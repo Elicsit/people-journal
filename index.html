@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>People Journal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #f5efe6; font-family: 'Crimson Pro', Georgia, serif; color: #2c1f0e; }
+    input, textarea, select, button { font-family: inherit; }
+    #app { max-width: 480px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; position: relative; }
+    .view { display: none; } .view.active { display: block; }
+    .header { padding: 20px 20px 14px; border-bottom: 1px solid rgba(139,100,60,0.2); display: flex; align-items: center; justify-content: space-between; background: #f5efe6; position: sticky; top: 0; z-index: 10; }
+    .logo { font-size: 21px; font-weight: 700; color: #6b4226; font-style: italic; }
+    .logo-sub { font-size: 12px; color: #9e7b5a; margin-top: 2px; font-style: italic; }
+    .badge { background: #8b4513; color: #f5efe6; font-size: 11px; border-radius: 20px; padding: 3px 11px; font-style: italic; }
+    .section { padding: 18px 20px 0; }
+    .field { margin-bottom: 15px; }
+    .label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #9e7b5a; margin-bottom: 8px; font-family: Georgia; display: block; }
+    .label-opt { text-transform: none; letter-spacing: 0; font-style: italic; color: #b89876; }
+    input[type=text], input[type=date], textarea, select { width: 100%; background: rgba(255,255,255,0.85); border: 1px solid rgba(139,100,60,0.3); border-radius: 8px; padding: 11px 13px; font-size: 15px; color: #2c1f0e; outline: none; }
+    textarea { resize: none; min-height: 110px; line-height: 1.65; }
+    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b4226' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px; }
+    .btn { background: #6b4226; color: #f5efe6; border: none; border-radius: 8px; padding: 12px 24px; font-size: 15px; cursor: pointer; width: 100%; font-style: italic; }
+    .btn:active { background: #5a3620; }
+    .btn-secondary { background: transparent; color: #6b4226; border: 1px solid rgba(107,66,38,0.4); border-radius: 8px; padding: 10px 24px; font-size: 15px; cursor: pointer; width: 100%; margin-top: 10px; }
+    .btn-back { background: none; border: none; color: #6b4226; font-size: 14px; cursor: pointer; font-family: Georgia; padding: 0; }
+    .btn-danger { background: none; border: none; color: #c0392b; font-size: 13px; cursor: pointer; font-family: Georgia; padding: 0; }
+    .btn-small { background: #6b4226; color: #f5efe6; border: none; border-radius: 6px; padding: 6px 13px; font-size: 12px; cursor: pointer; font-style: italic; white-space: nowrap; }
+    .btn-link { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; padding: 0; }
+    .fab { position: fixed; bottom: 24px; right: 20px; width: 54px; height: 54px; background: #6b4226; color: #f5efe6; border: none; border-radius: 50%; font-size: 26px; cursor: pointer; box-shadow: 0 4px 20px rgba(107,66,38,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; line-height: 1; }
+    .card { background: rgba(255,255,255,0.65); border: 1px solid rgba(139,100,60,0.18); border-radius: 12px; padding: 15px 17px; margin-bottom: 10px; cursor: pointer; box-shadow: 0 2px 8px rgba(107,66,38,0.07); }
+    .card:active { background: rgba(255,255,255,0.9); }
+    .card-name { font-size: 17px; font-weight: 600; }
+    .card-meta { font-size: 13px; color: #9e7b5a; font-style: italic; margin-top: 2px; }
+    .card-bday-alert { font-size: 12px; color: #8b5e3c; margin-top: 3px; }
+    .card-date { font-size: 11px; color: #b89876; margin-bottom: 3px; }
+    .card-pending { font-size: 11px; color: #c8956c; font-style: italic; }
+    .card-done { font-size: 11px; color: #9e7b5a; font-style: italic; }
+    .card-preview { margin-top: 9px; font-size: 13px; color: #6b5040; border-top: 1px solid rgba(139,100,60,0.1); padding-top: 8px; font-style: italic; }
+    .card-row { display: flex; justify-content: space-between; align-items: flex-start; }
+    .dot { width: 6px; height: 6px; background: #c8956c; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .entry-card { background: rgba(255,248,235,0.9); border: 1px solid rgba(139,100,60,0.15); border-radius: 10px; padding: 13px 15px; margin-bottom: 8px; }
+    .entry-text { font-size: 15px; line-height: 1.65; margin-bottom: 8px; }
+    .entry-footer { display: flex; justify-content: space-between; align-items: center; }
+    .entry-date { font-size: 11px; color: #b89876; font-style: italic; }
+    .tag { display: inline-block; background: rgba(139,100,60,0.12); color: #6b4226; border-radius: 20px; padding: 2px 10px; font-size: 12px; font-style: italic; }
+    .filter-row { display: flex; gap: 7px; margin-bottom: 15px; flex-wrap: wrap; }
+    .filter-btn { background: rgba(255,255,255,0.7); color: #6b4226; border: 1px solid rgba(107,66,38,0.3); border-radius: 20px; padding: 5px 13px; font-size: 12px; cursor: pointer; font-family: Georgia; font-style: italic; }
+    .filter-btn.active { background: #6b4226; color: #f5efe6; }
+    .cat-tabs { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 13px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .cat-tabs::-webkit-scrollbar { display: none; }
+    .cat-tab { border-radius: 20px; padding: 5px 12px; font-size: 12px; cursor: pointer; font-family: Georgia; white-space: nowrap; border: 1px solid rgba(107,66,38,0.25); background: rgba(255,255,255,0.6); color: #6b4226; }
+    .cat-tab.active { color: #fff; }
+    .person-name { font-size: 24px; font-weight: 700; font-style: italic; margin-bottom: 6px; }
+    .info-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; font-size: 13px; }
+    .info-icon { color: #9e7b5a; flex-shrink: 0; }
+    .info-text { color: #6b5040; font-style: italic; }
+    .bday-badge { background: rgba(200,149,108,0.18); color: #8b5e3c; border-radius: 12px; padding: 2px 10px; font-size: 11px; font-style: italic; }
+    .transfer-box { margin-top: 14px; background: rgba(200,149,108,0.12); border: 1px solid rgba(200,149,108,0.3); border-radius: 10px; padding: 12px 14px; }
+    .transfer-msg { font-size: 12px; color: #8b5e3c; font-style: italic; margin-bottom: 10px; }
+    .cat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 11px; }
+    .empty-msg { color: #9e7b5a; font-style: italic; font-size: 14px; padding: 14px 0; }
+    .empty-search { text-align: center; color: #9e7b5a; font-style: italic; padding: 36px 0; }
+    #toast { position: fixed; bottom: 86px; left: 50%; transform: translateX(-50%); background: #2c1f0e; color: #f5efe6; border-radius: 24px; padding: 9px 18px; font-size: 13px; font-style: italic; z-index: 200; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+    #toast.show { opacity: 1; }
+
+  .sync-bar { padding: 7px 20px; background: rgba(107,66,38,0.07); border-bottom: 1px solid rgba(139,100,60,0.15); font-size: 12px; color: #9e7b5a; font-style: italic; display: flex; justify-content: space-between; align-items: center; }
+  .sync-bar button { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; text-decoration: underline; padding: 0; }
+  #sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
+  #sb-overlay.open { display: flex; }
+  #sb-box { background: #f5efe6; border-radius: 14px; padding: 26px 22px; width: 90%; max-width: 400px; }
+  #sb-box .modal-title { font-size: 19px; font-weight: 700; font-style: italic; color: #6b4226; margin-bottom: 6px; }
+  #sb-box .modal-sub { font-size: 13px; color: #6b5040; line-height: 1.6; margin-bottom: 16px; }
+  #sb-box code { display: block; background: rgba(0,0,0,0.06); border-radius: 7px; padding: 10px 12px; font-size: 11px; font-family: monospace; line-height: 1.7; white-space: pre; margin-bottom: 16px; overflow-x: auto; }
+  </style>
+  <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="supabaseLoaded()"></script>
+</head>
+<body>
+<div id="app">
+  <!-- HOME -->
+  <div id="view-home" class="view active">
+    <div class="header">
+      <div>
+        <div class="logo">People Journal</div>
+        <div class="logo-sub" id="people-count">0 people recorded</div>
+      </div>
+      <div id="pending-badge" class="badge" style="display:none"></div>
+    </div>
+    <div id="sync-bar" class="sync-bar" style="display:none"></div>
+    <div class="section">
+      <input type="text" id="search-input" placeholder="Search by name or where you met…" style="margin-bottom:13px;" oninput="renderHome()" />
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn" onclick="setFilter(this,'pending')">⟳ Pending</button>
+        <button class="filter-btn" onclick="setFilter(this,'transferred')">✓ Done</button>
+      </div>
+      <div id="people-list"></div>
+    </div>
+    <button class="fab" onclick="showView('add-person')">+</button>
+  </div>
+
+  <!-- ADD PERSON -->
+  <div id="view-add-person" class="view">
+    <div class="header">
+      <button class="btn-back" onclick="showView('home')">← Back</button>
+      <div class="logo" style="font-size:17px;">Add Someone</div>
+    </div>
+    <div class="section">
+      <div class="field"><label class="label">Their Name</label><input type="text" id="form-name" placeholder="Full name…" /></div>
+      <div class="field"><label class="label">Where You Met</label><input type="text" id="form-met" placeholder="e.g. Church, coffee shop on 3rd…" /></div>
+      <div class="field"><label class="label">Date Met</label><input type="date" id="form-date" /></div>
+      <div class="field"><label class="label">Birthday <span class="label-opt">(optional)</span></label><input type="date" id="form-birthday" /></div>
+      <button class="btn" onclick="addPerson()">Add to Journal</button>
+      <button class="btn-secondary" onclick="showView('home')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- PERSON DETAIL -->
+  <div id="view-person" class="view">
+    <div class="header">
+      <button class="btn-back" onclick="showView('home')">← All People</button>
+      <button class="btn-danger" onclick="confirmDelete()">Remove</button>
+    </div>
+    <div class="section" id="person-detail"></div>
+  </div>
+
+  <!-- ADD ENTRY -->
+  <div id="view-add-entry" class="view">
+    <div class="header">
+      <button class="btn-back" onclick="showView('person')">← Back</button>
+      <div class="logo" style="font-size:17px;">Add Entry</div>
+    </div>
+    <div class="section">
+      <div id="entry-about" style="font-size:14px;color:#9e7b5a;font-style:italic;margin-bottom:14px;"></div>
+      <div class="field">
+        <label class="label">Category</label>
+        <select id="entry-category" onchange="updateEntryPlaceholder()">
+          <option value="notes">📝 Notes</option>
+          <option value="likes">❤️ Likes</option>
+          <option value="dislikes">👎 Dislikes</option>
+          <option value="family">🏡 Family</option>
+          <option value="memories">✨ Memories</option>
+          <option value="faith">🙏 Faith / Values</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label">What do you want to remember?</label>
+        <textarea id="entry-text"></textarea>
+      </div>
+      <button class="btn" onclick="addEntry()">Save Entry</button>
+      <button class="btn-secondary" onclick="showView('person')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sync overlay -->
+<div id="sb-overlay">
+  <div id="sb-box">
+    <div class="modal-title">Sync across devices</div>
+    <div class="modal-sub">Connect a free Supabase database so your journal syncs between your iPhone and computer.</div>
+    <div style="font-size:12px;color:#6b5040;margin-bottom:6px;font-family:Georgia;">1. Go to <a href="https://supabase.com" target="_blank" style="color:#6b4226;">supabase.com</a> → New project<br>2. SQL Editor → New query → Run this:</div>
+    <code>CREATE TABLE people (
+  id bigint primary key,
+  data jsonb not null,
+  updated_at timestamptz default now()
+);
+ALTER TABLE people ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all" ON people
+  FOR ALL USING (true);</code>
+    <div style="font-size:12px;color:#6b5040;margin-bottom:14px;font-family:Georgia;">3. Project Settings → API → copy URL and anon key</div>
+    <div class="field"><label class="label">Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co" /></div>
+    <div class="field"><label class="label">Anon Key</label><input type="text" id="sb-key" placeholder="eyJhbGci…" /></div>
+    <div id="sb-err" style="color:#c0392b;font-size:12px;font-style:italic;margin-bottom:10px;display:none;"></div>
+    <button class="btn" onclick="sbConnect()">Connect & Sync</button>
+    <button class="btn-secondary" onclick="sbClose()">Cancel</button>
+    <button class="btn-secondary" style="margin-top:6px;color:#c0392b;border-color:rgba(192,57,43,0.3);" onclick="sbDisconnect()">Disconnect sync</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const CATEGORIES = [
+  { key:'notes',    label:'Notes',          icon:'📝', color:'#c8956c' },
+  { key:'likes',    label:'Likes',          icon:'❤️',  color:'#c07b5a' },
+  { key:'dislikes', label:'Dislikes',       icon:'👎',  color:'#8b6355' },
+  { key:'family',   label:'Family',         icon:'🏡',  color:'#7a8c5a' },
+  { key:'memories', label:'Memories',       icon:'✨',  color:'#8a7ab8' },
+  { key:'faith',    label:'Faith / Values', icon:'🙏',  color:'#6b8c7a' },
+];
+const PLACEHOLDERS = {
+  notes:'Something they told you, an important detail…', likes:'Things they enjoy, hobbies, favourites…',
+  dislikes:'Things they avoid or dislike…', family:'Family members, relationships, background…',
+  memories:'A shared moment, story, or experience…', faith:'Their beliefs, values, spiritual life…',
+};
+
+// Data — loaded from localStorage, falls back to samples
+const SAMPLE_PEOPLE = [
+  { id:1, name:'Marcus Webb', metAt:'Church small group', date:'2024-01-15', birthday:'1985-03-22', transferred:false,
+    notes:[{id:10,text:'Grew up in Tennessee, loves woodworking',date:'2024-01-15',transferred:false}],
+    likes:[{id:11,text:'Woodworking, country music, strong coffee',date:'2024-01-15',transferred:false}],
+    dislikes:[], family:[{id:12,text:'Daughter just started college',date:'2024-02-03',transferred:true}],
+    memories:[], faith:[{id:13,text:'Leads the men\'s Bible study on Thursdays',date:'2024-01-15',transferred:false}] },
+  { id:2, name:'Elena Rourke', metAt:'Coffee shop — 3rd & Main', date:'2024-03-20', birthday:'', transferred:false,
+    notes:[{id:20,text:'Photographer, travels a lot for work',date:'2024-03-20',transferred:false}],
+    likes:[{id:21,text:'Photography, travel, black & white film',date:'2024-03-20',transferred:false}],
+    dislikes:[], family:[], memories:[], faith:[] }
+];
+
+let people = [];
+let currentPersonId = null;
+let activeCategory = 'notes';
+let currentFilter = 'all';
+
+function emptyPerson() { const p={}; CATEGORIES.forEach(c=>p[c.key]=[]); return p; }
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) { if(!d)return''; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function fmtBday(d) { if(!d)return''; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric'}); }
+function upcomingBday(b) {
+  if(!b)return null;
+  const now=new Date(); now.setHours(0,0,0,0);
+  const bd=new Date(b+'T00:00:00');
+  const next=new Date(now.getFullYear(),bd.getMonth(),bd.getDate());
+  if(next<now)next.setFullYear(now.getFullYear()+1);
+  const diff=Math.round((next-now)/86400000);
+  if(diff===0)return'🎂 Birthday today!';
+  if(diff===1)return'🎂 Birthday tomorrow!';
+  if(diff<=30)return`🎂 Birthday in ${diff} days`;
+  return null;
+}
+function totalPending(p) { return CATEGORIES.reduce((a,c)=>a+(p[c.key]||[]).filter(e=>!e.transferred).length,0); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='home') renderHome();
+  if(name==='person') renderPerson();
+  if(name==='add-person') {
+    document.getElementById('form-name').value='';
+    document.getElementById('form-met').value='';
+    document.getElementById('form-date').value=today();
+    document.getElementById('form-birthday').value='';
+    setTimeout(()=>document.getElementById('form-name').focus(),150);
+  }
+  if(name==='add-entry') {
+    const p=people.find(x=>x.id===currentPersonId);
+    document.getElementById('entry-about').textContent=p?'About '+p.name:'';
+    document.getElementById('entry-category').value=activeCategory;
+    document.getElementById('entry-text').value='';
+    updateEntryPlaceholder();
+    setTimeout(()=>document.getElementById('entry-text').focus(),150);
+  }
+}
+
+function setFilter(btn,f) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); currentFilter=f; renderHome();
+}
+
+function renderHome() {
+  const q=(document.getElementById('search-input').value||'').toLowerCase();
+  const filtered=people.filter(p=>{
+    const m=p.name.toLowerCase().includes(q)||(p.metAt||'').toLowerCase().includes(q);
+    if(currentFilter==='pending')return m&&totalPending(p)>0;
+    if(currentFilter==='transferred')return m&&p.transferred;
+    return m;
+  });
+  const pending=people.reduce((a,p)=>a+totalPending(p),0);
+  document.getElementById('people-count').textContent=people.length+' '+(people.length===1?'person':'people')+' recorded';
+  const badge=document.getElementById('pending-badge');
+  if(pending>0){badge.style.display='';badge.textContent=pending+' to transfer';}else badge.style.display='none';
+  const list=document.getElementById('people-list');
+  if(filtered.length===0){list.innerHTML=`<div class="empty-search">${q?'No one found…':'Tap + to add someone you\'ve met.'}</div>`;return;}
+  list.innerHTML=filtered.map(person=>{
+    const pend=totalPending(person), alert=upcomingBday(person.birthday);
+    const first=CATEGORIES.map(c=>(person[c.key]||[])[0]).find(Boolean);
+    return`<div class="card" onclick="openPerson(${person.id})">
+      <div class="card-row">
+        <div>
+          <div class="card-name">${esc(person.name)}</div>
+          ${person.metAt?`<div class="card-meta">met at ${esc(person.metAt)}</div>`:''}
+          ${alert?`<div class="card-bday-alert">${esc(alert)}</div>`:''}
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px;">
+          <div class="card-date">${fmtDate(person.date)}</div>
+          ${pend>0?`<div class="card-pending"><span class="dot"></span>${pend} to copy</div>`:CATEGORIES.some(c=>(person[c.key]||[]).length>0)?`<div class="card-done">✓ transferred</div>`:''}
+        </div>
+      </div>
+      ${first?`<div class="card-preview">"${esc(first.text.slice(0,90))}${first.text.length>90?'…':''}"</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openPerson(id) { currentPersonId=id; activeCategory='notes'; showView('person'); }
+
+function renderPerson() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  const pend=totalPending(person), bdayAlert=upcomingBday(person.birthday);
+  const cat=CATEGORIES.find(c=>c.key===activeCategory);
+  const entries=person[activeCategory]||[];
+  document.getElementById('person-detail').innerHTML=`
+    <div class="person-name">${esc(person.name)}</div>
+    <div style="margin-bottom:12px;">
+      ${person.metAt?`<div class="info-row"><span class="info-icon">📍</span><span class="info-text">met at ${esc(person.metAt)}</span><span class="tag" style="margin-left:auto;">${fmtDate(person.date)}</span></div>`:''}
+      <div class="info-row">
+        <span class="info-icon">🎂</span>
+        ${person.birthday
+          ?`<span class="info-text">${fmtBday(person.birthday)}</span>${bdayAlert?`<span class="bday-badge">${esc(bdayAlert)}</span>`:''}<button class="btn-link" style="margin-left:auto;" onclick="clearBirthday()">clear</button>`
+          :`<input type="date" style="flex:1;padding:6px 10px;font-size:13px;" onchange="setBirthday(this.value)" /><span style="font-size:12px;color:#9e7b5a;font-style:italic;margin-left:6px;">Add birthday</span>`}
+      </div>
+    </div>
+    ${pend>0?`<div class="transfer-box"><div class="transfer-msg">📖 ${pend} entr${pend>1?'ies':'y'} waiting to copy to your physical journal</div><button class="btn-small" onclick="markAllTransferred()">Mark all as transferred</button></div>`:''}
+    <div class="cat-tabs" style="margin-top:18px;">
+      ${CATEGORIES.map(c=>{const n=(person[c.key]||[]).length,a=c.key===activeCategory;return`<button class="cat-tab${a?' active':''}" style="${a?`background:${c.color};border-color:${c.color};`:''}" onclick="setCategory('${c.key}')">${c.icon} ${c.label}${n>0?` (${n})`:''}</button>`;}).join('')}
+    </div>
+    <div class="cat-header">
+      <span class="label" style="margin-bottom:0;">${cat?.icon} ${cat?.label}</span>
+      <button class="btn-small" onclick="showView('add-entry')">+ Add</button>
+    </div>
+    ${entries.length===0?'<div class="empty-msg">Nothing here yet. Tap + to add something.</div>':''}
+    ${entries.map(e=>`<div class="entry-card" style="border-left:3px solid ${cat?.color||'#c8956c'};opacity:${e.transferred?0.6:1};">
+      <div class="entry-text">${esc(e.text)}</div>
+      <div class="entry-footer">
+        <span class="entry-date">${fmtDate(e.date)}</span>
+        ${e.transferred?`<span class="tag">✓ in journal</span>`:`<button class="btn-link" onclick="markEntryTransferred(${e.id})">mark as copied →</button>`}
+      </div>
+    </div>`).join('')}
+  `;
+}
+
+function setCategory(key) { activeCategory=key; renderPerson(); }
+
+function addPerson() {
+  const name=document.getElementById('form-name').value.trim();
+  if(!name){document.getElementById('form-name').focus();return;}
+  people.unshift({id:Date.now(),name,metAt:document.getElementById('form-met').value.trim(),
+    date:document.getElementById('form-date').value,birthday:document.getElementById('form-birthday').value,
+    transferred:false,...emptyPerson()});
+  save(); showView('home'); showToast('Person added to your journal');
+}
+
+function addEntry() {
+  const text=document.getElementById('entry-text').value.trim();
+  if(!text){document.getElementById('entry-text').focus();return;}
+  const cat=document.getElementById('entry-category').value;
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person[cat]=[{id:Date.now(),text,date:today(),transferred:false},...(person[cat]||[])];
+  save(); activeCategory=cat; showView('person'); showToast('Entry saved');
+}
+
+function markEntryTransferred(entryId) {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  CATEGORIES.forEach(c=>{person[c.key]=(person[c.key]||[]).map(e=>e.id===entryId?{...e,transferred:true}:e);});
+  save(); renderPerson(); showToast('Marked as transferred ✓');
+}
+
+function markAllTransferred() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person.transferred=true;
+  CATEGORIES.forEach(c=>{person[c.key]=(person[c.key]||[]).map(e=>({...e,transferred:true}));});
+  save(); renderPerson(); showToast('All entries marked as transferred ✓');
+}
+
+function setBirthday(val) {
+  if(!val)return;
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person.birthday=val; save(); renderPerson(); showToast('Birthday saved');
+}
+
+function clearBirthday() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person.birthday=''; renderPerson();
+}
+
+function confirmDelete() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  if(!confirm(`Remove ${person.name}?`))return;
+  const _did=currentPersonId; people=people.filter(p=>p.id!==_did); save(); sbDelete(_did); showView('home'); showToast('Person removed');
+}
+
+function updateEntryPlaceholder() {
+  document.getElementById('entry-text').placeholder=PLACEHOLDERS[document.getElementById('entry-category').value]||'';
+}
+
+
+// ── Supabase sync ─────────────────────────────────────────────────────────
+let _sb = null;
+
+function supabaseLoaded() {
+  // Called when Supabase script finishes loading
+  const cfg = sbConfig();
+  if (cfg) sbInit(cfg.url, cfg.key, false);
+  else sbBar('disconnected');
+}
+
+function sbConfig() {
+  try { return JSON.parse(localStorage.getItem('pj_sb') || 'null'); } catch { return null; }
+}
+
+async function sbInit(url, key, pushLocal) {
+  try {
+    _sb = window.supabase.createClient(url, key);
+    const { error } = await _sb.from('people').select('id').limit(1);
+    if (error) throw error;
+
+    if (pushLocal && people.length > 0) {
+      // First-time connect: push local data up to cloud
+      const rows = people.map(p => { const {id,...data}=p; return {id,data}; });
+      await _sb.from('people').upsert(rows, {onConflict:'id'});
+      sbBar('connected');
+    } else {
+      // Every other open: always pull latest from cloud
+      const { data, error: e2 } = await _sb.from('people').select('id,data').order('id', {ascending:false});
+      if (e2) throw e2;
+      if (data) {
+        people = data.map(r => ({id:r.id, ...r.data}));
+        // Also update localStorage so offline works with latest data
+        try { localStorage.setItem('pj_people', JSON.stringify(people)); } catch(e) {}
+        renderHome();
+      }
+      sbBar('connected');
+    }
+  } catch(e) {
+    console.warn('Sync error', e);
+    sbBar('error');
+  }
+}
+
+function sbBar(state) {
+  const bar = document.getElementById('sync-bar');
+  if (!bar) return;
+  if (state === 'connected') {
+    bar.style.display = '';
+    bar.innerHTML = '✓ Synced across devices &nbsp;·&nbsp; <button onclick="sbOpen()">settings</button>';
+  } else if (state === 'disconnected') {
+    bar.style.display = '';
+    bar.innerHTML = '☁ Not synced &nbsp;·&nbsp; <button onclick="sbOpen()">connect to sync across devices</button>';
+  } else if (state === 'error') {
+    bar.style.display = '';
+    bar.innerHTML = '⚠ Sync error &nbsp;·&nbsp; <button onclick="sbOpen()">check settings</button>';
+  }
+}
+
+function sbOpen() { document.getElementById('sb-overlay').classList.add('open'); }
+function sbClose() { document.getElementById('sb-overlay').classList.remove('open'); }
+
+async function sbConnect() {
+  const url = document.getElementById('sb-url').value.trim();
+  const key = document.getElementById('sb-key').value.trim();
+  const err = document.getElementById('sb-err');
+  err.style.display = 'none';
+  if (!url || !key) { err.textContent='Please fill in both fields.'; err.style.display='block'; return; }
+  if (!window.supabase) { err.textContent='Still loading, please wait a moment and try again.'; err.style.display='block'; return; }
+  err.textContent='Connecting…'; err.style.color='#9e7b5a'; err.style.display='block';
+  try {
+    _sb = window.supabase.createClient(url, key);
+    const {error} = await _sb.from('people').select('id').limit(1);
+    if (error) throw error;
+    localStorage.setItem('pj_sb', JSON.stringify({url, key}));
+    // Push existing local people to cloud
+    if (people.length > 0) {
+      const rows = people.map(p => { const {id,...data}=p; return {id,data}; });
+      await _sb.from('people').upsert(rows, {onConflict:'id'});
+    }
+    sbClose();
+    sbBar('connected');
+    showToast('Connected! Your journal will now sync across devices.');
+  } catch(e) {
+    err.textContent='Could not connect — check your URL and key.';
+    err.style.color='#c0392b'; err.style.display='block';
+  }
+}
+
+function sbDisconnect() {
+  if (!confirm('Disconnect sync? Your data stays on this device.')) return;
+  localStorage.removeItem('pj_sb');
+  _sb = null;
+  sbClose();
+  sbBar('disconnected');
+  showToast('Sync disconnected.');
+}
+
+async function sbPush() {
+  if (!_sb) return;
+  try {
+    const rows = people.map(p => { const {id,...data}=p; return {id,data}; });
+    if (rows.length > 0) await _sb.from('people').upsert(rows, {onConflict:'id'});
+  } catch(e) { console.warn('Push failed', e); }
+}
+
+async function sbDelete(id) {
+  if (!_sb) return;
+  try { await _sb.from('people').delete().eq('id', id); } catch(e) {}
+}
+
+let toastTimer;
+function showToast(msg) {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+function save() {
+  try { localStorage.setItem('pj_people', JSON.stringify(people)); } catch(e) {}
+  sbPush();
+}
+
+// Init — runs immediately, no waiting
+document.getElementById('form-date').value=today();
+try {
+  const saved = localStorage.getItem('pj_people');
+  people = saved ? JSON.parse(saved) : SAMPLE_PEOPLE.slice();
+} catch(e) {
+  people = SAMPLE_PEOPLE.slice();
+}
+renderHome();
+// Show sync bar state (supabase may still be loading — that's fine)
+if (sbConfig()) {
+  sbBar('connected'); // optimistic — will update when supabase loads
+} else {
+  sbBar('disconnected');
+}
+</script>
+</body>
+</html>
