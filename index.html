@@ -235,7 +235,7 @@ function renderLocationChips() {
   if (!container) return;
   container.innerHTML = locations.map((l, i) => `
     <span class="loc-chip">${l}
-      ${DEFAULT_LOCATIONS.includes(l) ? '' : `<button onclick="removeLocation(${i})" title="Remove">×</button>`}
+      <button onclick="removeLocation(${i})" title="Remove">×</button>
     </span>`).join('');
 }
 
@@ -255,8 +255,6 @@ function addLocation() {
 }
 
 function removeLocation(index) {
-  const loc = locations[index];
-  if (DEFAULT_LOCATIONS.includes(loc)) return; // can't remove defaults
   locations.splice(index, 1);
   saveLocations();
   populateLocationDropdown();
