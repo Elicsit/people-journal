@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My People Journal</title>
+  <title>People Journal</title>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,7 +28,12 @@
     .btn-back { background: none; border: none; color: #6b4226; font-size: 14px; cursor: pointer; font-family: Georgia; padding: 0; }
     .btn-danger { background: none; border: none; color: #c0392b; font-size: 13px; cursor: pointer; font-family: Georgia; padding: 0; }
     .btn-small { background: #6b4226; color: #f5efe6; border: none; border-radius: 6px; padding: 6px 13px; font-size: 12px; cursor: pointer; font-style: italic; white-space: nowrap; }
-    .btn-link { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; padding: 0; }
+
+    .loc-chip { display:inline-flex; align-items:center; gap:5px; background:rgba(107,66,38,0.1); border:1px solid rgba(107,66,38,0.2); border-radius:20px; padding:4px 10px; font-size:12px; color:#6b4226; font-style:italic; }
+    .loc-chip button { background:none; border:none; color:#9e7b5a; cursor:pointer; font-size:14px; padding:0; line-height:1; }
+    .loc-chip button:hover { color:#c0392b; }
+
+    .loc-link { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; padding: 0; }
     .fab { position: fixed; bottom: 24px; right: 20px; width: 54px; height: 54px; background: #6b4226; color: #f5efe6; border: none; border-radius: 50%; font-size: 26px; cursor: pointer; box-shadow: 0 4px 20px rgba(107,66,38,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; line-height: 1; }
     .card { background: rgba(255,255,255,0.65); border: 1px solid rgba(139,100,60,0.18); border-radius: 12px; padding: 15px 17px; margin-bottom: 10px; cursor: pointer; box-shadow: 0 2px 8px rgba(107,66,38,0.07); }
     .card:active { background: rgba(255,255,255,0.9); }
@@ -109,7 +114,15 @@
     </div>
     <div class="section">
       <div class="field"><label class="label">Their Name</label><input type="text" id="form-name" placeholder="Full name…" /></div>
-      <div class="field"><label class="label">Where You Met</label><input type="text" id="form-met" placeholder="e.g. Church, coffee shop on 3rd…" /></div>
+      <div class="field">
+        <label class="label">Where You Met</label>
+        <select id="form-met"></select>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+          <input type="text" id="new-location-input" placeholder="Add a new location…" style="flex:1;padding:8px 12px;font-size:14px;" />
+          <button class="btn-small" onclick="addLocation()" type="button">+ Add</button>
+        </div>
+        <div id="locations-list" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
       <div class="field"><label class="label">Date Met</label><input type="date" id="form-date" /></div>
       <div class="field"><label class="label">Birthday <span class="label-opt">(optional)</span></label><input type="date" id="form-birthday" /></div>
       <button class="btn" onclick="addPerson()">Add to Journal</button>
@@ -196,6 +209,60 @@ const PLACEHOLDERS = {
   memories:'A shared moment, story, or experience…', faith:'Their beliefs, values, spiritual life…',
 };
 
+
+const DEFAULT_LOCATIONS = ['Gym', 'Oxygen Life', 'Church', 'Other'];
+let locations = [];
+
+function loadLocations() {
+  try {
+    const saved = localStorage.getItem('pj_locations');
+    locations = saved ? JSON.parse(saved) : DEFAULT_LOCATIONS.slice();
+  } catch(e) { locations = DEFAULT_LOCATIONS.slice(); }
+}
+
+function saveLocations() {
+  try { localStorage.setItem('pj_locations', JSON.stringify(locations)); } catch(e) {}
+}
+
+function populateLocationDropdown() {
+  const sel = document.getElementById('form-met');
+  if (!sel) return;
+  sel.innerHTML = locations.map(l => `<option value="${l}">${l}</option>`).join('');
+}
+
+function renderLocationChips() {
+  const container = document.getElementById('locations-list');
+  if (!container) return;
+  container.innerHTML = locations.map((l, i) => `
+    <span class="loc-chip">${l}
+      ${DEFAULT_LOCATIONS.includes(l) ? '' : `<button onclick="removeLocation(${i})" title="Remove">×</button>`}
+    </span>`).join('');
+}
+
+function addLocation() {
+  const input = document.getElementById('new-location-input');
+  const val = input.value.trim();
+  if (!val) { input.focus(); return; }
+  if (locations.includes(val)) { showToast('Already in your list'); input.value=''; return; }
+  locations.push(val);
+  saveLocations();
+  input.value = '';
+  populateLocationDropdown();
+  renderLocationChips();
+  // Set the new location as selected
+  document.getElementById('form-met').value = val;
+  showToast('Location added');
+}
+
+function removeLocation(index) {
+  const loc = locations[index];
+  if (DEFAULT_LOCATIONS.includes(loc)) return; // can't remove defaults
+  locations.splice(index, 1);
+  saveLocations();
+  populateLocationDropdown();
+  renderLocationChips();
+}
+
 // Data — loaded from localStorage, falls back to samples
 const SAMPLE_PEOPLE = [
   { id:1, name:'Marcus Webb', metAt:'Church small group', date:'2024-01-15', birthday:'1985-03-22', transferred:false,
@@ -241,7 +308,9 @@ function showView(name) {
   if(name==='person') renderPerson();
   if(name==='add-person') {
     document.getElementById('form-name').value='';
-    document.getElementById('form-met').value='';
+    populateLocationDropdown();
+    renderLocationChips();
+    document.getElementById('new-location-input').value='';
     document.getElementById('form-date').value=today();
     document.getElementById('form-birthday').value='';
     setTimeout(()=>document.getElementById('form-name').focus(),150);
@@ -337,7 +406,7 @@ function setCategory(key) { activeCategory=key; renderPerson(); }
 function addPerson() {
   const name=document.getElementById('form-name').value.trim();
   if(!name){document.getElementById('form-name').focus();return;}
-  people.unshift({id:Date.now(),name,metAt:document.getElementById('form-met').value.trim(),
+  people.unshift({id:Date.now(),name,metAt:document.getElementById('form-met').value,
     date:document.getElementById('form-date').value,birthday:document.getElementById('form-birthday').value,
     transferred:false,...emptyPerson()});
   save(); showView('home'); showToast('Person added to your journal');
@@ -510,6 +579,7 @@ function save() {
 }
 
 // Init — runs immediately, no waiting
+loadLocations();
 document.getElementById('form-date').value=today();
 try {
   const saved = localStorage.getItem('pj_people');
