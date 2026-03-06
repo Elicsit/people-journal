@@ -10,6 +10,24 @@
     html, body { height: 100%; background: #f5efe6; font-family: 'Crimson Pro', Georgia, serif; color: #2c1f0e; }
     input, textarea, select, button { font-family: inherit; }
     #app { max-width: 480px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; position: relative; }
+    @media (min-width: 700px) {
+      #app { max-width: 680px; }
+      .modal-box { max-width: 560px; }
+      .card { padding: 16px 20px; }
+      .entry-card { padding: 14px 18px; }
+    }
+    @media (min-width: 1024px) {
+      body { display: flex; justify-content: center; align-items: flex-start; padding: 32px 20px; background: #ede5d8; }
+      #app { max-width: 860px; width: 100%; border-radius: 18px; box-shadow: 0 8px 40px rgba(44,31,14,0.13); min-height: calc(100vh - 64px); padding-bottom: 60px; }
+      .modal-box { max-width: 620px; }
+      .section { padding: 0 28px 20px; }
+      .header { padding: 18px 28px 14px; }
+      .people-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    }
+    @media (min-width: 1280px) {
+      #app { max-width: 1060px; }
+      .people-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
     .view { display: none; } .view.active { display: block; }
     .header { padding: 20px 20px 14px; border-bottom: 1px solid rgba(139,100,60,0.2); display: flex; align-items: center; justify-content: space-between; background: #f5efe6; position: sticky; top: 0; z-index: 10; }
     .logo { font-size: 21px; font-weight: 700; color: #6b4226; font-style: italic; }
@@ -28,12 +46,10 @@
     .btn-back { background: none; border: none; color: #6b4226; font-size: 14px; cursor: pointer; font-family: Georgia; padding: 0; }
     .btn-danger { background: none; border: none; color: #c0392b; font-size: 13px; cursor: pointer; font-family: Georgia; padding: 0; }
     .btn-small { background: #6b4226; color: #f5efe6; border: none; border-radius: 6px; padding: 6px 13px; font-size: 12px; cursor: pointer; font-style: italic; white-space: nowrap; }
-
+    .btn-link { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; padding: 0; }
     .loc-chip { display:inline-flex; align-items:center; gap:5px; background:rgba(107,66,38,0.1); border:1px solid rgba(107,66,38,0.2); border-radius:20px; padding:4px 10px; font-size:12px; color:#6b4226; font-style:italic; }
     .loc-chip button { background:none; border:none; color:#9e7b5a; cursor:pointer; font-size:14px; padding:0; line-height:1; }
     .loc-chip button:hover { color:#c0392b; }
-
-    .loc-link { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; padding: 0; }
     .fab { position: fixed; bottom: 24px; right: 20px; width: 54px; height: 54px; background: #6b4226; color: #f5efe6; border: none; border-radius: 50%; font-size: 26px; cursor: pointer; box-shadow: 0 4px 20px rgba(107,66,38,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; line-height: 1; }
     .card { background: rgba(255,255,255,0.65); border: 1px solid rgba(139,100,60,0.18); border-radius: 12px; padding: 15px 17px; margin-bottom: 10px; cursor: pointer; box-shadow: 0 2px 8px rgba(107,66,38,0.07); }
     .card:active { background: rgba(255,255,255,0.9); }
@@ -54,8 +70,7 @@
     .filter-row { display: flex; gap: 7px; margin-bottom: 15px; flex-wrap: wrap; }
     .filter-btn { background: rgba(255,255,255,0.7); color: #6b4226; border: 1px solid rgba(107,66,38,0.3); border-radius: 20px; padding: 5px 13px; font-size: 12px; cursor: pointer; font-family: Georgia; font-style: italic; }
     .filter-btn.active { background: #6b4226; color: #f5efe6; }
-    .cat-tabs { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 13px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-    .cat-tabs::-webkit-scrollbar { display: none; }
+    .cat-tabs { display: flex; gap: 7px; flex-wrap: wrap; padding-bottom: 4px; margin-bottom: 13px; }
     .cat-tab { border-radius: 20px; padding: 5px 12px; font-size: 12px; cursor: pointer; font-family: Georgia; white-space: nowrap; border: 1px solid rgba(107,66,38,0.25); background: rgba(255,255,255,0.6); color: #6b4226; }
     .cat-tab.active { color: #fff; }
     .person-name { font-size: 24px; font-weight: 700; font-style: italic; margin-bottom: 6px; }
@@ -68,43 +83,33 @@
     .cat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 11px; }
     .empty-msg { color: #9e7b5a; font-style: italic; font-size: 14px; padding: 14px 0; }
     .empty-search { text-align: center; color: #9e7b5a; font-style: italic; padding: 36px 0; }
-    #toast { position: fixed; bottom: 86px; left: 50%; transform: translateX(-50%); background: #2c1f0e; color: #f5efe6; border-radius: 24px; padding: 9px 18px; font-size: 13px; font-style: italic; z-index: 200; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
-    #toast.show { opacity: 1; }
-
-  .sync-bar { padding: 7px 20px; background: rgba(107,66,38,0.07); border-bottom: 1px solid rgba(139,100,60,0.15); font-size: 12px; color: #9e7b5a; font-style: italic; display: flex; justify-content: space-between; align-items: center; }
-  .sync-bar button { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; text-decoration: underline; padding: 0; }
-  #sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
-  #sb-overlay.open { display: flex; }
-  #sb-box { background: #f5efe6; border-radius: 14px; padding: 26px 22px; width: 90%; max-width: 400px; }
-  #sb-box .modal-title { font-size: 19px; font-weight: 700; font-style: italic; color: #6b4226; margin-bottom: 6px; }
-  #sb-box .modal-sub { font-size: 13px; color: #6b5040; line-height: 1.6; margin-bottom: 16px; }
-  #sb-box code { display: block; background: rgba(0,0,0,0.06); border-radius: 7px; padding: 10px 12px; font-size: 11px; font-family: monospace; line-height: 1.7; white-space: pre; margin-bottom: 16px; overflow-x: auto; }
-
-    .btn-link { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; padding: 0; }
-    #family-modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
-    #family-modal-bg.open { display: flex; }
-    #family-modal { background: #f5efe6; border-radius: 14px; padding: 24px 20px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
+    .section-divider { border: none; border-top: 1px solid rgba(139,100,60,0.15); margin: 18px 0 14px; }
+    .section-heading { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #9e7b5a; font-family: Georgia; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .family-member-card { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(139,100,60,0.1); cursor: pointer; }
+    .family-member-name { font-size: 15px; font-weight: 600; }
+    .family-member-rel { font-size: 12px; color: #9e7b5a; font-style: italic; }
     .contact-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .contact-icon { font-size: 16px; flex-shrink: 0; width: 24px; text-align: center; }
     .contact-value { flex: 1; font-size: 14px; color: #2c1f0e; word-break: break-all; }
     .contact-value a { color: #6b4226; text-decoration: none; }
-    .contact-edit-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .contact-edit-row input { flex: 1; padding: 8px 11px; font-size: 14px; }
-    .section-divider { border: none; border-top: 1px solid rgba(139,100,60,0.15); margin: 18px 0 14px; }
-    .section-heading { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #9e7b5a; font-family: Georgia; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .family-chip { display: inline-block; background: rgba(107,66,38,0.1); border: 1px solid rgba(107,66,38,0.2); border-radius: 20px; padding: 4px 12px; font-size: 12px; color: #6b4226; font-style: italic; cursor: pointer; }
-    .family-member-card { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(139,100,60,0.1); cursor: pointer; }
-    .family-member-name { font-size: 15px; font-weight: 600; }
-    .family-member-meta { font-size: 12px; color: #9e7b5a; font-style: italic; }
     #contact-edit-panel { display: none; background: rgba(255,248,235,0.9); border: 1px solid rgba(139,100,60,0.2); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
-    .loc-chip { display: inline-flex; align-items: center; gap: 5px; background: rgba(107,66,38,0.1); border: 1px solid rgba(107,66,38,0.2); border-radius: 20px; padding: 4px 10px; font-size: 12px; color: #6b4226; font-style: italic; }
-    .loc-chip button { background: none; border: none; color: #9e7b5a; cursor: pointer; font-size: 14px; padding: 0; line-height: 1; }
-
+    #toast { position: fixed; bottom: 86px; left: 50%; transform: translateX(-50%); background: #2c1f0e; color: #f5efe6; border-radius: 24px; padding: 9px 18px; font-size: 13px; font-style: italic; z-index: 200; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+    #toast.show { opacity: 1; pointer-events: auto; }
+    .sync-bar { padding: 7px 20px; background: rgba(107,66,38,0.07); border-bottom: 1px solid rgba(139,100,60,0.15); font-size: 12px; color: #9e7b5a; font-style: italic; display: flex; justify-content: space-between; align-items: center; }
+    .sync-bar button { background: none; border: none; color: #6b4226; font-size: 12px; cursor: pointer; font-style: italic; font-family: Georgia; text-decoration: underline; padding: 0; }
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
+    .modal-bg.open { display: flex; }
+    .modal-box { background: #f5efe6; border-radius: 14px; padding: 24px 20px; width: 90%; max-width: 400px; max-height: 82vh; overflow-y: auto; }
+    .modal-title { font-size: 19px; font-weight: 700; font-style: italic; color: #6b4226; margin-bottom: 6px; }
+    .modal-sub { font-size: 13px; color: #6b5040; line-height: 1.6; margin-bottom: 16px; }
+    .search-result-row { padding: 9px 11px; border-radius: 8px; cursor: pointer; font-size: 14px; background: rgba(255,255,255,0.7); border: 1px solid rgba(139,100,60,0.15); margin-bottom: 5px; }
+    .search-result-row:hover { background: rgba(255,255,255,0.95); }
   </style>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="supabaseLoaded()"></script>
 </head>
 <body>
 <div id="app">
+
   <!-- HOME -->
   <div id="view-home" class="view active">
     <div class="header">
@@ -112,7 +117,7 @@
         <div class="logo">People Journal</div>
         <div class="logo-sub" id="people-count">0 people recorded</div>
       </div>
-      <div id="pending-badge" class="badge" style="display:none"></div>
+      <button onclick="showView('journal')" id="journal-nav-btn" style="background:rgba(255,255,255,0.7);border:1px solid rgba(107,66,38,0.3);border-radius:20px;padding:6px 13px;font-size:12px;font-family:Georgia;font-style:italic;color:#6b4226;cursor:pointer;display:none;">📖 <span id="pending-badge-count"></span> to copy</button>
     </div>
     <div id="sync-bar" class="sync-bar" style="display:none"></div>
     <div class="section">
@@ -121,8 +126,11 @@
         <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
         <button class="filter-btn" onclick="setFilter(this,'pending')">⟳ Pending</button>
         <button class="filter-btn" onclick="setFilter(this,'transferred')">✓ Done</button>
+        <button class="filter-btn" id="circles-filter-btn" onclick="toggleCircleFilterPanel()" style="border-style:dashed;">⬤ Circles</button>
+        <button id="trash-filter-btn" onclick="openTrashModal()" style="display:none;border-style:dashed;" class="filter-btn">🗑 <span id="trash-badge"></span></button>
       </div>
-      <div id="people-list"></div>
+      <div id="circle-filter-panel" style="display:none;flex-wrap:wrap;gap:6px;margin-top:8px;padding:10px 14px;background:rgba(255,255,255,0.5);border-radius:12px;border:1px solid rgba(139,100,60,0.15);"></div>
+      <div class="people-grid" id="people-list"></div>
     </div>
     <button class="fab" onclick="showView('add-person')">+</button>
   </div>
@@ -137,12 +145,7 @@
       <div class="field"><label class="label">Their Name</label><input type="text" id="form-name" placeholder="Full name…" /></div>
       <div class="field">
         <label class="label">Where You Met</label>
-        <select id="form-met"></select>
-        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
-          <input type="text" id="new-location-input" placeholder="Add a new location…" style="flex:1;padding:8px 12px;font-size:14px;" />
-          <button class="btn-small" onclick="addLocation()" type="button">+ Add</button>
-        </div>
-        <div id="locations-list" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <input type="text" id="form-met" placeholder="e.g. Church, Gym, Coffee shop…" />
       </div>
       <div class="field"><label class="label">Date Met</label><input type="date" id="form-date" /></div>
       <div class="field"><label class="label">Birthday <span class="label-opt">(optional)</span></label><input type="date" id="form-birthday" /></div>
@@ -174,32 +177,47 @@
       <div id="entry-about" style="font-size:14px;color:#9e7b5a;font-style:italic;margin-bottom:14px;"></div>
       <div class="field">
         <label class="label">Category</label>
-        <select id="entry-category" onchange="updateEntryPlaceholder()">
-          <option value="notes">📝 Notes</option>
-          <option value="likes">❤️ Likes</option>
-          <option value="dislikes">👎 Dislikes</option>
-          <option value="family">🏡 Family</option>
-          <option value="memories">✨ Memories</option>
-          <option value="faith">🙏 Faith / Values</option>
-        </select>
+        <select id="entry-category" onchange="updateEntryPlaceholder()"></select>
       </div>
       <div class="field">
         <label class="label">What do you want to remember?</label>
         <textarea id="entry-text"></textarea>
       </div>
+      <div id="entry-journal-row" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,0.5);border:1px solid rgba(139,100,60,0.2);border-radius:10px;margin-bottom:14px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#2c1f0e;">Copy to journal</div>
+          <div style="font-size:12px;color:#9e7b5a;font-style:italic;">Mark this entry to copy to your physical journal</div>
+        </div>
+        <div id="entry-journal-toggle" onclick="toggleEntryJournal()" style="width:44px;height:24px;border-radius:24px;background:#ccc;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;">
+          <div id="entry-journal-knob" style="position:absolute;width:18px;height:18px;background:white;border-radius:50%;top:3px;left:3px;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+        </div>
+      </div>
       <button class="btn" onclick="addEntry()">Save Entry</button>
       <button class="btn-secondary" onclick="showView('person')">Cancel</button>
     </div>
   </div>
-</div>
+
+  <!-- JOURNAL TO-DO -->
+  <div id="view-journal" class="view">
+    <div class="header">
+      <button class="btn-back" onclick="showView('home')">← Back</button>
+      <div class="logo" style="font-size:17px;">Journal List</div>
+    </div>
+    <div class="section">
+      <div style="font-size:13px;color:#9e7b5a;font-style:italic;margin-bottom:16px;">These entries are waiting to be copied into your physical journal.</div>
+      <div id="journal-list"></div>
+    </div>
+  </div>
+
+</div><!-- /#app -->
 
 <!-- Sync overlay -->
-<div id="sb-overlay">
-  <div id="sb-box">
+<div id="sb-overlay" class="modal-bg">
+  <div class="modal-box">
     <div class="modal-title">Sync across devices</div>
     <div class="modal-sub">Connect a free Supabase database so your journal syncs between your iPhone and computer.</div>
     <div style="font-size:12px;color:#6b5040;margin-bottom:6px;font-family:Georgia;">1. Go to <a href="https://supabase.com" target="_blank" style="color:#6b4226;">supabase.com</a> → New project<br>2. SQL Editor → New query → Run this:</div>
-    <code>CREATE TABLE people (
+    <code style="display:block;background:rgba(0,0,0,0.06);border-radius:7px;padding:10px 12px;font-size:11px;font-family:monospace;line-height:1.7;white-space:pre;margin-bottom:16px;overflow-x:auto;">CREATE TABLE people (
   id bigint primary key,
   data jsonb not null,
   updated_at timestamptz default now()
@@ -217,26 +235,74 @@ CREATE POLICY "Allow all" ON people
   </div>
 </div>
 
-
-<!-- Family modal -->
-<div id="family-modal-bg">
-  <div id="family-modal">
-    <div style="font-size:19px;font-weight:700;font-style:italic;color:#6b4226;margin-bottom:6px;">Family Groups</div>
-    <div style="font-size:13px;color:#6b5040;margin-bottom:16px;">Assign this person to a family group, or create a new one.</div>
-    <div id="family-group-list"></div>
-    <hr class="section-divider" />
-    <div style="font-size:12px;color:#9e7b5a;font-family:Georgia;margin-bottom:8px;">Create new group</div>
-    <div style="display:flex;gap:8px;">
-      <input type="text" id="new-group-input" placeholder="e.g. The Webb Family" style="flex:1;padding:8px 11px;font-size:14px;" />
-      <button class="btn-small" onclick="createFamilyGroup()">+ Create</button>
-    </div>
-    <div id="family-modal-err" style="color:#c0392b;font-size:12px;font-style:italic;margin-top:8px;display:none;"></div>
+<!-- Family / relationships modal -->
+<div id="family-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">Family &amp; Relationships</div>
+    <div class="modal-sub" id="family-modal-sub"></div>
+    <div id="family-links-list" style="margin-bottom:12px;"></div>
+    <hr class="section-divider" style="margin-top:4px;" />
+    <div style="font-size:12px;color:#9e7b5a;font-family:Georgia;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Link a person</div>
+    <input type="text" id="family-search-input" placeholder="Search by name…" oninput="renderFamilySearchResults()" style="margin-bottom:8px;" />
+    <div id="family-search-results" style="margin-bottom:8px;max-height:150px;overflow-y:auto;"></div>
+    <div id="family-selected-person" style="display:none;margin-bottom:8px;padding:8px 10px;background:rgba(107,66,38,0.08);border-radius:8px;font-size:14px;color:#6b4226;font-style:italic;"></div>
+    <input type="text" id="family-relation-input" placeholder="Their relation (e.g. Sister, Dad, Wife…)" style="margin-bottom:10px;" />
+    <button class="btn-small" onclick="addFamilyLink()">+ Add Link</button>
+    <div id="family-add-err" style="color:#c0392b;font-size:12px;font-style:italic;margin-top:6px;display:none;"></div>
     <button class="btn-secondary" onclick="closeFamilyModal()" style="margin-top:14px;">Done</button>
   </div>
 </div>
 
-<div id="toast"></div>
+<!-- Custom category modal -->
+<div id="custom-cat-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">Custom Categories</div>
+    <div class="modal-sub">Add categories just for this person — like "Favourite Food", "Music", anything you like.</div>
+    <div id="custom-cat-list" style="margin-bottom:4px;"></div>
+    <hr class="section-divider" />
+    <div style="font-size:12px;color:#9e7b5a;font-family:Georgia;margin-bottom:8px;">Add a new category</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+      <input type="text" id="new-cat-icon" placeholder="🍕" style="width:52px;padding:8px;font-size:18px;text-align:center;flex-shrink:0;" maxlength="2" />
+      <input type="text" id="new-cat-name" placeholder="e.g. Favourite Food" style="flex:1;padding:8px 11px;font-size:14px;" />
+    </div>
+    <button class="btn-small" onclick="createCustomCategory()">+ Add Category</button>
+    <div id="custom-cat-err" style="color:#c0392b;font-size:12px;font-style:italic;margin-top:8px;display:none;"></div>
+    <button class="btn-secondary" onclick="closeCustomCatModal()" style="margin-top:14px;">Done</button>
+  </div>
+</div>
 
+<!-- Circles modal (unified) -->
+<div id="circles-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">Circles</div>
+    <div class="modal-sub" id="circles-modal-sub">Tap a circle to assign or remove this person.</div>
+    <div id="assign-circle-list" style="margin-bottom:12px;"></div>
+    <hr class="section-divider" style="margin-top:4px;" />
+    <div style="font-size:12px;color:#9e7b5a;font-family:Georgia;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Create a new circle</div>
+    <div style="margin-bottom:10px;">
+      <input type="text" id="new-circle-name" placeholder="e.g. Close Friends, Church..." style="width:100%;" />
+    </div>
+    <div id="circle-color-picker" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;"></div>
+    <button class="btn-small" onclick="createCircle()">+ Create Circle</button>
+    <div id="circles-modal-err" style="color:#c0392b;font-size:12px;font-style:italic;margin-top:6px;display:none;"></div>
+    <button class="btn-secondary" onclick="closeCirclesModal()" style="margin-top:14px;">Done</button>
+  </div>
+</div>
+
+<!-- Recycle Bin modal -->
+<div id="trash-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">🗑 Recycle Bin</div>
+    <div class="modal-sub">Restore people you've deleted, or remove them forever.</div>
+    <div id="trash-list" style="margin-bottom:12px;max-height:50vh;overflow-y:auto;"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
+      <button class="btn-danger" onclick="emptyTrash()" style="font-size:13px;border:1px solid rgba(192,57,43,0.3);padding:6px 14px;border-radius:6px;">Empty bin</button>
+      <button class="btn-secondary" onclick="closeTrashModal()" style="flex:1;">Done</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
 <script>
 const CATEGORIES = [
   { key:'notes',    label:'Notes',          icon:'📝', color:'#c8956c' },
@@ -246,331 +312,31 @@ const CATEGORIES = [
   { key:'memories', label:'Memories',       icon:'✨',  color:'#8a7ab8' },
   { key:'faith',    label:'Faith / Values', icon:'🙏',  color:'#6b8c7a' },
 ];
+const CUSTOM_COLORS = ['#b87ba0','#6b8cb8','#7ab899','#b8a06b','#8b7ab8','#b8706b','#6b9eb8','#a0b86b'];
 const PLACEHOLDERS = {
-  notes:'Something they told you, an important detail…', likes:'Things they enjoy, hobbies, favourites…',
-  dislikes:'Things they avoid or dislike…', family:'Family members, relationships, background…',
-  memories:'A shared moment, story, or experience…', faith:'Their beliefs, values, spiritual life…',
+  notes:'Something they told you, an important detail…',
+  likes:'Things they enjoy, hobbies, favourites…',
+  dislikes:'Things they avoid or dislike…',
+  family:'Family members, relationships, background…',
+  memories:'A shared moment, story, or experience…',
+  faith:'Their beliefs, values, spiritual life…',
 };
 
-
-const DEFAULT_LOCATIONS = ['Gym', 'Oxygen Life', 'Church', 'Other'];
-let locations = [];
-
-function loadLocations() {
-  try {
-    const saved = localStorage.getItem('pj_locations');
-    locations = saved ? JSON.parse(saved) : DEFAULT_LOCATIONS.slice();
-  } catch(e) { locations = DEFAULT_LOCATIONS.slice(); }
+function allCatsForPerson(person) {
+  const custom = (person.customCategories || []).map(c => ({
+    key: 'custom_'+c.id, label: c.label, icon: c.icon || '📌', color: c.color || '#b87ba0', isCustom: true, customId: c.id
+  }));
+  return [...CATEGORIES, ...custom];
 }
 
-function saveLocations() {
-  try { localStorage.setItem('pj_locations', JSON.stringify(locations)); } catch(e) {}
-}
-
-function populateLocationDropdown() {
-  const sel = document.getElementById('form-met');
-  if (!sel) return;
-  sel.innerHTML = locations.map(l => `<option value="${l}">${l}</option>`).join('');
-}
-
-function renderLocationChips() {
-  const container = document.getElementById('locations-list');
-  if (!container) return;
-  container.innerHTML = locations.map((l, i) => `
-    <span class="loc-chip">${l}
-      <button onclick="removeLocation(${i})" title="Remove">×</button>
-    </span>`).join('');
-}
-
-function addLocation() {
-  const input = document.getElementById('new-location-input');
-  const val = input.value.trim();
-  if (!val) { input.focus(); return; }
-  if (locations.includes(val)) { showToast('Already in your list'); input.value=''; return; }
-  locations.push(val);
-  saveLocations();
-  input.value = '';
-  populateLocationDropdown();
-  renderLocationChips();
-  // Set the new location as selected
-  document.getElementById('form-met').value = val;
-  showToast('Location added');
-}
-
-function removeLocation(index) {
-  locations.splice(index, 1);
-  saveLocations();
-  populateLocationDropdown();
-  renderLocationChips();
-}
-
-
-// ── Family groups ────────────────────────────────────────────────────────────
-let familyGroups = []; // [{id, name, memberIds:[]}]
-
-function loadFamilyGroups() {
-  try { familyGroups = JSON.parse(localStorage.getItem('pj_families') || '[]'); } catch(e) { familyGroups = []; }
-}
-async function sbPushFamilies() {
-  if (!_sb) return;
-  try {
-    await _sb.from('settings').upsert({ key: 'families', value: JSON.stringify(familyGroups) }, { onConflict: 'key' });
-  } catch(e) { console.warn('Family sync push failed', e); }
-}
-async function sbPullFamilies() {
-  if (!_sb) return;
-  try {
-    const { data, error } = await _sb.from('settings').select('value').eq('key', 'families').single();
-    if (error || !data) return;
-    familyGroups = JSON.parse(data.value || '[]');
-    try { localStorage.setItem('pj_families', JSON.stringify(familyGroups)); } catch(e) {}
-  } catch(e) { console.warn('Family sync pull failed', e); }
-}
-function saveFamilyGroups() {
-  try { localStorage.setItem('pj_families', JSON.stringify(familyGroups)); } catch(e) {}
-  sbPushFamilies();
-}
-function personFamilyGroup(personId) {
-  return familyGroups.find(g => g.memberIds.includes(personId)) || null;
-}
-function openFamilyModal() {
-  renderFamilyGroupList();
-  document.getElementById('family-modal-bg').classList.add('open');
-}
-function closeFamilyModal() {
-  document.getElementById('family-modal-bg').classList.remove('open');
-  renderPerson();
-}
-function createFamilyGroup() {
-  const input = document.getElementById('new-group-input');
-  const name = input.value.trim();
-  const err = document.getElementById('family-modal-err');
-  err.style.display = 'none';
-  if (!name) { input.focus(); return; }
-  if (familyGroups.find(g => g.name === name)) { err.textContent='A group with that name already exists.'; err.style.display='block'; return; }
-  const group = { id: Date.now(), name, memberIds: [currentPersonId] };
-  familyGroups.push(group);
-  saveFamilyGroups();
-  input.value = '';
-  renderFamilyGroupList();
-  showToast('Family group created');
-}
-function assignToGroup(groupId) {
-  // Remove from any existing group first
-  familyGroups = familyGroups.map(g => ({...g, memberIds: g.memberIds.filter(id => id !== currentPersonId)}));
-  const group = familyGroups.find(g => g.id === groupId);
-  if (group) group.memberIds.push(currentPersonId);
-  saveFamilyGroups();
-  renderFamilyGroupList();
-  showToast('Added to family group');
-}
-function removeFromGroup() {
-  familyGroups = familyGroups.map(g => ({...g, memberIds: g.memberIds.filter(id => id !== currentPersonId)}));
-  // Remove empty groups
-  familyGroups = familyGroups.filter(g => g.memberIds.length > 0);
-  saveFamilyGroups();
-  renderFamilyGroupList();
-  showToast('Removed from family group');
-}
-function deleteFamilyGroup(groupId) {
-  if (!confirm('Delete this family group?')) return;
-  familyGroups = familyGroups.filter(g => g.id !== groupId);
-  saveFamilyGroups();
-  renderFamilyGroupList();
-  showToast('Group deleted');
-}
-function renderFamilyGroupList() {
-  const container = document.getElementById('family-group-list');
-  if (!container) return;
-  const currentGroup = personFamilyGroup(currentPersonId);
-  if (familyGroups.length === 0) {
-    container.innerHTML = '<div style="color:#9e7b5a;font-style:italic;font-size:13px;margin-bottom:10px;">No family groups yet. Create one below.</div>';
-    return;
-  }
-  container.innerHTML = familyGroups.map(g => {
-    const isMember = g.memberIds.includes(currentPersonId);
-    const memberNames = g.memberIds.map(id => { const p = people.find(x=>x.id===id); return p?p.name:''; }).filter(Boolean).join(', ');
-    return `<div style="background:rgba(255,255,255,0.6);border:1px solid rgba(139,100,60,0.18);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <div>
-          <div style="font-size:15px;font-weight:600;">${esc(g.name)}</div>
-          <div style="font-size:12px;color:#9e7b5a;font-style:italic;margin-top:2px;">${esc(memberNames) || 'No members'}</div>
-        </div>
-        <button class="btn-danger" onclick="deleteFamilyGroup(${g.id})" style="font-size:11px;">delete</button>
-      </div>
-      <div style="margin-top:10px;">
-        ${isMember
-          ? `<button class="btn-small" style="background:#8b6355;" onclick="removeFromGroup()">Remove from this group</button>`
-          : `<button class="btn-small" onclick="assignToGroup(${g.id})">Add to this group</button>`}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ── Contact details ────────────────────────────────────────────────────────
-// ── Contact helpers ──────────────────────────────────────────────────────────
-const CONTACT_TYPES = [
-  { type:'phone',  icon:'📞', label:'Phone',       href: v=>'tel:'+v },
-  { type:'email',  icon:'✉️',  label:'Email',       href: v=>'mailto:'+v },
-  { type:'address',icon:'📍', label:'Address',     href: null },
-  { type:'social', icon:'📱', label:'Social Media',href: null },
-];
-const CONTACT_LABELS = {
-  phone:  ['Mobile','Home','Work','Other'],
-  email:  ['Personal','Work','Other'],
-  address:['Home','Work','Other'],
-  social: ['Instagram','Facebook','Twitter/X','LinkedIn','Other'],
-};
-
-function getContacts(person) {
-  // Support both old format {phone,email,...} and new format [{type,label,value}]
-  if (!person.contacts) return [];
-  if (Array.isArray(person.contacts)) return person.contacts;
-  // Convert old format
-  const old = person.contacts;
-  const arr = [];
-  if (old.phone)   arr.push({id:1, type:'phone',   label:'Mobile',    value:old.phone});
-  if (old.email)   arr.push({id:2, type:'email',   label:'Personal',  value:old.email});
-  if (old.address) arr.push({id:3, type:'address', label:'Home',      value:old.address});
-  if (old.social)  arr.push({id:4, type:'social',  label:'Instagram', value:old.social});
-  return arr;
-}
-
-// ── Form contacts (Add Person) ────────────────────────────────────────────
-window._formContacts = [];
-
-function renderFormContacts() {
-  const list = document.getElementById('form-contacts-list');
-  if (!list) return;
-  list.innerHTML = (window._formContacts || []).map((c, i) => {
-    const ct = CONTACT_TYPES.find(x=>x.type===c.type) || CONTACT_TYPES[0];
-    const labels = CONTACT_LABELS[c.type] || ['Other'];
-    return `<div style="background:rgba(255,255,255,0.6);border:1px solid rgba(139,100,60,0.2);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-        <span style="font-size:15px;">${ct.icon}</span>
-        <select onchange="updateFormContact(${i},'type',this.value)" style="flex:1;padding:6px 10px;font-size:13px;">
-          ${CONTACT_TYPES.map(x=>`<option value="${x.type}" ${c.type===x.type?'selected':''}>${x.label}</option>`).join('')}
-        </select>
-        <button class="btn-link" style="color:#c0392b;font-size:18px;" onclick="removeFormContact(${i})">×</button>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <select onchange="updateFormContact(${i},'label',this.value)" style="width:110px;padding:6px 8px;font-size:13px;">
-          ${labels.map(l=>`<option value="${l}" ${c.label===l?'selected':''}>${l}</option>`).join('')}
-        </select>
-        <input type="text" value="${esc(c.value)}" placeholder="Enter ${ct.label.toLowerCase()}…" oninput="updateFormContact(${i},'value',this.value)" style="flex:1;padding:6px 10px;font-size:14px;" />
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function formAddContact() {
-  window._formContacts = window._formContacts || [];
-  window._formContacts.push({ id: Date.now(), type:'phone', label:'Mobile', value:'' });
-  renderFormContacts();
-}
-function updateFormContact(i, field, val) {
-  if (!window._formContacts[i]) return;
-  window._formContacts[i][field] = val;
-  if (field === 'type') {
-    window._formContacts[i].label = (CONTACT_LABELS[val] || ['Other'])[0];
-    renderFormContacts();
-  }
-}
-function removeFormContact(i) {
-  window._formContacts.splice(i, 1);
-  renderFormContacts();
-}
-function readFormContacts() {
-  return (window._formContacts || []).filter(c => c.value.trim()).map(c => ({...c, value:c.value.trim()}));
-}
-
-// ── Profile contact edit ──────────────────────────────────────────────────
-let _editContacts = [];
-
-function toggleContactEdit() {
-  const panel = document.getElementById('contact-edit-panel');
-  if (!panel) return;
-  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
-  const person = people.find(p=>p.id===currentPersonId);
-  _editContacts = JSON.parse(JSON.stringify(getContacts(person)));
-  panel.style.display = 'block';
-  renderContactEditPanel();
-}
-
-function renderContactEditPanel() {
-  const panel = document.getElementById('contact-edit-panel');
-  if (!panel) return;
-  panel.innerHTML = `
-    <div id="contact-edit-rows">
-      ${_editContacts.map((c, i) => {
-        const ct = CONTACT_TYPES.find(x=>x.type===c.type) || CONTACT_TYPES[0];
-        const labels = CONTACT_LABELS[c.type] || ['Other'];
-        return `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
-          <div style="flex:1;">
-            <div style="display:flex;gap:6px;margin-bottom:5px;">
-              <span style="font-size:15px;padding-top:6px;">${ct.icon}</span>
-              <select onchange="updateEditContact(${i},'type',this.value)" style="flex:1;padding:5px 8px;font-size:12px;">
-                ${CONTACT_TYPES.map(x=>`<option value="${x.type}" ${c.type===x.type?'selected':''}>${x.label}</option>`).join('')}
-              </select>
-              <select onchange="updateEditContact(${i},'label',this.value)" style="width:100px;padding:5px 6px;font-size:12px;">
-                ${labels.map(l=>`<option value="${l}" ${c.label===l?'selected':''}>${l}</option>`).join('')}
-              </select>
-            </div>
-            <input type="text" value="${esc(c.value)}" oninput="updateEditContact(${i},'value',this.value)" style="width:100%;padding:7px 10px;font-size:14px;" />
-          </div>
-          <button class="btn-link" style="color:#c0392b;font-size:20px;padding-top:4px;" onclick="removeEditContact(${i})">×</button>
-        </div>`;
-      }).join('')}
-    </div>
-    <button class="btn-link" onclick="addEditContact()" style="margin-bottom:10px;">+ Add another</button><br/>
-    <button class="btn-small" onclick="saveContactDetails()" style="margin-top:4px;">Save</button>
-    <button class="btn-link" onclick="toggleContactEdit()" style="margin-left:12px;">Cancel</button>
-  `;
-}
-
-function addEditContact() {
-  _editContacts.push({ id: Date.now(), type:'phone', label:'Mobile', value:'' });
-  renderContactEditPanel();
-}
-function updateEditContact(i, field, val) {
-  if (!_editContacts[i]) return;
-  _editContacts[i][field] = val;
-  if (field === 'type') {
-    _editContacts[i].label = (CONTACT_LABELS[val] || ['Other'])[0];
-    renderContactEditPanel();
-  }
-}
-function removeEditContact(i) {
-  _editContacts.splice(i, 1);
-  renderContactEditPanel();
-}
-function saveContactDetails() {
-  const idx = people.findIndex(p=>p.id===currentPersonId);
-  if (idx < 0) return;
-  people[idx].contacts = _editContacts.filter(c=>c.value.trim()).map(c=>({...c,value:c.value.trim()}));
-  save();
-  renderPerson();
-  showToast('Contact details saved');
-}
-
-// Data — loaded from localStorage, falls back to samples
-const SAMPLE_PEOPLE = [
-  { id:1, name:'Marcus Webb', metAt:'Church small group', date:'2024-01-15', birthday:'1985-03-22', transferred:false,
-    notes:[{id:10,text:'Grew up in Tennessee, loves woodworking',date:'2024-01-15',transferred:false}],
-    likes:[{id:11,text:'Woodworking, country music, strong coffee',date:'2024-01-15',transferred:false}],
-    dislikes:[], family:[{id:12,text:'Daughter just started college',date:'2024-02-03',transferred:true}],
-    memories:[], faith:[{id:13,text:'Leads the men\'s Bible study on Thursdays',date:'2024-01-15',transferred:false}] },
-  { id:2, name:'Elena Rourke', metAt:'Coffee shop — 3rd & Main', date:'2024-03-20', birthday:'', transferred:false,
-    notes:[{id:20,text:'Photographer, travels a lot for work',date:'2024-03-20',transferred:false}],
-    likes:[{id:21,text:'Photography, travel, black & white film',date:'2024-03-20',transferred:false}],
-    dislikes:[], family:[], memories:[], faith:[] }
-];
-
+// ── State ────────────────────────────────────────────────────────────────────
 let people = [];
 let currentPersonId = null;
 let activeCategory = 'notes';
 let currentFilter = 'all';
+let currentCircleFilter = new Set();
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
 function emptyPerson() { const p={}; CATEGORIES.forEach(c=>p[c.key]=[]); return p; }
 function today() { return new Date().toISOString().split('T')[0]; }
 function fmtDate(d) { if(!d)return''; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
@@ -587,31 +353,329 @@ function upcomingBday(b) {
   if(diff<=30)return`🎂 Birthday in ${diff} days`;
   return null;
 }
-function totalPending(p) { return CATEGORIES.reduce((a,c)=>a+(p[c.key]||[]).filter(e=>!e.transferred).length,0); }
+function totalPending(p) {
+  // "pending" = entries marked for journal (transferred:true) — shown as "to copy"
+  return allCatsForPerson(p).reduce((a,c)=>a+(p[c.key]||[]).filter(e=>e.transferred).length,0);
+}
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// ── Toast ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const el=document.getElementById('toast');
+  el.innerHTML=esc(msg); el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}
+function showToastUndo(msg) {
+  const el=document.getElementById('toast');
+  el.innerHTML=msg+` <button onclick="undoDeleteCategory()" style="background:none;border:none;color:#c8956c;font-size:13px;font-style:italic;cursor:pointer;padding:0;margin-left:4px;font-family:inherit;">Undo</button>`;
+  el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),10000);
+}
+
+function showToastWithUndo(msg, undoFn) {
+  const el=document.getElementById('toast');
+  el.innerHTML=esc(msg)+` <button onclick="journalUndo()" style="background:none;border:none;color:#c8956c;font-size:13px;font-style:italic;cursor:pointer;padding:0;margin-left:4px;font-family:inherit;">Undo</button>`;
+  el.classList.add('show');
+  window._journalUndoFn=undoFn;
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>{el.classList.remove('show');window._journalUndoFn=null;},8000);
+}
+function journalUndo() {
+  if(window._journalUndoFn) { window._journalUndoFn(); window._journalUndoFn=null; }
+  document.getElementById('toast').classList.remove('show');
+}
+const CONTACT_TYPES = [
+  { type:'phone',  icon:'📞', label:'Phone',       href: v=>'tel:'+v },
+  { type:'email',  icon:'✉️',  label:'Email',       href: v=>'mailto:'+v },
+  { type:'address',icon:'📍', label:'Address',     href: null },
+  { type:'social', icon:'📱', label:'Social Media',href: null },
+];
+const CONTACT_LABELS = {
+  phone:['Mobile','Home','Work','Other'], email:['Personal','Work','Other'],
+  address:['Home','Work','Other'], social:['Instagram','Facebook','Twitter/X','LinkedIn','Other'],
+};
+function getContacts(person) {
+  if (!person.contacts) return [];
+  if (Array.isArray(person.contacts)) return person.contacts;
+  const o=person.contacts, arr=[];
+  if(o.phone)   arr.push({id:1,type:'phone',  label:'Mobile',   value:o.phone});
+  if(o.email)   arr.push({id:2,type:'email',  label:'Personal', value:o.email});
+  if(o.address) arr.push({id:3,type:'address',label:'Home',     value:o.address});
+  if(o.social)  arr.push({id:4,type:'social', label:'Instagram',value:o.social});
+  return arr;
+}
+window._formContacts = [];
+function renderFormContacts() {
+  const list=document.getElementById('form-contacts-list'); if(!list)return;
+  list.innerHTML=(window._formContacts||[]).map((c,i)=>{
+    const ct=CONTACT_TYPES.find(x=>x.type===c.type)||CONTACT_TYPES[0];
+    const labels=CONTACT_LABELS[c.type]||['Other'];
+    return `<div style="background:rgba(255,255,255,0.6);border:1px solid rgba(139,100,60,0.2);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <span style="font-size:15px;">${ct.icon}</span>
+        <select onchange="updateFormContact(${i},'type',this.value)" style="flex:1;padding:6px 10px;font-size:13px;">
+          ${CONTACT_TYPES.map(x=>`<option value="${x.type}"${c.type===x.type?' selected':''}>${x.label}</option>`).join('')}
+        </select>
+        <button class="btn-link" style="color:#c0392b;font-size:18px;" onclick="removeFormContact(${i})">×</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <select onchange="updateFormContact(${i},'label',this.value)" style="width:110px;padding:6px 8px;font-size:13px;">
+          ${labels.map(l=>`<option value="${l}"${c.label===l?' selected':''}>${l}</option>`).join('')}
+        </select>
+        <input type="text" value="${esc(c.value)}" placeholder="Enter ${ct.label.toLowerCase()}…" oninput="updateFormContact(${i},'value',this.value)" style="flex:1;padding:6px 10px;font-size:14px;" />
+      </div>
+    </div>`;
+  }).join('');
+}
+function formAddContact() { window._formContacts.push({id:Date.now(),type:'phone',label:'Mobile',value:''}); renderFormContacts(); }
+function updateFormContact(i,field,val) {
+  if(!window._formContacts[i])return;
+  window._formContacts[i][field]=val;
+  if(field==='type'){window._formContacts[i].label=(CONTACT_LABELS[val]||['Other'])[0];renderFormContacts();}
+}
+function removeFormContact(i) { window._formContacts.splice(i,1); renderFormContacts(); }
+function readFormContacts() { return (window._formContacts||[]).filter(c=>c.value.trim()).map(c=>({...c,value:c.value.trim()})); }
+
+let _editContacts=[];
+function toggleContactEdit() {
+  const panel=document.getElementById('contact-edit-panel'); if(!panel)return;
+  if(panel.style.display==='block'){panel.style.display='none';return;}
+  const person=people.find(p=>p.id===currentPersonId);
+  _editContacts=JSON.parse(JSON.stringify(getContacts(person)));
+  panel.style.display='block'; renderContactEditPanel();
+}
+function renderContactEditPanel() {
+  const panel=document.getElementById('contact-edit-panel'); if(!panel)return;
+  panel.innerHTML=`<div id="contact-edit-rows">
+    ${_editContacts.map((c,i)=>{
+      const ct=CONTACT_TYPES.find(x=>x.type===c.type)||CONTACT_TYPES[0];
+      const labels=CONTACT_LABELS[c.type]||['Other'];
+      return `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+        <div style="flex:1;">
+          <div style="display:flex;gap:6px;margin-bottom:5px;">
+            <span style="font-size:15px;padding-top:6px;">${ct.icon}</span>
+            <select onchange="updateEditContact(${i},'type',this.value)" style="flex:1;padding:5px 8px;font-size:12px;">
+              ${CONTACT_TYPES.map(x=>`<option value="${x.type}"${c.type===x.type?' selected':''}>${x.label}</option>`).join('')}
+            </select>
+            <select onchange="updateEditContact(${i},'label',this.value)" style="width:100px;padding:5px 6px;font-size:12px;">
+              ${labels.map(l=>`<option value="${l}"${c.label===l?' selected':''}>${l}</option>`).join('')}
+            </select>
+          </div>
+          <input type="text" value="${esc(c.value)}" oninput="updateEditContact(${i},'value',this.value)" style="width:100%;padding:7px 10px;font-size:14px;" />
+        </div>
+        <button class="btn-link" style="color:#c0392b;font-size:20px;padding-top:4px;" onclick="removeEditContact(${i})">×</button>
+      </div>`;
+    }).join('')}
+  </div>
+  <button class="btn-link" onclick="addEditContact()" style="margin-bottom:10px;">+ Add another</button><br/>
+  <button class="btn-small" onclick="saveContactDetails()" style="margin-top:4px;">Save</button>
+  <button class="btn-link" onclick="toggleContactEdit()" style="margin-left:12px;">Cancel</button>`;
+}
+function addEditContact() { _editContacts.push({id:Date.now(),type:'phone',label:'Mobile',value:''}); renderContactEditPanel(); }
+function updateEditContact(i,field,val) {
+  if(!_editContacts[i])return;
+  _editContacts[i][field]=val;
+  if(field==='type'){_editContacts[i].label=(CONTACT_LABELS[val]||['Other'])[0];renderContactEditPanel();}
+}
+function removeEditContact(i) { _editContacts.splice(i,1); renderContactEditPanel(); }
+function saveContactDetails() {
+  const idx=people.findIndex(p=>p.id===currentPersonId); if(idx<0)return;
+  people[idx].contacts=_editContacts.filter(c=>c.value.trim()).map(c=>({...c,value:c.value.trim()}));
+  save(); renderPerson(); showToast('Contact details saved');
+}
+
+// ── Family & Relationships ────────────────────────────────────────────────────
+// person.familyLinks = [{linkedId, relation}]
+let _familySelectedId = null;
+
+function openFamilyModal() {
+  const person=people.find(p=>p.id===currentPersonId);
+  document.getElementById('family-modal-sub').textContent=`Linked people for ${person?person.name:''}`;
+  document.getElementById('family-search-input').value='';
+  document.getElementById('family-search-results').innerHTML='';
+  document.getElementById('family-relation-input').value='';
+  document.getElementById('family-add-err').style.display='none';
+  _familySelectedId=null;
+  document.getElementById('family-selected-person').style.display='none';
+  renderFamilyLinksList();
+  document.getElementById('family-modal-bg').classList.add('open');
+}
+function closeFamilyModal() {
+  document.getElementById('family-modal-bg').classList.remove('open');
+  renderPerson();
+}
+function renderFamilySearchResults() {
+  const q=document.getElementById('family-search-input').value.trim().toLowerCase();
+  const container=document.getElementById('family-search-results');
+  if(!q){container.innerHTML='';return;}
+  const existing=(people.find(p=>p.id===currentPersonId)?.familyLinks||[]).map(l=>l.linkedId);
+  const results=people.filter(p=>p.id!==currentPersonId&&!existing.includes(p.id)&&p.name.toLowerCase().includes(q));
+  if(!results.length){container.innerHTML='<div style="font-size:13px;color:#9e7b5a;font-style:italic;padding:6px 0;">No one found…</div>';return;}
+  container.innerHTML=results.map(p=>
+    `<div class="search-result-row" onclick="selectFamilyPerson(${p.id})">
+      <span style="font-weight:600;">${esc(p.name)}</span>
+      ${p.metAt?`<span style="color:#9e7b5a;font-style:italic;font-size:12px;margin-left:6px;">met at ${esc(p.metAt)}</span>`:''}
+    </div>`
+  ).join('');
+}
+function selectFamilyPerson(id) {
+  _familySelectedId=id;
+  const p=people.find(x=>x.id===id);
+  const el=document.getElementById('family-selected-person');
+  el.textContent='✓ Selected: '+(p?p.name:'');
+  el.style.display='block';
+  document.getElementById('family-search-input').value='';
+  document.getElementById('family-search-results').innerHTML='';
+  document.getElementById('family-relation-input').focus();
+}
+function addFamilyLink() {
+  const err=document.getElementById('family-add-err'); err.style.display='none';
+  const relation=document.getElementById('family-relation-input').value.trim();
+  if(!_familySelectedId){err.textContent='Please select a person first.';err.style.display='block';return;}
+  if(!relation){err.textContent='Please enter a relation.';err.style.display='block';document.getElementById('family-relation-input').focus();return;}
+  const personA=people.find(p=>p.id===currentPersonId);
+  const personB=people.find(p=>p.id===_familySelectedId);
+  if(!personA||!personB)return;
+  if(!personA.familyLinks)personA.familyLinks=[];
+  if(!personB.familyLinks)personB.familyLinks=[];
+  personA.familyLinks.push({linkedId:personB.id, relation});
+  personB.familyLinks.push({linkedId:personA.id, relation:`${relation} of ${personA.name}`});
+  save();
+  _familySelectedId=null;
+  document.getElementById('family-selected-person').style.display='none';
+  document.getElementById('family-relation-input').value='';
+  renderFamilyLinksList();
+  showToast(`Linked ${personB.name} as ${relation}`);
+}
+function removeFamilyLink(linkedId) {
+  const a=people.find(p=>p.id===currentPersonId);
+  const b=people.find(p=>p.id===linkedId);
+  if(a)a.familyLinks=(a.familyLinks||[]).filter(l=>l.linkedId!==linkedId);
+  if(b)b.familyLinks=(b.familyLinks||[]).filter(l=>l.linkedId!==currentPersonId);
+  save(); renderFamilyLinksList(); showToast('Link removed');
+}
+function renderFamilyLinksList() {
+  const container=document.getElementById('family-links-list'); if(!container)return;
+  const person=people.find(p=>p.id===currentPersonId);
+  const links=person?.familyLinks||[];
+  if(!links.length){container.innerHTML='<div style="color:#9e7b5a;font-style:italic;font-size:13px;margin-bottom:10px;">No family or relationships linked yet.</div>';return;}
+  container.innerHTML=links.map((l,idx)=>{
+    const linked=people.find(p=>p.id===l.linkedId);
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,0.6);border:1px solid rgba(139,100,60,0.18);border-radius:10px;margin-bottom:8px;">
+      <div style="cursor:pointer;flex:1;" onclick="closeFamilyModal();openPerson(${l.linkedId})">
+        <div style="font-size:15px;font-weight:600;">${linked?esc(linked.name):'Unknown'}</div>
+        <div style="font-size:12px;color:#9e7b5a;font-style:italic;">${esc(l.relation)}</div>
+      </div>
+      <button style="background:none;border:none;color:#c0392b;font-size:13px;cursor:pointer;padding:4px 8px;" onclick="removeFamilyLink(${l.linkedId})">Remove</button>
+    </div>`;
+  }).join('');
+}
+
+// ── Custom Categories ────────────────────────────────────────────────────────
+let _undoTimer=null;
+let _pendingDeletes=[];
+
+function openCustomCatModal() { renderCustomCatList(); document.getElementById('custom-cat-modal-bg').classList.add('open'); }
+function closeCustomCatModal() { document.getElementById('custom-cat-modal-bg').classList.remove('open'); renderPerson(); }
+
+function renderCustomCatList() {
+  const container=document.getElementById('custom-cat-list'); if(!container)return;
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  const cats=person.customCategories||[];
+  if(!cats.length){container.innerHTML='<div style="color:#9e7b5a;font-style:italic;font-size:13px;margin-bottom:10px;">No custom categories yet.</div>';return;}
+  container.innerHTML=cats.map((c,idx)=>{
+    const count=(person['custom_'+c.id]||[]).length;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,0.6);border:1px solid rgba(139,100,60,0.18);border-radius:10px;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">${esc(c.icon||'📌')}</span>
+        <div>
+          <div style="font-size:15px;font-weight:600;">${esc(c.label)}</div>
+          <div style="font-size:12px;color:#9e7b5a;font-style:italic;">${count} entr${count===1?'y':'ies'}</div>
+        </div>
+      </div>
+      <button style="background:#c0392b;color:white;border:none;border-radius:6px;padding:7px 13px;font-size:13px;cursor:pointer;" onclick="deleteCustomCategory(${idx})">Delete</button>
+    </div>`;
+  }).join('');
+}
+function createCustomCategory() {
+  const nameInput=document.getElementById('new-cat-name');
+  const iconInput=document.getElementById('new-cat-icon');
+  const err=document.getElementById('custom-cat-err'); err.style.display='none';
+  const name=nameInput.value.trim();
+  if(!name){nameInput.focus();return;}
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  if(!person.customCategories)person.customCategories=[];
+  if(person.customCategories.find(c=>c.label.toLowerCase()===name.toLowerCase())){err.textContent='Already exists.';err.style.display='block';return;}
+  const id=Date.now();
+  person.customCategories.push({id, label:name, icon:iconInput.value.trim()||'📌', color:CUSTOM_COLORS[person.customCategories.length%CUSTOM_COLORS.length]});
+  person['custom_'+id]=[];
+  save(); nameInput.value=''; iconInput.value='';
+  renderCustomCatList(); showToast('Category added');
+}
+function deleteCustomCategory(idx) {
+  const person=people.find(p=>p.id===currentPersonId); if(!person||!person.customCategories)return;
+  const cat=person.customCategories[idx]; if(!cat)return;
+  _pendingDeletes.push({personId:currentPersonId, catId:cat.id, catData:{...cat}, entries:JSON.parse(JSON.stringify(person['custom_'+cat.id]||[]))});
+  person.customCategories.splice(idx,1);
+  delete person['custom_'+cat.id];
+  save(); renderCustomCatList();
+  clearTimeout(_undoTimer);
+  const count=_pendingDeletes.length;
+  const label=_pendingDeletes[_pendingDeletes.length-1].catData.label;
+  showToastUndo(count===1?`"${label}" deleted — `:`${count} categories deleted — `);
+  _undoTimer=setTimeout(()=>{_pendingDeletes=[];document.getElementById('toast').classList.remove('show');},10000);
+}
+function undoDeleteCategory() {
+  if(!_pendingDeletes.length)return;
+  clearTimeout(_undoTimer);
+  const {personId,catId,catData,entries}=_pendingDeletes.pop();
+  const person=people.find(p=>p.id===personId);
+  if(person){
+    if(!person.customCategories)person.customCategories=[];
+    person.customCategories.push(catData);
+    person['custom_'+catId]=entries;
+    save(); renderCustomCatList();
+  }
+  if(_pendingDeletes.length>0){
+    const count=_pendingDeletes.length;
+    const label=_pendingDeletes[_pendingDeletes.length-1].catData.label;
+    showToastUndo(count===1?`"${label}" deleted — `:`${count} categories deleted — `);
+    _undoTimer=setTimeout(()=>{_pendingDeletes=[];document.getElementById('toast').classList.remove('show');},10000);
+  } else {
+    showToast(`"${catData.label}" restored ✓`);
+  }
+}
+
+// ── Views ────────────────────────────────────────────────────────────────────
 function showView(name) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   window.scrollTo(0,0);
   if(name==='home') renderHome();
+  if(name==='journal') renderJournal();
   if(name==='person') renderPerson();
   if(name==='add-person') {
     document.getElementById('form-name').value='';
-    populateLocationDropdown();
-    renderLocationChips();
-    document.getElementById('new-location-input').value='';
+    document.getElementById('form-met').value='';
     document.getElementById('form-date').value=today();
     document.getElementById('form-birthday').value='';
-    window._formContacts = [];
-    renderFormContacts();
+    window._formContacts=[]; renderFormContacts();
     setTimeout(()=>document.getElementById('form-name').focus(),150);
   }
   if(name==='add-entry') {
     const p=people.find(x=>x.id===currentPersonId);
     document.getElementById('entry-about').textContent=p?'About '+p.name:'';
-    document.getElementById('entry-category').value=activeCategory;
+    const cats=p?allCatsForPerson(p):CATEGORIES;
+    const sel=document.getElementById('entry-category');
+    sel.innerHTML=cats.map(c=>`<option value="${c.key}">${c.icon} ${c.label}</option>`).join('');
+    sel.value=activeCategory;
     document.getElementById('entry-text').value='';
+    // Set journal toggle from person's default
+    _entryJournalOn = p?.journalDefault || false;
+    const tog=document.getElementById('entry-journal-toggle');
+    const knob=document.getElementById('entry-journal-knob');
+    if(tog) tog.style.background=_entryJournalOn?'#6b4226':'#ccc';
+    if(knob) knob.style.left=_entryJournalOn?'23px':'3px';
     updateEntryPlaceholder();
     setTimeout(()=>document.getElementById('entry-text').focus(),150);
   }
@@ -619,36 +683,88 @@ function showView(name) {
 
 function setFilter(btn,f) {
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); currentFilter=f; renderHome();
+  btn.classList.add('active');
+  currentFilter=f;
+  currentCircleFilter=new Set();
+  const panel=document.getElementById('circle-filter-panel');
+  if(panel) panel.style.display='none';
+  renderHome();
+}
+
+function toggleCircleFilterPanel() {
+  const panel=document.getElementById('circle-filter-panel');
+  const btn=document.getElementById('circles-filter-btn');
+  const isOpen=panel.style.display==='flex';
+  if(isOpen && currentCircleFilter.size===0) {
+    panel.style.display='none';
+    btn.classList.remove('active');
+  } else {
+    panel.style.display='flex';
+    btn.classList.add('active');
+    renderCircleFilterPanel();
+  }
+}
+
+function setCircleFilter(id) {
+  if(currentCircleFilter.has(id)) currentCircleFilter.delete(id);
+  else currentCircleFilter.add(id);
+  renderCircleFilterPanel();
+  renderHome();
+}
+
+function renderCircleFilterPanel() {
+  const panel=document.getElementById('circle-filter-panel'); if(!panel)return;
+  if(!circles.length) {
+    panel.innerHTML='<span style="font-size:13px;color:#9e7b5a;font-style:italic;">No circles yet — create some from a person\'s profile.</span>';
+    return;
+  }
+  panel.innerHTML=circles.map(c=>{
+    const active=currentCircleFilter.has(c.id);
+    const count=people.filter(p=>(p.circleIds||[]).includes(c.id)).length;
+    return `<button onclick="setCircleFilter(${c.id})" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:2px solid ${c.color};background:${active?c.color:'transparent'};color:${active?'#fff':c.color};font-size:13px;font-family:Georgia;font-style:italic;cursor:pointer;transition:all 0.15s;">
+      <span style="width:8px;height:8px;border-radius:50%;background:${active?'rgba(255,255,255,0.8)':c.color};display:inline-block;flex-shrink:0;"></span>
+      ${esc(c.name)}<span style="opacity:0.7;font-size:11px;margin-left:2px;">(${count})</span>
+    </button>`;
+  }).join('');
 }
 
 function renderHome() {
+  const trashBadge=document.getElementById('trash-badge');
+  const trashBtn=document.getElementById('trash-filter-btn');
+  if(trashBtn) trashBtn.style.display=trash.length>0?'':'none';
+  if(trashBadge) trashBadge.textContent=trash.length>0?trash.length:'';
   const q=(document.getElementById('search-input').value||'').toLowerCase();
   const filtered=people.filter(p=>{
     const m=p.name.toLowerCase().includes(q)||(p.metAt||'').toLowerCase().includes(q);
     if(currentFilter==='pending')return m&&totalPending(p)>0;
     if(currentFilter==='transferred')return m&&p.transferred;
+    if(currentCircleFilter.size>0)return m&&(p.circleIds||[]).some(id=>currentCircleFilter.has(id));
     return m;
   });
   const pending=people.reduce((a,p)=>a+totalPending(p),0);
   document.getElementById('people-count').textContent=people.length+' '+(people.length===1?'person':'people')+' recorded';
-  const badge=document.getElementById('pending-badge');
-  if(pending>0){badge.style.display='';badge.textContent=pending+' to transfer';}else badge.style.display='none';
+  updateJournalBadge();
   const list=document.getElementById('people-list');
-  if(filtered.length===0){list.innerHTML=`<div class="empty-search">${q?'No one found…':'Tap + to add someone you\'ve met.'}</div>`;return;}
+  if(!filtered.length){list.innerHTML=`<div class="empty-search">${q?'No one found…':'Tap + to add someone you\'ve met.'}</div>`;return;}
   list.innerHTML=filtered.map(person=>{
-    const pend=totalPending(person), alert=upcomingBday(person.birthday);
-    const first=CATEGORIES.map(c=>(person[c.key]||[])[0]).find(Boolean);
+    const pend=totalPending(person),alert=upcomingBday(person.birthday);
+    const cats=allCatsForPerson(person);
+    const first=cats.map(c=>(person[c.key]||[])[0]).find(Boolean);
+    const personCircleList=circles.filter(c=>(person.circleIds||[]).includes(c.id));
+    const circleDots=personCircleList.length
+      ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;">${personCircleList.map(c=>`<span title="${esc(c.name)}" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${c.color};"></span>`).join('')}</div>`
+      : '';
     return`<div class="card" onclick="openPerson(${person.id})">
       <div class="card-row">
         <div>
           <div class="card-name">${esc(person.name)}</div>
           ${person.metAt?`<div class="card-meta">met at ${esc(person.metAt)}</div>`:''}
           ${alert?`<div class="card-bday-alert">${esc(alert)}</div>`:''}
+          ${circleDots}
         </div>
         <div style="text-align:right;flex-shrink:0;margin-left:12px;">
           <div class="card-date">${fmtDate(person.date)}</div>
-          ${pend>0?`<div class="card-pending"><span class="dot"></span>${pend} to copy</div>`:CATEGORIES.some(c=>(person[c.key]||[]).length>0)?`<div class="card-done">✓ transferred</div>`:''}
+          ${pend>0?`<div class="card-pending"><span class="dot"></span>${pend} for journal</div>`:''}
         </div>
       </div>
       ${first?`<div class="card-preview">"${esc(first.text.slice(0,90))}${first.text.length>90?'…':''}"</div>`:''}
@@ -661,17 +777,29 @@ function openPerson(id) { currentPersonId=id; activeCategory='notes'; showView('
 function renderPerson() {
   const person=people.find(p=>p.id===currentPersonId); if(!person)return;
   const pend=totalPending(person), bdayAlert=upcomingBday(person.birthday);
-  const cat=CATEGORIES.find(c=>c.key===activeCategory);
+  const cats=allCatsForPerson(person);
+  const cat=cats.find(c=>c.key===activeCategory)||cats[0];
   const entries=person[activeCategory]||[];
   document.getElementById('person-detail').innerHTML=`
     <div class="person-name">${esc(person.name)}</div>
     <div style="margin-bottom:12px;">
-      ${person.metAt?`<div class="info-row"><span class="info-icon">📍</span><span class="info-text">met at ${esc(person.metAt)}</span><span class="tag" style="margin-left:auto;">${fmtDate(person.date)}</span></div>`:''}
+      <div class="info-row">
+        <span class="info-icon">📍</span>
+        <input type="text" value="${esc(person.metAt||'')}" placeholder="Where you met…" onchange="saveMetAt(this.value)" style="flex:1;padding:5px 10px;font-size:13px;background:rgba(255,255,255,0.7);border:1px solid rgba(139,100,60,0.2);border-radius:6px;" />
+        <span class="tag" style="margin-left:8px;flex-shrink:0;">${fmtDate(person.date)}</span>
+      </div>
       <div class="info-row">
         <span class="info-icon">🎂</span>
         ${person.birthday
           ?`<span class="info-text">${fmtBday(person.birthday)}</span>${bdayAlert?`<span class="bday-badge">${esc(bdayAlert)}</span>`:''}<button class="btn-link" style="margin-left:auto;" onclick="clearBirthday()">clear</button>`
           :`<input type="date" style="flex:1;padding:6px 10px;font-size:13px;" onchange="setBirthday(this.value)" /><span style="font-size:12px;color:#9e7b5a;font-style:italic;margin-left:6px;">Add birthday</span>`}
+      </div>
+      <div class="info-row" style="margin-top:8px;">
+        <span class="info-icon">📖</span>
+        <span class="info-text" style="flex:1;">Auto-copy entries to journal</span>
+        <div onclick="toggleJournalDefault()" style="width:44px;height:24px;border-radius:24px;background:${person.journalDefault?'#6b4226':'#ccc'};position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;">
+          <div style="position:absolute;width:18px;height:18px;background:white;border-radius:50%;top:3px;left:${person.journalDefault?'23px':'3px'};transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+        </div>
       </div>
     </div>
 
@@ -682,50 +810,73 @@ function renderPerson() {
     </div>
     <div id="contact-edit-panel"></div>
     ${(()=>{
-      const contacts = getContacts(person);
-      if (!contacts.length) return '<div class="empty-msg" style="padding:8px 0 12px;">No contact details yet. Tap Edit to add.</div>';
-      return contacts.map(c => {
-        const ct = CONTACT_TYPES.find(x=>x.type===c.type) || CONTACT_TYPES[0];
-        const href = ct.href ? ct.href(c.value) : null;
-        return `<div class="contact-row">
+      const contacts=getContacts(person);
+      if(!contacts.length)return'<div class="empty-msg" style="padding:8px 0 12px;">No contact details yet. Tap Edit to add.</div>';
+      return contacts.map(c=>{
+        const ct=CONTACT_TYPES.find(x=>x.type===c.type)||CONTACT_TYPES[0];
+        const href=ct.href?ct.href(c.value):null;
+        return`<div class="contact-row">
           <span class="contact-icon">${ct.icon}</span>
           <div style="flex:1;">
             <div style="font-size:11px;color:#9e7b5a;font-family:Georgia;letter-spacing:1px;text-transform:uppercase;margin-bottom:1px;">${esc(c.label)}</div>
-            <span class="contact-value">${href ? `<a href="${href}">${esc(c.value)}</a>` : esc(c.value)}</span>
+            <span class="contact-value">${href?`<a href="${href}">${esc(c.value)}</a>`:esc(c.value)}</span>
           </div>
         </div>`;
       }).join('');
     })()}
+
     <hr class="section-divider" />
     <div class="section-heading">
-      <span>Family Group</span>
-      <button class="btn-small" onclick="openFamilyModal()">Manage</button>
+      <span>Family &amp; Relationships</span>
+      <button class="btn-small" onclick="openFamilyModal()">+ Add</button>
     </div>
-    ${(()=>{ const g=personFamilyGroup(person.id);
-      if(!g) return '<div class="empty-msg" style="padding:8px 0 12px;">Not assigned to a family group. Tap Manage.</div>';
-      const members = g.memberIds.filter(id=>id!==person.id).map(id=>people.find(p=>p.id===id)).filter(Boolean);
-      return `<span class="family-chip" onclick="openFamilyModal()">🏡 ${esc(g.name)}</span>
-        ${members.length>0?`<div style="margin-top:10px;">${members.map(m=>`
-          <div class="family-member-card" onclick="openPerson(${m.id})">
-            <div><div class="family-member-name">${esc(m.name)}</div>${m.metAt?`<div class="family-member-meta">met at ${esc(m.metAt)}</div>`:''}</div>
-            <span style="margin-left:auto;color:#b89876;font-size:13px;">→</span>
-          </div>`).join('')}</div>`:''}`;
+    ${(()=>{
+      const links=person.familyLinks||[];
+      if(!links.length)return'<div class="empty-msg" style="padding:8px 0 12px;">No one linked yet. Tap + Add.</div>';
+      return links.map(l=>{
+        const linked=people.find(p=>p.id===l.linkedId);
+        return`<div class="family-member-card" onclick="openPerson(${l.linkedId})">
+          <div>
+            <div class="family-member-name">${linked?esc(linked.name):'Unknown'}</div>
+            <div class="family-member-rel">${esc(l.relation)}</div>
+          </div>
+          <span style="margin-left:auto;color:#b89876;font-size:13px;">→</span>
+        </div>`;
+      }).join('');
     })()}
+
     <hr class="section-divider" />
-    ${pend>0?`<div class="transfer-box"><div class="transfer-msg">📖 ${pend} entr${pend>1?'ies':'y'} waiting to copy to your physical journal</div><button class="btn-small" onclick="markAllTransferred()">Mark all as transferred</button></div>`:''}
-    <div class="cat-tabs" style="margin-top:18px;">
-      ${CATEGORIES.map(c=>{const n=(person[c.key]||[]).length,a=c.key===activeCategory;return`<button class="cat-tab${a?' active':''}" style="${a?`background:${c.color};border-color:${c.color};`:''}" onclick="setCategory('${c.key}')">${c.icon} ${c.label}${n>0?` (${n})`:''}</button>`;}).join('')}
+    <div class="section-heading">
+      <span>Circles</span>
+      <button class="btn-small" onclick="openAssignCircleModal()">Assign</button>
+    </div>
+    ${(()=>{
+      const pc=personCircles(person.id);
+      if(!pc.length)return'<div class="empty-msg" style="padding:8px 0 12px;">Not in any circles yet. Tap Assign.</div>';
+      return`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;">${pc.map(c=>`<span style="display:inline-flex;align-items:center;gap:5px;background:${c.color}22;color:${c.color};border:1px solid ${c.color}66;border-radius:20px;padding:4px 12px;font-size:13px;font-style:italic;cursor:pointer;" onclick="openAssignCircleModal()">${esc(c.name)}</span>`).join('')}</div>`;
+    })()}
+
+    <hr class="section-divider" />
+    ${pend>0?`<div class="transfer-box" style="margin-bottom:14px;"><div class="transfer-msg">📖 ${pend} entr${pend>1?'ies':'y'} marked to copy to your physical journal</div><button class="btn-small" onclick="markAllTransferred()">Clear all once copied</button></div>`:''}
+    <div class="cat-tabs" style="margin-top:4px;">
+      ${cats.map(c=>{const n=(person[c.key]||[]).length,a=c.key===activeCategory;return`<button class="cat-tab${a?' active':''}" style="${a?`background:${c.color};border-color:${c.color};`:''}" onclick="setCategory('${c.key}')">${c.icon} ${c.label}${n>0?` (${n})`:''}</button>`;}).join('')}
+      <button class="cat-tab" style="border-style:dashed;" onclick="openCustomCatModal()">＋ Custom</button>
     </div>
     <div class="cat-header">
       <span class="label" style="margin-bottom:0;">${cat?.icon} ${cat?.label}</span>
       <button class="btn-small" onclick="showView('add-entry')">+ Add</button>
     </div>
-    ${entries.length===0?'<div class="empty-msg">Nothing here yet. Tap + to add something.</div>':''}
-    ${entries.map(e=>`<div class="entry-card" style="border-left:3px solid ${cat?.color||'#c8956c'};opacity:${e.transferred?0.6:1};">
+    ${!entries.length?'<div class="empty-msg">Nothing here yet. Tap + to add something.</div>':''}
+    ${entries.map(e=>`<div class="entry-card" style="border-left:3px solid ${cat?.color||'#c8956c'};">
       <div class="entry-text">${esc(e.text)}</div>
       <div class="entry-footer">
         <span class="entry-date">${fmtDate(e.date)}</span>
-        ${e.transferred?`<span class="tag">✓ in journal</span>`:`<button class="btn-link" onclick="markEntryTransferred(${e.id})">mark as copied →</button>`}
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${e.transferred
+            ?`<button class="btn-link" style="color:#6b4226;" onclick="markEntryTransferred(${e.id})">✓ mark as done</button>`
+            :`<span style="font-size:11px;color:#ccc;font-style:italic;"></span>`}
+          <button class="btn-link" style="color:#c0392b;font-size:11px;" onclick="deleteEntry(${e.id})">delete</button>
+        </div>
       </div>
     </div>`).join('')}
   `;
@@ -738,198 +889,426 @@ function addPerson() {
   if(!name){document.getElementById('form-name').focus();return;}
   people.unshift({id:Date.now(),name,metAt:document.getElementById('form-met').value,
     date:document.getElementById('form-date').value,birthday:document.getElementById('form-birthday').value,
-    transferred:false,
-    contacts: readFormContacts(),
-    ...emptyPerson()});
+    transferred:false,contacts:readFormContacts(),customCategories:[],familyLinks:[],...emptyPerson()});
   save(); showView('home'); showToast('Person added to your journal');
 }
-
 function addEntry() {
   const text=document.getElementById('entry-text').value.trim();
   if(!text){document.getElementById('entry-text').focus();return;}
   const cat=document.getElementById('entry-category').value;
   const person=people.find(p=>p.id===currentPersonId); if(!person)return;
-  person[cat]=[{id:Date.now(),text,date:today(),transferred:false},...(person[cat]||[])];
+  if(!person[cat])person[cat]=[];
+  person[cat]=[{id:Date.now(),text,date:today(),transferred:_entryJournalOn},...person[cat]];
   save(); activeCategory=cat; showView('person'); showToast('Entry saved');
 }
-
+let _entryJournalOn = false;
+function toggleEntryJournal() {
+  _entryJournalOn = !_entryJournalOn;
+  const tog=document.getElementById('entry-journal-toggle');
+  const knob=document.getElementById('entry-journal-knob');
+  if(tog) tog.style.background=_entryJournalOn?'#6b4226':'#ccc';
+  if(knob) knob.style.left=_entryJournalOn?'23px':'3px';
+}
+function toggleJournalDefault() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person.journalDefault=!person.journalDefault;
+  save(); renderPerson();
+}
 function markEntryTransferred(entryId) {
   const person=people.find(p=>p.id===currentPersonId); if(!person)return;
-  CATEGORIES.forEach(c=>{person[c.key]=(person[c.key]||[]).map(e=>e.id===entryId?{...e,transferred:true}:e);});
-  save(); renderPerson(); showToast('Marked as transferred ✓');
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>e.id===entryId?{...e,transferred:false}:e);});
+  save(); renderPerson();
+  showToastWithUndo('Marked as done', ()=>{
+    allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>e.id===entryId?{...e,transferred:true}:e);});
+    save(); renderPerson(); renderHome();
+  });
 }
-
 function markAllTransferred() {
   const person=people.find(p=>p.id===currentPersonId); if(!person)return;
-  person.transferred=true;
-  CATEGORIES.forEach(c=>{person[c.key]=(person[c.key]||[]).map(e=>({...e,transferred:true}));});
-  save(); renderPerson(); showToast('All entries marked as transferred ✓');
+  const snapshot={};
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])snapshot[c.key]=person[c.key].map(e=>({...e}));});
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>({...e,transferred:false}));});
+  save(); renderPerson();
+  showToastWithUndo('All cleared from journal list', ()=>{
+    allCatsForPerson(person).forEach(c=>{if(snapshot[c.key])person[c.key]=snapshot[c.key];});
+    save(); renderPerson();
+  });
 }
-
+function saveMetAt(val) {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person.metAt=val.trim(); save();
+}
 function setBirthday(val) {
   if(!val)return;
   const person=people.find(p=>p.id===currentPersonId); if(!person)return;
   person.birthday=val; save(); renderPerson(); showToast('Birthday saved');
 }
-
 function clearBirthday() {
   const person=people.find(p=>p.id===currentPersonId); if(!person)return;
   person.birthday=''; renderPerson();
 }
-
 function confirmDelete() {
   const person=people.find(p=>p.id===currentPersonId); if(!person)return;
-  if(!confirm(`Remove ${person.name}?`))return;
-  const _did=currentPersonId; people=people.filter(p=>p.id!==_did); save(); sbDelete(_did); showView('home'); showToast('Person removed');
+  const id=currentPersonId;
+  trash.push({type:'person', ...person, deletedAt:Date.now()});
+  saveTrash();
+  people.forEach(p=>{ if(p.familyLinks) p.familyLinks=p.familyLinks.filter(l=>l.linkedId!==id); });
+  people=people.filter(p=>p.id!==id);
+  save(); sbDelete(id); showView('home'); showToast(`${person.name} moved to Recycle Bin`);
 }
-
 function updateEntryPlaceholder() {
-  document.getElementById('entry-text').placeholder=PLACEHOLDERS[document.getElementById('entry-category').value]||'';
+  const cat=document.getElementById('entry-category').value;
+  document.getElementById('entry-text').placeholder=PLACEHOLDERS[cat]||'Write something to remember…';
 }
 
-
-// ── Supabase sync ─────────────────────────────────────────────────────────
-let _sb = null;
-
-function supabaseLoaded() {
-  // Called when Supabase script finishes loading
-  const cfg = sbConfig();
-  if (cfg) sbInit(cfg.url, cfg.key, false);
-  else sbBar('disconnected');
-}
-
-function sbConfig() {
-  try { return JSON.parse(localStorage.getItem('pj_sb') || 'null'); } catch { return null; }
-}
-
-async function sbInit(url, key, pushLocal) {
+// ── Supabase ─────────────────────────────────────────────────────────────────
+let _sb=null;
+function supabaseLoaded() { const cfg=sbConfig(); if(cfg)sbInit(cfg.url,cfg.key,false); else sbBar('disconnected'); }
+function sbConfig() { try{return JSON.parse(localStorage.getItem('pj_sb')||'null');}catch{return null;} }
+async function sbInit(url,key,pushLocal) {
   try {
-    _sb = window.supabase.createClient(url, key);
-    const { error } = await _sb.from('people').select('id').limit(1);
-    if (error) throw error;
-
-    if (pushLocal && people.length > 0) {
-      // First-time connect: push local data up to cloud
-      const rows = people.map(p => { const {id,...data}=p; return {id,data}; });
-      await _sb.from('people').upsert(rows, {onConflict:'id'});
-      await sbPushFamilies();
+    _sb=window.supabase.createClient(url,key);
+    const{error}=await _sb.from('people').select('id').limit(1);
+    if(error)throw error;
+    if(pushLocal&&people.length>0){
+      await _sb.from('people').upsert(people.map(p=>{const{id,...data}=p;return{id,data};}),{onConflict:'id'});
       sbBar('connected');
     } else {
-      // Every other open: always pull latest from cloud
-      const { data, error: e2 } = await _sb.from('people').select('id,data').order('id', {ascending:false});
-      if (e2) throw e2;
-      if (data) {
-        people = data.map(r => ({id:r.id, ...r.data}));
-        // Also update localStorage so offline works with latest data
-        try { localStorage.setItem('pj_people', JSON.stringify(people)); } catch(e) {}
-        renderHome();
-      }
-      // Also pull family groups
-      await sbPullFamilies();
+      const{data,error:e2}=await _sb.from('people').select('id,data').order('id',{ascending:false});
+      if(e2)throw e2;
+      if(data){people=data.map(r=>({id:r.id,...r.data}));try{localStorage.setItem('pj_people',JSON.stringify(people));}catch(e){}renderHome();}
       sbBar('connected');
     }
-  } catch(e) {
-    console.warn('Sync error', e);
-    sbBar('error');
-  }
+  }catch(e){console.warn('Sync error',e);sbBar('error');}
 }
-
 function sbBar(state) {
-  const bar = document.getElementById('sync-bar');
-  if (!bar) return;
-  if (state === 'connected') {
-    bar.style.display = '';
-    bar.innerHTML = '✓ Synced across devices &nbsp;·&nbsp; <button onclick="sbOpen()">settings</button>';
-  } else if (state === 'disconnected') {
-    bar.style.display = '';
-    bar.innerHTML = '☁ Not synced &nbsp;·&nbsp; <button onclick="sbOpen()">connect to sync across devices</button>';
-  } else if (state === 'error') {
-    bar.style.display = '';
-    bar.innerHTML = '⚠ Sync error &nbsp;·&nbsp; <button onclick="sbOpen()">check settings</button>';
-  }
+  const bar=document.getElementById('sync-bar'); if(!bar)return;
+  if(state==='connected'){bar.style.display='';bar.innerHTML='✓ Synced &nbsp;·&nbsp; <button onclick="sbOpen()">settings</button>';}
+  else if(state==='disconnected'){bar.style.display='';bar.innerHTML='☁ Not synced &nbsp;·&nbsp; <button onclick="sbOpen()">connect</button>';}
+  else{bar.style.display='';bar.innerHTML='⚠ Sync error &nbsp;·&nbsp; <button onclick="sbOpen()">check settings</button>';}
 }
-
-function sbOpen() { document.getElementById('sb-overlay').classList.add('open'); }
-function sbClose() { document.getElementById('sb-overlay').classList.remove('open'); }
-
+function sbOpen(){document.getElementById('sb-overlay').classList.add('open');}
+function sbClose(){document.getElementById('sb-overlay').classList.remove('open');}
 async function sbConnect() {
-  const url = document.getElementById('sb-url').value.trim();
-  const key = document.getElementById('sb-key').value.trim();
-  const err = document.getElementById('sb-err');
-  err.style.display = 'none';
-  if (!url || !key) { err.textContent='Please fill in both fields.'; err.style.display='block'; return; }
-  if (!window.supabase) { err.textContent='Still loading, please wait a moment and try again.'; err.style.display='block'; return; }
-  err.textContent='Connecting…'; err.style.color='#9e7b5a'; err.style.display='block';
+  const url=document.getElementById('sb-url').value.trim();
+  const key=document.getElementById('sb-key').value.trim();
+  const err=document.getElementById('sb-err'); err.style.display='none';
+  if(!url||!key){err.textContent='Please fill in both fields.';err.style.display='block';return;}
+  if(!window.supabase){err.textContent='Still loading, please wait.';err.style.display='block';return;}
+  err.textContent='Connecting…';err.style.color='#9e7b5a';err.style.display='block';
   try {
-    _sb = window.supabase.createClient(url, key);
-    const {error} = await _sb.from('people').select('id').limit(1);
-    if (error) throw error;
-    localStorage.setItem('pj_sb', JSON.stringify({url, key}));
-    // Push existing local people to cloud
-    if (people.length > 0) {
-      const rows = people.map(p => { const {id,...data}=p; return {id,data}; });
-      await _sb.from('people').upsert(rows, {onConflict:'id'});
+    _sb=window.supabase.createClient(url,key);
+    const{error}=await _sb.from('people').select('id').limit(1); if(error)throw error;
+    localStorage.setItem('pj_sb',JSON.stringify({url,key}));
+    if(people.length>0)await _sb.from('people').upsert(people.map(p=>{const{id,...data}=p;return{id,data};}),{onConflict:'id'});
+    sbClose(); sbBar('connected'); showToast('Connected! Journal will now sync.');
+  }catch(e){err.textContent='Could not connect — check your URL and key.';err.style.color='#c0392b';err.style.display='block';}
+}
+function sbDisconnect() {
+  if(!confirm('Disconnect sync? Data stays on this device.'))return;
+  localStorage.removeItem('pj_sb');_sb=null;sbClose();sbBar('disconnected');showToast('Sync disconnected.');
+}
+async function sbPush() {
+  if(!_sb)return;
+  try{if(people.length>0)await _sb.from('people').upsert(people.map(p=>{const{id,...data}=p;return{id,data};}),{onConflict:'id'});}catch(e){}
+}
+async function sbDelete(id){if(!_sb)return;try{await _sb.from('people').delete().eq('id',id);}catch(e){}}
+function save(){try{localStorage.setItem('pj_people',JSON.stringify(people));}catch(e){}sbPush();}
+
+// ── Circles ──────────────────────────────────────────────────────────────────
+// circles stored globally: [{id, name, emoji, color}]
+// person.circleIds = [id, id, ...]
+const CIRCLE_COLORS = ['#8a7ab8','#6b8cb8','#7ab899','#b87ba0','#c8956c','#7a8c5a','#b8706b','#6b8c7a','#b8a06b','#6b7ab8'];
+let circles = [];
+let _selectedCircleColor = CIRCLE_COLORS[0];
+
+function loadCircles() {
+  try {
+    const stored = localStorage.getItem('pj_circles');
+    if (!stored) { circles=[]; return; }
+    const parsed = JSON.parse(stored);
+    // Wipe any old auto-seeded "Close Friends" that the user never created
+    // (identifiable because they have no real id — old format used string names as ids)
+    // Just start fresh if stored array looks like old seed data
+    circles = Array.isArray(parsed) ? parsed : [];
+    // Clear legacy seeded circles that have no numeric id
+    circles = circles.filter(c => typeof c.id === 'number');
+  } catch(e) { circles=[]; }
+}
+function saveCircles() { try { localStorage.setItem('pj_circles', JSON.stringify(circles)); } catch(e){} }
+
+function renderCircleColorPicker() {
+  const container = document.getElementById('circle-color-picker'); if(!container)return;
+  const usedColors = new Set(circles.map(c=>c.color));
+  container.innerHTML = CIRCLE_COLORS.map(color => {
+    const used = usedColors.has(color) && color !== _selectedCircleColor;
+    return `<div onclick="${used?'':'selectCircleColor(\''+color+'\')'}" title="${used?'Already used':'Pick this colour'}" style="width:30px;height:30px;border-radius:50%;background:${color};cursor:${used?'not-allowed':'pointer'};opacity:${used?0.25:1};box-shadow:${color===_selectedCircleColor?'0 0 0 3px #2c1f0e':'none'};transition:box-shadow 0.15s;"></div>`;
+  }).join('');
+}
+function selectCircleColor(color) { _selectedCircleColor=color; renderCircleColorPicker(); }
+
+function personCircles(personId) {
+  const p = people.find(x=>x.id===personId);
+  return circles.filter(c=>(p?.circleIds||[]).includes(c.id));
+}
+
+function openCirclesModal() {
+  const person = people.find(p=>p.id===currentPersonId);
+  const sub = document.getElementById('circles-modal-sub');
+  if(sub) sub.textContent = person ? `Tap a circle to assign or remove ${person.name}.` : 'Manage your circles.';
+  const usedColors=new Set(circles.map(c=>c.color));
+  _selectedCircleColor=CIRCLE_COLORS.find(c=>!usedColors.has(c))||CIRCLE_COLORS[0];
+  document.getElementById('new-circle-name').value='';
+  document.getElementById('circles-modal-err').style.display='none';
+  renderAssignCircleList();
+  renderCircleColorPicker();
+  document.getElementById('circles-modal-bg').classList.add('open');
+}
+function closeCirclesModal() {
+  document.getElementById('circles-modal-bg').classList.remove('open');
+  if(currentPersonId) renderPerson();
+}
+// Keep old function name working (called from profile Assign button)
+function openAssignCircleModal() { openCirclesModal(); }
+function closeAssignCircleModal() { closeCirclesModal(); }
+
+function createCircle() {
+  const nameInput=document.getElementById('new-circle-name');
+  const err=document.getElementById('circles-modal-err'); err.style.display='none';
+  const name=nameInput.value.trim();
+  if(!name){nameInput.focus();return;}
+  if(circles.find(c=>c.name.toLowerCase()===name.toLowerCase())){err.textContent='A circle with that name already exists.';err.style.display='block';return;}
+  if(circles.find(c=>c.color===_selectedCircleColor)){err.textContent='That colour is already used by another circle. Pick a different one.';err.style.display='block';return;}
+  circles.push({id:Date.now(), name, color:_selectedCircleColor});
+  saveCircles(); nameInput.value='';
+  const usedAfter=new Set(circles.map(c=>c.color));
+  _selectedCircleColor=CIRCLE_COLORS.find(c=>!usedAfter.has(c))||CIRCLE_COLORS[0];
+  renderCircleColorPicker();
+  renderAssignCircleList();
+  showToast('Circle created');
+}
+function deleteCircle(id) {
+  const circle = circles.find(c=>c.id===id); if(!circle)return;
+  const members = people.filter(p=>(p.circleIds||[]).includes(id));
+  if(members.length > 0) {
+    showToast(`Can't delete — ${members.length} ${members.length===1?'person belongs':'people belong'} to this circle`);
+    return;
+  }
+  // No members — move to trash
+  trash.push({type:'circle', circle, deletedAt:Date.now()});
+  saveTrash();
+  circles=circles.filter(c=>c.id!==id);
+  saveCircles();
+  const container=document.getElementById('assign-circle-list');
+  if(container) renderAssignCircleList();
+  showToast('Circle moved to Recycle Bin');
+}
+function togglePersonCircle(circleId) {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  if(!person.circleIds)person.circleIds=[];
+  if(person.circleIds.includes(circleId)) person.circleIds=person.circleIds.filter(id=>id!==circleId);
+  else person.circleIds.push(circleId);
+  save(); renderAssignCircleList();
+}
+function renderAssignCircleList() {
+  const container=document.getElementById('assign-circle-list'); if(!container)return;
+  const person=people.find(p=>p.id===currentPersonId);
+  if(!circles.length){container.innerHTML='<div style="color:#9e7b5a;font-style:italic;font-size:13px;margin-bottom:10px;">No circles yet — create one below.</div>';return;}
+  container.innerHTML=circles.map(c=>{
+    const assigned=(person?.circleIds||[]).includes(c.id);
+    const memberCount=people.filter(p=>(p.circleIds||[]).includes(c.id)).length;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:${assigned?c.color+'22':'rgba(255,255,255,0.6)'};border:2px solid ${assigned?c.color:'rgba(139,100,60,0.18)'};border-radius:10px;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;" onclick="togglePersonCircle(${c.id})">
+        <div style="width:20px;height:20px;border-radius:50%;background:${c.color};flex-shrink:0;"></div>
+        <div>
+          <div style="font-size:15px;font-weight:600;color:${assigned?c.color:'#2c1f0e'};">${esc(c.name)}</div>
+          <div style="font-size:12px;color:#9e7b5a;font-style:italic;">${memberCount} ${memberCount===1?'person':'people'}${assigned?' · assigned':''}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        ${assigned?`<span style="color:${c.color};font-size:18px;">✓</span>`:''}
+        <button style="background:none;border:none;color:${memberCount>0?'#bbb':'#c0392b'};font-size:12px;cursor:pointer;padding:4px 6px;" onclick="deleteCircle(${c.id})" title="${memberCount>0?'Remove all members first':''}">${memberCount>0?'🔒':'Delete'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Recycle Bin ──────────────────────────────────────────────────────────────
+// trash items: {type:'person', ...personData, deletedAt} or {type:'entry', personId, personName, categoryKey, categoryLabel, entry, deletedAt}
+let trash = [];
+function loadTrash() { try { trash = JSON.parse(localStorage.getItem('pj_trash')||'[]'); } catch(e) { trash=[]; } }
+function saveTrash() { try { localStorage.setItem('pj_trash', JSON.stringify(trash)); } catch(e){} }
+function openTrashModal() { renderTrashList(); document.getElementById('trash-modal-bg').classList.add('open'); }
+function closeTrashModal() { document.getElementById('trash-modal-bg').classList.remove('open'); }
+
+function deleteEntry(entryId) {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  const cats=allCatsForPerson(person);
+  for(const c of cats) {
+    const arr=person[c.key]||[];
+    const entry=arr.find(e=>e.id===entryId);
+    if(entry) {
+      trash.push({type:'entry', personId:person.id, personName:person.name, categoryKey:c.key, categoryLabel:c.label, entry, deletedAt:Date.now()});
+      person[c.key]=arr.filter(e=>e.id!==entryId);
+      saveTrash(); save(); renderPerson();
+      showToast('Entry moved to Recycle Bin');
+      return;
     }
-    sbClose();
-    sbBar('connected');
-    showToast('Connected! Your journal will now sync across devices.');
-  } catch(e) {
-    err.textContent='Could not connect — check your URL and key.';
-    err.style.color='#c0392b'; err.style.display='block';
   }
 }
 
-function sbDisconnect() {
-  if (!confirm('Disconnect sync? Your data stays on this device.')) return;
-  localStorage.removeItem('pj_sb');
-  _sb = null;
-  sbClose();
-  sbBar('disconnected');
-  showToast('Sync disconnected.');
+function restoreFromTrash(idx) {
+  const item=trash[idx]; if(!item)return;
+  if(item.type==='person') {
+    const {type,deletedAt,...person}=item;
+    people.unshift(person);
+    trash.splice(idx,1);
+    saveTrash(); save(); renderTrashList(); renderHome();
+    showToast(`${person.name} restored`);
+  } else if(item.type==='entry') {
+    const person=people.find(p=>p.id===item.personId);
+    if(!person){showToast('Person no longer exists — cannot restore');trash.splice(idx,1);saveTrash();renderTrashList();return;}
+    if(!person[item.categoryKey]) person[item.categoryKey]=[];
+    person[item.categoryKey].unshift(item.entry);
+    trash.splice(idx,1);
+    saveTrash(); save(); renderTrashList();
+    showToast('Entry restored');
+  } else if(item.type==='circle') {
+    circles.push(item.circle);
+    trash.splice(idx,1);
+    saveCircles(); saveTrash(); renderTrashList();
+    showToast(`Circle "${item.circle.name}" restored`);
+  }
+}
+function permanentDelete(idx) {
+  trash.splice(idx,1);
+  saveTrash(); renderTrashList();
+  showToast('Permanently deleted');
+}
+function emptyTrash() {
+  trash=[]; saveTrash(); renderTrashList(); showToast('Recycle bin emptied');
+}
+function renderTrashList() {
+  const container=document.getElementById('trash-list'); if(!container)return;
+  const trashBadge=document.getElementById('trash-badge');
+  const trashBtn=document.getElementById('trash-filter-btn');
+  if(trashBadge) trashBadge.textContent=trash.length>0?trash.length:'';
+  if(trashBtn) trashBtn.style.display=trash.length>0?'':'none';
+  if(!trash.length){container.innerHTML='<div style="color:#9e7b5a;font-style:italic;font-size:14px;padding:10px 0;">Recycle bin is empty.</div>';return;}
+  container.innerHTML=trash.map((item,idx)=>{
+    const deletedAgo=Math.round((Date.now()-item.deletedAt)/60000);
+    const timeStr=deletedAgo<60?`${deletedAgo}m ago`:deletedAgo<1440?`${Math.round(deletedAgo/60)}h ago`:`${Math.round(deletedAgo/1440)}d ago`;
+    let title, sub;
+    if(item.type==='person') {
+      title=item.name;
+      sub=`${item.metAt?`met at ${item.metAt} · `:''}person · deleted ${timeStr}`;
+    } else if(item.type==='entry') {
+      title=`"${item.entry.text.length>50?item.entry.text.slice(0,50)+'…':item.entry.text}"`;
+      sub=`${item.personName} · ${item.categoryLabel} · deleted ${timeStr}`;
+    } else if(item.type==='circle') {
+      title=item.circle.name;
+      sub=`circle · deleted ${timeStr}`;
+    }
+    const dot=item.type==='circle'?`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${item.circle.color};margin-right:6px;vertical-align:middle;"></span>`:'';
+    return `<div style="background:rgba(255,255,255,0.6);border:1px solid rgba(139,100,60,0.18);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
+      <div style="font-size:15px;font-weight:600;margin-bottom:3px;">${dot}${esc(title)}</div>
+      <div style="font-size:12px;color:#9e7b5a;font-style:italic;margin-bottom:8px;">${esc(sub)}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-small" onclick="restoreFromTrash(${idx})">↩ Restore</button>
+        <button style="background:none;border:1px solid rgba(192,57,43,0.4);color:#c0392b;border-radius:6px;padding:6px 13px;font-size:12px;cursor:pointer;" onclick="permanentDelete(${idx})">Delete forever</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-async function sbPush() {
-  if (!_sb) return;
-  try {
-    const rows = people.map(p => { const {id,...data}=p; return {id,data}; });
-    if (rows.length > 0) await _sb.from('people').upsert(rows, {onConflict:'id'});
-  } catch(e) { console.warn('Push failed', e); }
+function renderJournal() {
+  const container=document.getElementById('journal-list'); if(!container)return;
+  // Collect all pending entries grouped by person
+  const groups=[];
+  people.forEach(person=>{
+    const cats=allCatsForPerson(person);
+    const pending=[];
+    cats.forEach(c=>{
+      (person[c.key]||[]).filter(e=>e.transferred).forEach(e=>{
+        pending.push({entry:e, cat:c, personId:person.id});
+      });
+    });
+    if(pending.length) groups.push({person, pending});
+  });
+  if(!groups.length){
+    container.innerHTML='<div class="empty-msg" style="padding:20px 0;">Nothing to copy — you\'re all caught up! ✓</div>';
+    return;
+  }
+  container.innerHTML=groups.map(({person,pending})=>`
+    <div style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:16px;font-weight:600;color:#2c1f0e;cursor:pointer;" onclick="openPerson(${person.id})">${esc(person.name)} →</div>
+        <button class="btn-small" onclick="markPersonAllDone(${person.id})">All done</button>
+      </div>
+      ${pending.map(({entry,cat})=>`
+        <div style="background:rgba(255,255,255,0.65);border:1px solid rgba(139,100,60,0.18);border-left:3px solid ${cat.color};border-radius:10px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+          <div style="flex:1;">
+            <div style="font-size:12px;color:${cat.color};font-style:italic;margin-bottom:3px;">${cat.icon} ${cat.label}</div>
+            <div style="font-size:14px;color:#2c1f0e;">${esc(entry.text)}</div>
+            <div style="font-size:11px;color:#9e7b5a;margin-top:4px;">${fmtDate(entry.date)}</div>
+          </div>
+          <button class="btn-small" style="flex-shrink:0;" onclick="markDoneFromJournal(${person.id},${entry.id})">✓ Done</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+function markDoneFromJournal(personId, entryId) {
+  const person=people.find(p=>p.id===personId); if(!person)return;
+  allCatsForPerson(person).forEach(c=>{
+    if(person[c.key]) person[c.key]=person[c.key].map(e=>e.id===entryId?{...e,transferred:false}:e);
+  });
+  save(); renderJournal(); updateJournalBadge();
+  showToastWithUndo('Marked as done', ()=>{
+    allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>e.id===entryId?{...e,transferred:true}:e);});
+    save(); renderJournal(); updateJournalBadge();
+  });
+}
+function updateJournalBadge() {
+  const total=people.reduce((a,p)=>a+totalPending(p),0);
+  const journalBtn=document.getElementById('journal-nav-btn');
+  const journalCount=document.getElementById('pending-badge-count');
+  if(journalBtn){journalBtn.style.display=total>0?'':'none';}
+  if(journalCount)journalCount.textContent=total;
+}
+function markPersonAllDone(personId) {
+  const person=people.find(p=>p.id===personId); if(!person)return;
+  // Snapshot which entries were transferred so we can undo
+  const snapshot={};
+  allCatsForPerson(person).forEach(c=>{
+    if(person[c.key]) snapshot[c.key]=person[c.key].map(e=>({...e}));
+  });
+  allCatsForPerson(person).forEach(c=>{
+    if(person[c.key]) person[c.key]=person[c.key].map(e=>({...e,transferred:false}));
+  });
+  save(); renderJournal(); updateJournalBadge();
+  showToastWithUndo(`${person.name}'s entries cleared`, ()=>{
+    allCatsForPerson(person).forEach(c=>{if(snapshot[c.key])person[c.key]=snapshot[c.key];});
+    save(); renderJournal(); updateJournalBadge();
+  });
 }
 
-async function sbDelete(id) {
-  if (!_sb) return;
-  try { await _sb.from('people').delete().eq('id', id); } catch(e) {}
-}
-
-let toastTimer;
-function showToast(msg) {
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.classList.add('show');
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
-}
-
-function save() {
-  try { localStorage.setItem('pj_people', JSON.stringify(people)); } catch(e) {}
-  sbPush();
-}
-
-// Init — runs immediately, no waiting
-loadLocations();
-loadFamilyGroups();
+// ── Init ─────────────────────────────────────────────────────────────────────
+const SAMPLE_PEOPLE=[
+  {id:1,name:'Marcus Webb',metAt:'Church small group',date:'2024-01-15',birthday:'1985-03-22',transferred:false,familyLinks:[],customCategories:[],
+    notes:[{id:10,text:'Grew up in Tennessee, loves woodworking',date:'2024-01-15',transferred:false}],
+    likes:[{id:11,text:'Woodworking, country music, strong coffee',date:'2024-01-15',transferred:false}],
+    dislikes:[],family:[{id:12,text:'Daughter just started college',date:'2024-02-03',transferred:true}],
+    memories:[],faith:[{id:13,text:"Leads the men's Bible study on Thursdays",date:'2024-01-15',transferred:false}]},
+  {id:2,name:'Elena Rourke',metAt:'Coffee shop — 3rd & Main',date:'2024-03-20',birthday:'',transferred:false,familyLinks:[],customCategories:[],
+    notes:[{id:20,text:'Photographer, travels a lot for work',date:'2024-03-20',transferred:false}],
+    likes:[{id:21,text:'Photography, travel, black & white film',date:'2024-03-20',transferred:false}],
+    dislikes:[],family:[],memories:[],faith:[]}
+];
+loadCircles();
+loadTrash();
 document.getElementById('form-date').value=today();
-try {
-  const saved = localStorage.getItem('pj_people');
-  people = saved ? JSON.parse(saved) : SAMPLE_PEOPLE.slice();
-} catch(e) {
-  people = SAMPLE_PEOPLE.slice();
-}
+try{const s=localStorage.getItem('pj_people');people=s?JSON.parse(s):SAMPLE_PEOPLE.slice();}catch(e){people=SAMPLE_PEOPLE.slice();}
 renderHome();
-// Show sync bar state (supabase may still be loading — that's fine)
-if (sbConfig()) {
-  sbBar('connected'); // optimistic — will update when supabase loads
-} else {
-  sbBar('disconnected');
-}
+if(sbConfig())sbBar('connected');else sbBar('disconnected');
 </script>
 </body>
 </html>
