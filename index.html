@@ -313,8 +313,24 @@ let familyGroups = []; // [{id, name, memberIds:[]}]
 function loadFamilyGroups() {
   try { familyGroups = JSON.parse(localStorage.getItem('pj_families') || '[]'); } catch(e) { familyGroups = []; }
 }
+async function sbPushFamilies() {
+  if (!_sb) return;
+  try {
+    await _sb.from('settings').upsert({ key: 'families', value: JSON.stringify(familyGroups) }, { onConflict: 'key' });
+  } catch(e) { console.warn('Family sync push failed', e); }
+}
+async function sbPullFamilies() {
+  if (!_sb) return;
+  try {
+    const { data, error } = await _sb.from('settings').select('value').eq('key', 'families').single();
+    if (error || !data) return;
+    familyGroups = JSON.parse(data.value || '[]');
+    try { localStorage.setItem('pj_families', JSON.stringify(familyGroups)); } catch(e) {}
+  } catch(e) { console.warn('Family sync pull failed', e); }
+}
 function saveFamilyGroups() {
   try { localStorage.setItem('pj_families', JSON.stringify(familyGroups)); } catch(e) {}
+  sbPushFamilies();
 }
 function personFamilyGroup(personId) {
   return familyGroups.find(g => g.memberIds.includes(personId)) || null;
@@ -692,6 +708,7 @@ async function sbInit(url, key, pushLocal) {
       // First-time connect: push local data up to cloud
       const rows = people.map(p => { const {id,...data}=p; return {id,data}; });
       await _sb.from('people').upsert(rows, {onConflict:'id'});
+      await sbPushFamilies();
       sbBar('connected');
     } else {
       // Every other open: always pull latest from cloud
@@ -703,6 +720,8 @@ async function sbInit(url, key, pushLocal) {
         try { localStorage.setItem('pj_people', JSON.stringify(people)); } catch(e) {}
         renderHome();
       }
+      // Also pull family groups
+      await sbPullFamilies();
       sbBar('connected');
     }
   } catch(e) {
