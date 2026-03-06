@@ -148,10 +148,8 @@
       <div class="field"><label class="label">Birthday <span class="label-opt">(optional)</span></label><input type="date" id="form-birthday" /></div>
       <div style="border-top:1px solid rgba(139,100,60,0.15);margin:18px 0 16px;"></div>
       <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9e7b5a;font-family:Georgia;margin-bottom:14px;">Contact Details <span style="text-transform:none;letter-spacing:0;font-style:italic;color:#b89876;">(optional)</span></div>
-      <div class="field"><label class="label">📞 Phone</label><input type="text" id="form-phone" placeholder="Phone number…" /></div>
-      <div class="field"><label class="label">✉️ Email</label><input type="text" id="form-email" placeholder="Email address…" /></div>
-      <div class="field"><label class="label">📍 Address</label><input type="text" id="form-address" placeholder="Address…" /></div>
-      <div class="field"><label class="label">📱 Social Media</label><input type="text" id="form-social" placeholder="Instagram, Facebook…" /></div>
+      <div id="form-contacts-list"></div>
+      <button class="btn-secondary" onclick="formAddContact()" style="margin-bottom:10px;padding:8px 14px;font-size:13px;">+ Add contact detail</button>
       <button class="btn" onclick="addPerson()">Add to Journal</button>
       <button class="btn-secondary" onclick="showView('home')">Cancel</button>
     </div>
@@ -410,40 +408,147 @@ function renderFamilyGroupList() {
 }
 
 // ── Contact details ────────────────────────────────────────────────────────
-function getContacts(person) { return person.contacts || {phone:'',email:'',address:'',social:''}; }
-function saveContacts(personId, contacts) {
-  const idx = people.findIndex(p=>p.id===personId);
-  if (idx < 0) return;
-  people[idx].contacts = contacts;
-  save();
+// ── Contact helpers ──────────────────────────────────────────────────────────
+const CONTACT_TYPES = [
+  { type:'phone',  icon:'📞', label:'Phone',       href: v=>'tel:'+v },
+  { type:'email',  icon:'✉️',  label:'Email',       href: v=>'mailto:'+v },
+  { type:'address',icon:'📍', label:'Address',     href: null },
+  { type:'social', icon:'📱', label:'Social Media',href: null },
+];
+const CONTACT_LABELS = {
+  phone:  ['Mobile','Home','Work','Other'],
+  email:  ['Personal','Work','Other'],
+  address:['Home','Work','Other'],
+  social: ['Instagram','Facebook','Twitter/X','LinkedIn','Other'],
+};
+
+function getContacts(person) {
+  // Support both old format {phone,email,...} and new format [{type,label,value}]
+  if (!person.contacts) return [];
+  if (Array.isArray(person.contacts)) return person.contacts;
+  // Convert old format
+  const old = person.contacts;
+  const arr = [];
+  if (old.phone)   arr.push({id:1, type:'phone',   label:'Mobile',    value:old.phone});
+  if (old.email)   arr.push({id:2, type:'email',   label:'Personal',  value:old.email});
+  if (old.address) arr.push({id:3, type:'address', label:'Home',      value:old.address});
+  if (old.social)  arr.push({id:4, type:'social',  label:'Instagram', value:old.social});
+  return arr;
 }
+
+// ── Form contacts (Add Person) ────────────────────────────────────────────
+window._formContacts = [];
+
+function renderFormContacts() {
+  const list = document.getElementById('form-contacts-list');
+  if (!list) return;
+  list.innerHTML = (window._formContacts || []).map((c, i) => {
+    const ct = CONTACT_TYPES.find(x=>x.type===c.type) || CONTACT_TYPES[0];
+    const labels = CONTACT_LABELS[c.type] || ['Other'];
+    return `<div style="background:rgba(255,255,255,0.6);border:1px solid rgba(139,100,60,0.2);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <span style="font-size:15px;">${ct.icon}</span>
+        <select onchange="updateFormContact(${i},'type',this.value)" style="flex:1;padding:6px 10px;font-size:13px;">
+          ${CONTACT_TYPES.map(x=>`<option value="${x.type}" ${c.type===x.type?'selected':''}>${x.label}</option>`).join('')}
+        </select>
+        <button class="btn-link" style="color:#c0392b;font-size:18px;" onclick="removeFormContact(${i})">×</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <select onchange="updateFormContact(${i},'label',this.value)" style="width:110px;padding:6px 8px;font-size:13px;">
+          ${labels.map(l=>`<option value="${l}" ${c.label===l?'selected':''}>${l}</option>`).join('')}
+        </select>
+        <input type="text" value="${esc(c.value)}" placeholder="Enter ${ct.label.toLowerCase()}…" oninput="updateFormContact(${i},'value',this.value)" style="flex:1;padding:6px 10px;font-size:14px;" />
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function formAddContact() {
+  window._formContacts = window._formContacts || [];
+  window._formContacts.push({ id: Date.now(), type:'phone', label:'Mobile', value:'' });
+  renderFormContacts();
+}
+function updateFormContact(i, field, val) {
+  if (!window._formContacts[i]) return;
+  window._formContacts[i][field] = val;
+  if (field === 'type') {
+    window._formContacts[i].label = (CONTACT_LABELS[val] || ['Other'])[0];
+    renderFormContacts();
+  }
+}
+function removeFormContact(i) {
+  window._formContacts.splice(i, 1);
+  renderFormContacts();
+}
+function readFormContacts() {
+  return (window._formContacts || []).filter(c => c.value.trim()).map(c => ({...c, value:c.value.trim()}));
+}
+
+// ── Profile contact edit ──────────────────────────────────────────────────
+let _editContacts = [];
+
 function toggleContactEdit() {
   const panel = document.getElementById('contact-edit-panel');
   if (!panel) return;
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
   const person = people.find(p=>p.id===currentPersonId);
-  const c = getContacts(person);
-  if (panel.style.display === 'none' || !panel.style.display) {
-    panel.style.display = 'block';
-    panel.innerHTML = `
-      <div class="contact-edit-row"><span style="width:24px;text-align:center;">📞</span><input type="text" id="c-phone" placeholder="Phone number" value="${esc(c.phone)}" /></div>
-      <div class="contact-edit-row"><span style="width:24px;text-align:center;">✉️</span><input type="text" id="c-email" placeholder="Email address" value="${esc(c.email)}" /></div>
-      <div class="contact-edit-row"><span style="width:24px;text-align:center;">📍</span><input type="text" id="c-address" placeholder="Address" value="${esc(c.address)}" /></div>
-      <div class="contact-edit-row"><span style="width:24px;text-align:center;">📱</span><input type="text" id="c-social" placeholder="Instagram / Social media" value="${esc(c.social)}" /></div>
-      <button class="btn-small" onclick="saveContactDetails()" style="margin-top:6px;">Save</button>
-      <button class="btn-link" onclick="toggleContactEdit()" style="margin-left:12px;">Cancel</button>
-    `;
-  } else {
-    panel.style.display = 'none';
+  _editContacts = JSON.parse(JSON.stringify(getContacts(person)));
+  panel.style.display = 'block';
+  renderContactEditPanel();
+}
+
+function renderContactEditPanel() {
+  const panel = document.getElementById('contact-edit-panel');
+  if (!panel) return;
+  panel.innerHTML = `
+    <div id="contact-edit-rows">
+      ${_editContacts.map((c, i) => {
+        const ct = CONTACT_TYPES.find(x=>x.type===c.type) || CONTACT_TYPES[0];
+        const labels = CONTACT_LABELS[c.type] || ['Other'];
+        return `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+          <div style="flex:1;">
+            <div style="display:flex;gap:6px;margin-bottom:5px;">
+              <span style="font-size:15px;padding-top:6px;">${ct.icon}</span>
+              <select onchange="updateEditContact(${i},'type',this.value)" style="flex:1;padding:5px 8px;font-size:12px;">
+                ${CONTACT_TYPES.map(x=>`<option value="${x.type}" ${c.type===x.type?'selected':''}>${x.label}</option>`).join('')}
+              </select>
+              <select onchange="updateEditContact(${i},'label',this.value)" style="width:100px;padding:5px 6px;font-size:12px;">
+                ${labels.map(l=>`<option value="${l}" ${c.label===l?'selected':''}>${l}</option>`).join('')}
+              </select>
+            </div>
+            <input type="text" value="${esc(c.value)}" oninput="updateEditContact(${i},'value',this.value)" style="width:100%;padding:7px 10px;font-size:14px;" />
+          </div>
+          <button class="btn-link" style="color:#c0392b;font-size:20px;padding-top:4px;" onclick="removeEditContact(${i})">×</button>
+        </div>`;
+      }).join('')}
+    </div>
+    <button class="btn-link" onclick="addEditContact()" style="margin-bottom:10px;">+ Add another</button><br/>
+    <button class="btn-small" onclick="saveContactDetails()" style="margin-top:4px;">Save</button>
+    <button class="btn-link" onclick="toggleContactEdit()" style="margin-left:12px;">Cancel</button>
+  `;
+}
+
+function addEditContact() {
+  _editContacts.push({ id: Date.now(), type:'phone', label:'Mobile', value:'' });
+  renderContactEditPanel();
+}
+function updateEditContact(i, field, val) {
+  if (!_editContacts[i]) return;
+  _editContacts[i][field] = val;
+  if (field === 'type') {
+    _editContacts[i].label = (CONTACT_LABELS[val] || ['Other'])[0];
+    renderContactEditPanel();
   }
 }
+function removeEditContact(i) {
+  _editContacts.splice(i, 1);
+  renderContactEditPanel();
+}
 function saveContactDetails() {
-  const contacts = {
-    phone: document.getElementById('c-phone').value.trim(),
-    email: document.getElementById('c-email').value.trim(),
-    address: document.getElementById('c-address').value.trim(),
-    social: document.getElementById('c-social').value.trim(),
-  };
-  saveContacts(currentPersonId, contacts);
+  const idx = people.findIndex(p=>p.id===currentPersonId);
+  if (idx < 0) return;
+  people[idx].contacts = _editContacts.filter(c=>c.value.trim()).map(c=>({...c,value:c.value.trim()}));
+  save();
   renderPerson();
   showToast('Contact details saved');
 }
@@ -498,10 +603,8 @@ function showView(name) {
     document.getElementById('new-location-input').value='';
     document.getElementById('form-date').value=today();
     document.getElementById('form-birthday').value='';
-    document.getElementById('form-phone').value='';
-    document.getElementById('form-email').value='';
-    document.getElementById('form-address').value='';
-    document.getElementById('form-social').value='';
+    window._formContacts = [];
+    renderFormContacts();
     setTimeout(()=>document.getElementById('form-name').focus(),150);
   }
   if(name==='add-entry') {
@@ -578,14 +681,20 @@ function renderPerson() {
       <button class="btn-small" onclick="toggleContactEdit()">Edit</button>
     </div>
     <div id="contact-edit-panel"></div>
-    ${(()=>{ const c=getContacts(person); const hasAny=c.phone||c.email||c.address||c.social;
-      if(!hasAny) return '<div class="empty-msg" style="padding:8px 0 12px;">No contact details yet. Tap Edit to add.</div>';
-      return [
-        c.phone?`<div class="contact-row"><span class="contact-icon">📞</span><span class="contact-value"><a href="tel:${esc(c.phone)}">${esc(c.phone)}</a></span></div>`:'',
-        c.email?`<div class="contact-row"><span class="contact-icon">✉️</span><span class="contact-value"><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></span></div>`:'',
-        c.address?`<div class="contact-row"><span class="contact-icon">📍</span><span class="contact-value">${esc(c.address)}</span></div>`:'',
-        c.social?`<div class="contact-row"><span class="contact-icon">📱</span><span class="contact-value">${esc(c.social)}</span></div>`:'',
-      ].join('');
+    ${(()=>{
+      const contacts = getContacts(person);
+      if (!contacts.length) return '<div class="empty-msg" style="padding:8px 0 12px;">No contact details yet. Tap Edit to add.</div>';
+      return contacts.map(c => {
+        const ct = CONTACT_TYPES.find(x=>x.type===c.type) || CONTACT_TYPES[0];
+        const href = ct.href ? ct.href(c.value) : null;
+        return `<div class="contact-row">
+          <span class="contact-icon">${ct.icon}</span>
+          <div style="flex:1;">
+            <div style="font-size:11px;color:#9e7b5a;font-family:Georgia;letter-spacing:1px;text-transform:uppercase;margin-bottom:1px;">${esc(c.label)}</div>
+            <span class="contact-value">${href ? `<a href="${href}">${esc(c.value)}</a>` : esc(c.value)}</span>
+          </div>
+        </div>`;
+      }).join('');
     })()}
     <hr class="section-divider" />
     <div class="section-heading">
@@ -630,12 +739,7 @@ function addPerson() {
   people.unshift({id:Date.now(),name,metAt:document.getElementById('form-met').value,
     date:document.getElementById('form-date').value,birthday:document.getElementById('form-birthday').value,
     transferred:false,
-    contacts:{
-      phone:document.getElementById('form-phone').value.trim(),
-      email:document.getElementById('form-email').value.trim(),
-      address:document.getElementById('form-address').value.trim(),
-      social:document.getElementById('form-social').value.trim(),
-    },
+    contacts: readFormContacts(),
     ...emptyPerson()});
   save(); showView('home'); showToast('Person added to your journal');
 }
