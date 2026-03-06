@@ -192,6 +192,24 @@ CREATE POLICY "Allow all" ON people
   </div>
 </div>
 
+
+<!-- Family modal -->
+<div id="family-modal-bg">
+  <div id="family-modal">
+    <div style="font-size:19px;font-weight:700;font-style:italic;color:#6b4226;margin-bottom:6px;">Family Groups</div>
+    <div style="font-size:13px;color:#6b5040;margin-bottom:16px;">Assign this person to a family group, or create a new one.</div>
+    <div id="family-group-list"></div>
+    <hr class="section-divider" />
+    <div style="font-size:12px;color:#9e7b5a;font-family:Georgia;margin-bottom:8px;">Create new group</div>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="new-group-input" placeholder="e.g. The Webb Family" style="flex:1;padding:8px 11px;font-size:14px;" />
+      <button class="btn-small" onclick="createFamilyGroup()">+ Create</button>
+    </div>
+    <div id="family-modal-err" style="color:#c0392b;font-size:12px;font-style:italic;margin-top:8px;display:none;"></div>
+    <button class="btn-secondary" onclick="closeFamilyModal()" style="margin-top:14px;">Done</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -259,6 +277,132 @@ function removeLocation(index) {
   saveLocations();
   populateLocationDropdown();
   renderLocationChips();
+}
+
+
+// ── Family groups ────────────────────────────────────────────────────────────
+let familyGroups = []; // [{id, name, memberIds:[]}]
+
+function loadFamilyGroups() {
+  try { familyGroups = JSON.parse(localStorage.getItem('pj_families') || '[]'); } catch(e) { familyGroups = []; }
+}
+function saveFamilyGroups() {
+  try { localStorage.setItem('pj_families', JSON.stringify(familyGroups)); } catch(e) {}
+}
+function personFamilyGroup(personId) {
+  return familyGroups.find(g => g.memberIds.includes(personId)) || null;
+}
+function openFamilyModal() {
+  renderFamilyGroupList();
+  document.getElementById('family-modal-bg').classList.add('open');
+}
+function closeFamilyModal() {
+  document.getElementById('family-modal-bg').classList.remove('open');
+  renderPerson();
+}
+function createFamilyGroup() {
+  const input = document.getElementById('new-group-input');
+  const name = input.value.trim();
+  const err = document.getElementById('family-modal-err');
+  err.style.display = 'none';
+  if (!name) { input.focus(); return; }
+  if (familyGroups.find(g => g.name === name)) { err.textContent='A group with that name already exists.'; err.style.display='block'; return; }
+  const group = { id: Date.now(), name, memberIds: [currentPersonId] };
+  familyGroups.push(group);
+  saveFamilyGroups();
+  input.value = '';
+  renderFamilyGroupList();
+  showToast('Family group created');
+}
+function assignToGroup(groupId) {
+  // Remove from any existing group first
+  familyGroups = familyGroups.map(g => ({...g, memberIds: g.memberIds.filter(id => id !== currentPersonId)}));
+  const group = familyGroups.find(g => g.id === groupId);
+  if (group) group.memberIds.push(currentPersonId);
+  saveFamilyGroups();
+  renderFamilyGroupList();
+  showToast('Added to family group');
+}
+function removeFromGroup() {
+  familyGroups = familyGroups.map(g => ({...g, memberIds: g.memberIds.filter(id => id !== currentPersonId)}));
+  // Remove empty groups
+  familyGroups = familyGroups.filter(g => g.memberIds.length > 0);
+  saveFamilyGroups();
+  renderFamilyGroupList();
+  showToast('Removed from family group');
+}
+function deleteFamilyGroup(groupId) {
+  if (!confirm('Delete this family group?')) return;
+  familyGroups = familyGroups.filter(g => g.id !== groupId);
+  saveFamilyGroups();
+  renderFamilyGroupList();
+  showToast('Group deleted');
+}
+function renderFamilyGroupList() {
+  const container = document.getElementById('family-group-list');
+  if (!container) return;
+  const currentGroup = personFamilyGroup(currentPersonId);
+  if (familyGroups.length === 0) {
+    container.innerHTML = '<div style="color:#9e7b5a;font-style:italic;font-size:13px;margin-bottom:10px;">No family groups yet. Create one below.</div>';
+    return;
+  }
+  container.innerHTML = familyGroups.map(g => {
+    const isMember = g.memberIds.includes(currentPersonId);
+    const memberNames = g.memberIds.map(id => { const p = people.find(x=>x.id===id); return p?p.name:''; }).filter(Boolean).join(', ');
+    return `<div style="background:rgba(255,255,255,0.6);border:1px solid rgba(139,100,60,0.18);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-size:15px;font-weight:600;">${esc(g.name)}</div>
+          <div style="font-size:12px;color:#9e7b5a;font-style:italic;margin-top:2px;">${esc(memberNames) || 'No members'}</div>
+        </div>
+        <button class="btn-danger" onclick="deleteFamilyGroup(${g.id})" style="font-size:11px;">delete</button>
+      </div>
+      <div style="margin-top:10px;">
+        ${isMember
+          ? `<button class="btn-small" style="background:#8b6355;" onclick="removeFromGroup()">Remove from this group</button>`
+          : `<button class="btn-small" onclick="assignToGroup(${g.id})">Add to this group</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Contact details ────────────────────────────────────────────────────────
+function getContacts(person) { return person.contacts || {phone:'',email:'',address:'',social:''}; }
+function saveContacts(personId, contacts) {
+  const idx = people.findIndex(p=>p.id===personId);
+  if (idx < 0) return;
+  people[idx].contacts = contacts;
+  save();
+}
+function toggleContactEdit() {
+  const panel = document.getElementById('contact-edit-panel');
+  if (!panel) return;
+  const person = people.find(p=>p.id===currentPersonId);
+  const c = getContacts(person);
+  if (panel.style.display === 'none' || !panel.style.display) {
+    panel.style.display = 'block';
+    panel.innerHTML = `
+      <div class="contact-edit-row"><span style="width:24px;text-align:center;">📞</span><input type="text" id="c-phone" placeholder="Phone number" value="${esc(c.phone)}" /></div>
+      <div class="contact-edit-row"><span style="width:24px;text-align:center;">✉️</span><input type="text" id="c-email" placeholder="Email address" value="${esc(c.email)}" /></div>
+      <div class="contact-edit-row"><span style="width:24px;text-align:center;">📍</span><input type="text" id="c-address" placeholder="Address" value="${esc(c.address)}" /></div>
+      <div class="contact-edit-row"><span style="width:24px;text-align:center;">📱</span><input type="text" id="c-social" placeholder="Instagram / Social media" value="${esc(c.social)}" /></div>
+      <button class="btn-small" onclick="saveContactDetails()" style="margin-top:6px;">Save</button>
+      <button class="btn-link" onclick="toggleContactEdit()" style="margin-left:12px;">Cancel</button>
+    `;
+  } else {
+    panel.style.display = 'none';
+  }
+}
+function saveContactDetails() {
+  const contacts = {
+    phone: document.getElementById('c-phone').value.trim(),
+    email: document.getElementById('c-email').value.trim(),
+    address: document.getElementById('c-address').value.trim(),
+    social: document.getElementById('c-social').value.trim(),
+  };
+  saveContacts(currentPersonId, contacts);
+  renderPerson();
+  showToast('Contact details saved');
 }
 
 // Data — loaded from localStorage, falls back to samples
@@ -380,6 +524,38 @@ function renderPerson() {
           :`<input type="date" style="flex:1;padding:6px 10px;font-size:13px;" onchange="setBirthday(this.value)" /><span style="font-size:12px;color:#9e7b5a;font-style:italic;margin-left:6px;">Add birthday</span>`}
       </div>
     </div>
+
+    <hr class="section-divider" />
+    <div class="section-heading">
+      <span>Contact Details</span>
+      <button class="btn-small" onclick="toggleContactEdit()">Edit</button>
+    </div>
+    <div id="contact-edit-panel"></div>
+    ${(()=>{ const c=getContacts(person); const hasAny=c.phone||c.email||c.address||c.social;
+      if(!hasAny) return '<div class="empty-msg" style="padding:8px 0 12px;">No contact details yet. Tap Edit to add.</div>';
+      return [
+        c.phone?`<div class="contact-row"><span class="contact-icon">📞</span><span class="contact-value"><a href="tel:${esc(c.phone)}">${esc(c.phone)}</a></span></div>`:'',
+        c.email?`<div class="contact-row"><span class="contact-icon">✉️</span><span class="contact-value"><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></span></div>`:'',
+        c.address?`<div class="contact-row"><span class="contact-icon">📍</span><span class="contact-value">${esc(c.address)}</span></div>`:'',
+        c.social?`<div class="contact-row"><span class="contact-icon">📱</span><span class="contact-value">${esc(c.social)}</span></div>`:'',
+      ].join('');
+    })()}
+    <hr class="section-divider" />
+    <div class="section-heading">
+      <span>Family Group</span>
+      <button class="btn-small" onclick="openFamilyModal()">Manage</button>
+    </div>
+    ${(()=>{ const g=personFamilyGroup(person.id);
+      if(!g) return '<div class="empty-msg" style="padding:8px 0 12px;">Not assigned to a family group. Tap Manage.</div>';
+      const members = g.memberIds.filter(id=>id!==person.id).map(id=>people.find(p=>p.id===id)).filter(Boolean);
+      return `<span class="family-chip" onclick="openFamilyModal()">🏡 ${esc(g.name)}</span>
+        ${members.length>0?`<div style="margin-top:10px;">${members.map(m=>`
+          <div class="family-member-card" onclick="openPerson(${m.id})">
+            <div><div class="family-member-name">${esc(m.name)}</div>${m.metAt?`<div class="family-member-meta">met at ${esc(m.metAt)}</div>`:''}</div>
+            <span style="margin-left:auto;color:#b89876;font-size:13px;">→</span>
+          </div>`).join('')}</div>`:''}`;
+    })()}
+    <hr class="section-divider" />
     ${pend>0?`<div class="transfer-box"><div class="transfer-msg">📖 ${pend} entr${pend>1?'ies':'y'} waiting to copy to your physical journal</div><button class="btn-small" onclick="markAllTransferred()">Mark all as transferred</button></div>`:''}
     <div class="cat-tabs" style="margin-top:18px;">
       ${CATEGORIES.map(c=>{const n=(person[c.key]||[]).length,a=c.key===activeCategory;return`<button class="cat-tab${a?' active':''}" style="${a?`background:${c.color};border-color:${c.color};`:''}" onclick="setCategory('${c.key}')">${c.icon} ${c.label}${n>0?` (${n})`:''}</button>`;}).join('')}
@@ -578,6 +754,7 @@ function save() {
 
 // Init — runs immediately, no waiting
 loadLocations();
+loadFamilyGroups();
 document.getElementById('form-date').value=today();
 try {
   const saved = localStorage.getItem('pj_people');
