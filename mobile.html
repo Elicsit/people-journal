@@ -1,0 +1,3070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>People Journal — Mobile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf7f2;
+      --bg2: #f0ebe0;
+      --bg3: #e8e0d0;
+      --surface: rgba(255,255,255,0.8);
+      --surface2: rgba(255,255,255,0.55);
+      --surface3: rgba(255,252,245,0.95);
+      --border: rgba(160,130,90,0.18);
+      --border2: rgba(160,130,90,0.32);
+      --accent: #8B4513;
+      --accent2: #A0522D;
+      --accent3: #CD853F;
+      --gold: #B8860B;
+      --reminder: #6b48b8;
+      --text: #1c1208;
+      --text2: #5c4a30;
+      --text3: #9e8060;
+      --text4: #c4a882;
+      --danger: #b03020;
+      --nav-h: 64px;
+      --header-h: 60px;
+      --shadow: 0 2px 16px rgba(100,70,30,0.09);
+      --shadow2: 0 4px 32px rgba(100,70,30,0.14);
+      --modal-overlay: rgba(28,18,8,0.5);
+      --toast-bg: #1c1208;
+      --toast-fg: #faf7f2;
+    }
+    .dark {
+      --bg: #160f08;
+      --bg2: #1e1510;
+      --bg3: #261b12;
+      --surface: rgba(38,27,18,0.95);
+      --surface2: rgba(30,21,12,0.8);
+      --surface3: rgba(42,30,18,0.98);
+      --border: rgba(180,140,90,0.18);
+      --border2: rgba(180,140,90,0.3);
+      --accent: #d4956c;
+      --accent2: #c8825a;
+      --accent3: #e0a870;
+      --gold: #d4a830;
+      --reminder: #9b7de0;
+      --text: #f5ead8;
+      --text2: #c8a878;
+      --text3: #9e7848;
+      --text4: #6e5030;
+      --danger: #e06050;
+      --shadow: 0 2px 16px rgba(0,0,0,0.3);
+      --shadow2: 0 4px 32px rgba(0,0,0,0.4);
+      --modal-overlay: rgba(0,0,0,0.7);
+      --toast-bg: #f5ead8;
+      --toast-fg: #160f08;
+    }
+
+    html, body { height:100%; background:var(--bg); font-family:'Lato',sans-serif; color:var(--text); transition:background .25s,color .25s; }
+    input, textarea, select, button { font-family:inherit; }
+
+    #app {
+      max-width: 480px; margin:0 auto; min-height:100vh;
+      padding-bottom: var(--nav-h);
+      position:relative; background:var(--bg);
+    }
+    /* Mobile only — no wide breakpoints */
+
+    /* ── Bottom Nav ── */
+    #bottom-nav {
+      position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+      width:100%; max-width:480px;
+      height:var(--nav-h);
+      background:var(--surface3);
+      border-top:1px solid var(--border);
+      display:flex; align-items:stretch;
+      z-index:200;
+      box-shadow:0 -2px 20px rgba(100,70,30,0.1);
+    }
+
+    .nav-btn {
+      flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:2px; background:none; border:none; cursor:pointer;
+      color:var(--text3); font-size:9px; font-weight:700; letter-spacing:.3px; text-transform:uppercase;
+      transition:color .15s;
+      position:relative;
+    }
+    .nav-btn .nav-icon { font-size:20px; line-height:1; }
+    .nav-btn.active { color:var(--accent); }
+    .nav-btn.active::after {
+      content:''; position:absolute; top:0; left:20%; right:20%; height:2px;
+      background:var(--accent); border-radius:0 0 3px 3px;
+    }
+    .nav-badge {
+      position:absolute; top:8px; right:calc(50% - 18px);
+      background:var(--accent); color:var(--bg); border-radius:10px;
+      font-size:10px; font-weight:700; padding:1px 5px; min-width:16px; text-align:center;
+      display:none;
+    }
+
+    /* ── Views ── */
+    .view { display:none; } .view.active { display:block; min-height:calc(100vh - var(--nav-h)); }
+    @media (min-width:1024px) { .view.active { min-height:calc(100vh - 64px - var(--nav-h)); } }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding:16px 20px 14px; display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid var(--border); background:var(--bg);
+      position:sticky; top:0; z-index:10;
+      transition:background .25s;
+    }
+    @media (min-width:1024px) { .page-header { padding:18px 28px 14px; } }
+    .page-title { font-family:'Playfair Display',Georgia,serif; font-size:22px; font-weight:700; color:var(--text); }
+    .page-sub { font-size:12px; color:var(--text3); margin-top:1px; font-weight:300; }
+    .btn-icon { background:none; border:none; cursor:pointer; padding:6px; font-size:20px; color:var(--text3); border-radius:8px; }
+    .btn-icon:hover { background:var(--bg2); }
+
+    /* ── Section ── */
+    .section { padding:20px 20px 0; }
+    @media (min-width:1024px) { .section { padding:20px 28px 0; } }
+
+    /* ── Typography ── */
+    .serif { font-family:'Playfair Display',Georgia,serif; }
+    .label {
+      display:block; font-size:10px; letter-spacing:2px; text-transform:uppercase;
+      font-weight:700; color:var(--text3); margin-bottom:8px;
+    }
+    .divider { border:none; border-top:1px solid var(--border); margin:16px 0; }
+    .section-heading {
+      font-size:10px; letter-spacing:2px; text-transform:uppercase; font-weight:700;
+      color:var(--text3); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;
+    }
+    .empty-msg { color:var(--text3); font-size:14px; padding:14px 0; font-style:italic; font-family:'Playfair Display',serif; }
+    .empty-state { text-align:center; padding:48px 20px; color:var(--text3); }
+    .empty-state .empty-icon { font-size:48px; margin-bottom:12px; opacity:.5; }
+    .empty-state p { font-family:'Playfair Display',serif; font-style:italic; font-size:16px; }
+
+    /* ── Inputs ── */
+    .field { margin-bottom:16px; }
+    input[type=text], input[type=date], textarea, select {
+      width:100%; background:var(--surface); border:1px solid var(--border2);
+      border-radius:10px; padding:12px 14px; font-size:15px; color:var(--text);
+      outline:none; transition:border-color .15s, background .25s;
+    }
+    input[type=text]:focus, input[type=date]:focus, textarea:focus, select:focus { border-color:var(--accent); }
+    textarea { resize:none; min-height:120px; line-height:1.7; }
+    select { appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B4513' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 14px center; padding-right:36px;
+    }
+    .dark select {
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4956c' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      background:var(--accent); color:var(--bg); border:none; border-radius:10px;
+      padding:13px 24px; font-size:15px; font-weight:700; cursor:pointer; width:100%;
+      letter-spacing:.3px; transition:background .15s;
+    }
+    .btn:active { background:var(--accent2); }
+    .btn-secondary {
+      background:transparent; color:var(--accent); border:1.5px solid var(--border2);
+      border-radius:10px; padding:11px 24px; font-size:15px; cursor:pointer; width:100%; margin-top:10px;
+    }
+    .btn-ghost { background:none; border:none; color:var(--text3); font-size:13px; cursor:pointer; padding:4px 8px; }
+    .btn-back { background:none; border:none; color:var(--accent); font-size:14px; cursor:pointer; padding:0; font-weight:700; display:flex; align-items:center; gap:4px; }
+    .btn-danger { background:none; border:none; color:var(--danger); font-size:13px; cursor:pointer; padding:0; font-weight:700; }
+    .btn-sm {
+      background:var(--accent); color:var(--bg); border:none; border-radius:7px;
+      padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;
+    }
+    .btn-sm-ghost { background:var(--surface); border:1px solid var(--border2); color:var(--text2); border-radius:7px; padding:6px 14px; font-size:12px; cursor:pointer; white-space:nowrap; }
+    .btn-link { background:none; border:none; color:var(--accent); font-size:12px; cursor:pointer; padding:0; font-weight:700; }
+
+    /* ── Cards ── */
+    .card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:14px; padding:16px 18px; margin-bottom:10px; cursor:pointer;
+      box-shadow:var(--shadow); transition:transform .1s, box-shadow .1s;
+    }
+    .card:active { transform:scale(0.99); }
+    .card-name { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); }
+    .card-meta { font-size:13px; color:var(--text3); margin-top:2px; }
+    .card-date { font-size:11px; color:var(--text4); margin-bottom:2px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
+    .card-preview { margin-top:10px; font-size:13px; color:var(--text2); border-top:1px solid var(--border); padding-top:9px; font-style:italic; font-family:'Playfair Display',serif; line-height:1.5; }
+    .card-row { display:flex; justify-content:space-between; align-items:flex-start; }
+
+    /* ── Chips & Tags ── */
+    .chip { display:inline-flex; align-items:center; gap:5px; background:var(--bg2); border:1px solid var(--border); border-radius:20px; padding:4px 11px; font-size:12px; color:var(--text2); font-weight:700; }
+    .tag { display:inline-block; background:var(--bg2); color:var(--accent); border-radius:20px; padding:2px 10px; font-size:12px; font-weight:700; }
+
+    /* ── Filter Row ── */
+    .filter-row { display:flex; gap:7px; margin-bottom:14px; flex-wrap:wrap; }
+    .filter-btn {
+      background:var(--surface); color:var(--text2); border:1.5px solid var(--border2);
+      border-radius:20px; padding:5px 14px; font-size:12px; cursor:pointer; font-weight:700;
+      transition:all .15s;
+    }
+    .filter-btn.active { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+
+    /* ── Entry Card ── */
+    .entry-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:14px 16px; margin-bottom:9px;
+      transition:background .25s;
+    }
+    .entry-text { font-size:15px; line-height:1.7; margin-bottom:8px; color:var(--text); }
+    .entry-footer { display:flex; justify-content:space-between; align-items:center; }
+    .entry-date { font-size:11px; color:var(--text4); font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
+
+    /* ── Cat Tabs ── */
+    .cat-tabs { display:flex; gap:7px; flex-wrap:wrap; padding-bottom:4px; margin-bottom:14px; }
+    .cat-tab { border-radius:20px; padding:6px 13px; font-size:12px; cursor:pointer; white-space:nowrap; border:1.5px solid var(--border2); background:var(--surface); color:var(--text2); font-weight:700; transition:all .15s; }
+    .cat-tab.active { color:#fff; border-color:transparent; }
+    .cat-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+
+    /* ── Info Rows ── */
+    .info-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; font-size:14px; }
+    .info-icon { font-size:16px; flex-shrink:0; width:22px; text-align:center; }
+    .info-text { color:var(--text2); flex:1; }
+
+    /* ── Toggle ── */
+    .toggle-track { width:44px; height:24px; border-radius:24px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+    .toggle-knob { position:absolute; width:18px; height:18px; background:white; border-radius:50%; top:3px; transition:left .2s; box-shadow:0 1px 4px rgba(0,0,0,0.25); }
+
+    /* ── Inline edit rows ── */
+    .edit-expand { display:none; margin:-2px 0 10px 32px; }
+    .edit-expand-inner { display:flex; gap:8px; align-items:center; }
+
+    /* ── Person name header ── */
+    .person-hero { padding:20px 20px 0; }
+    .person-hero-name { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; line-height:1.2; margin-bottom:6px; }
+    .person-bio { font-size:14px; color:var(--text2); line-height:1.65; font-style:italic; font-family:'Playfair Display',serif; }
+    .person-bio-placeholder { color:var(--text4); font-style:italic; font-size:14px; font-family:'Playfair Display',serif; }
+    .bio-edit-area { width:100%; min-height:72px; resize:none; font-size:14px; margin-top:6px; font-family:'Playfair Display',serif; font-style:italic; line-height:1.65; }
+
+    /* ── Bday badge ── */
+    .bday-badge { background:rgba(184,134,11,0.15); color:var(--gold); border-radius:10px; padding:2px 9px; font-size:11px; font-weight:700; }
+
+    /* ── Transfer box ── */
+    .transfer-box { background:rgba(184,134,11,0.08); border:1px solid rgba(184,134,11,0.25); border-radius:12px; padding:12px 14px; margin-bottom:14px; }
+    .transfer-msg { font-size:13px; color:var(--gold); margin-bottom:10px; font-style:italic; font-family:'Playfair Display',serif; }
+
+    /* ── Contact ── */
+    .contact-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .contact-icon { font-size:16px; flex-shrink:0; width:24px; text-align:center; }
+    .contact-value { flex:1; font-size:14px; color:var(--text); word-break:break-all; }
+    .contact-value a { color:var(--accent); text-decoration:none; }
+    #contact-edit-panel { display:none; background:var(--bg2); border:1px solid var(--border2); border-radius:12px; padding:14px; margin-bottom:14px; }
+
+    /* ── Family ── */
+    .family-card { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); cursor:pointer; }
+    .family-name { font-size:15px; font-weight:700; }
+    .family-rel { font-size:12px; color:var(--text3); }
+
+    /* ── Sync bar ── */
+    .sync-bar { padding:7px 20px; background:var(--bg2); border-bottom:1px solid var(--border); font-size:12px; color:var(--text3); display:flex; justify-content:space-between; align-items:center; font-weight:700; letter-spacing:.3px; }
+    .sync-bar button { background:none; border:none; color:var(--accent); font-size:12px; cursor:pointer; font-weight:700; text-decoration:underline; padding:0; }
+
+    /* ── Toast ── */
+    #toast { position:fixed; bottom:calc(var(--nav-h) + 16px); left:50%; transform:translateX(-50%); background:var(--toast-bg); color:var(--toast-fg); border-radius:24px; padding:10px 20px; font-size:13px; font-weight:700; z-index:300; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .2s; max-width:90vw; }
+    #toast.show { opacity:1; pointer-events:auto; }
+
+    /* ── Modal ── */
+    .modal-bg { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:500; align-items:center; justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal-box { background:var(--bg); border-radius:16px; padding:24px 22px; width:90%; max-width:420px; max-height:84vh; overflow-y:auto; box-shadow:var(--shadow2); }
+    .modal-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:6px; }
+    .modal-sub { font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:16px; }
+    .search-result-row { padding:10px 12px; border-radius:10px; cursor:pointer; font-size:14px; background:var(--surface); border:1px solid var(--border); margin-bottom:5px; font-weight:700; }
+    .search-result-row:hover { border-color:var(--accent); }
+
+    /* ── Home Dashboard ── */
+    .home-hero {
+      padding:24px 20px 20px;
+      background:linear-gradient(160deg, var(--bg) 0%, var(--bg2) 100%);
+      border-bottom:1px solid var(--border);
+    }
+    @media (min-width:1024px) { .home-hero { padding:28px 28px 22px; } }
+    .home-greeting { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; line-height:1.2; color:var(--text); margin-bottom:2px; }
+    .home-sub { font-size:13px; color:var(--text3); font-weight:300; margin-bottom:16px; }
+    .home-stats { display:flex; gap:10px; }
+    .stat-pill { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:8px 14px; flex:1; text-align:center; }
+    .stat-num { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--accent); }
+    .stat-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; font-weight:700; }
+
+    /* ── Birthday strip ── */
+    .bday-strip-section { padding:16px 20px 0; }
+    @media (min-width:1024px) { .bday-strip-section { padding:16px 28px 0; } }
+    .bday-strip-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; font-weight:700; color:var(--text3); margin-bottom:10px; }
+    .bday-strip { display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; -webkit-overflow-scrolling:touch; }
+    .bday-strip::-webkit-scrollbar { display:none; }
+    .bday-pill {
+      flex-shrink:0; background:var(--surface); border:1px solid var(--border);
+      border-radius:12px; padding:10px 13px; cursor:pointer; text-align:center;
+      min-width:80px; transition:border-color .15s;
+    }
+    .bday-pill:hover { border-color:var(--accent); }
+    .bday-pill.today { border-color:var(--gold); background:rgba(184,134,11,0.07); }
+    .bday-pill-name { font-size:12px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px; }
+    .bday-pill-date { font-size:11px; color:var(--text3); margin-top:2px; }
+    .bday-pill-days { font-size:13px; font-weight:700; color:var(--gold); margin-top:1px; }
+
+    /* ── Calendar ── */
+    .cal-header { padding:16px 20px 0; }
+    @media (min-width:1024px) { .cal-header { padding:16px 28px 0; } }
+    .cal-nav { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .cal-month { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); flex:1; }
+    .cal-nav-btn { background:var(--surface); border:1px solid var(--border2); border-radius:8px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:16px; }
+    .cal-day-name { text-align:center; font-size:10px; font-weight:700; color:var(--text3); letter-spacing:1px; padding:4px 0; }
+    .cal-day {
+      aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      border-radius:10px; cursor:pointer; position:relative; transition:background .1s; font-size:14px; font-weight:400; color:var(--text2);
+    }
+    .cal-day:hover { background:var(--bg2); }
+    .cal-day.today { background:var(--accent); color:var(--bg) !important; font-weight:700; }
+    .cal-day.today:hover { background:var(--accent2); }
+    .cal-day.other-month { color:var(--text4); }
+    .cal-day.has-events::after { content:''; position:absolute; bottom:4px; width:4px; height:4px; border-radius:50%; background:var(--accent); }
+    .cal-day.has-personal::after { background:var(--reminder); }
+    .cal-day.has-events.has-personal::after { background:var(--accent); box-shadow:6px 0 0 var(--reminder); }
+    .cal-day.today.has-events::after { background:var(--bg); }
+    .cal-day.today.has-personal::after { background:var(--bg); box-shadow:6px 0 0 rgba(255,255,255,0.7); }
+    .cal-day.selected { background:var(--bg2); border:2px solid var(--accent); }
+    .cal-events-panel { padding:0 20px; }
+    @media (min-width:1024px) { .cal-events-panel { padding:0 28px; } }
+    .cal-event-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:13px 15px; margin-bottom:8px; }
+    .cal-event-name { font-weight:700; font-size:15px; color:var(--text); }
+    .cal-event-meta { font-size:12px; color:var(--text3); margin-top:2px; }
+    .cal-event-note { font-size:13px; color:var(--text2); margin-top:6px; font-style:italic; font-family:'Playfair Display',serif; }
+
+    /* ── Calendar two-column desktop layout ── */
+    .cal-body { display:block; }
+    .cal-left { flex:1; min-width:0; }
+    .cal-right { display:none; }
+    .cal-upcoming-section { padding:0 20px 20px; margin-top:8px; }
+    .cal-upcoming-label { font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center; }
+    .cal-upcoming-item { display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;cursor:pointer;transition:border-color .15s; }
+    .cal-upcoming-item:hover { border-color:var(--accent); }
+    .cal-upcoming-date { flex-shrink:0;text-align:center;width:42px; }
+    .cal-upcoming-day { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--accent);line-height:1; }
+    .cal-upcoming-mon { font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px; }
+    .cal-upcoming-title { font-size:14px;font-weight:700;color:var(--text); }
+    .cal-upcoming-sub { font-size:12px;color:var(--text3);margin-top:1px; }
+    .cal-upcoming-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+
+    @media (min-width:1024px) {
+      .cal-body { display:flex;gap:0;align-items:flex-start; }
+      .cal-left { flex:0 0 420px;border-right:1px solid var(--border); }
+      .cal-right { display:block;flex:1;padding:16px 28px 20px;min-height:400px; }
+      .cal-upcoming-section { padding:0 28px 20px; }
+      .cal-header { padding:16px 28px 0; }
+      .cal-events-panel { padding:0; }
+    }
+
+    /* ── Birthdays two-column desktop ── */
+    .bday-page-section { padding:16px 20px 20px; }
+    @media (min-width:1024px) {
+      .bday-page-section { padding:20px 28px; }
+      #birthdays-list .bday-month-group { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+      #birthdays-list .bday-month-group .card { margin-bottom:0; }
+    }
+
+    /* ── Journal single wide column ── */
+    .journal-grid { }
+    @media (min-width:1024px) {
+      .journal-grid .journal-person-group { margin-bottom:24px; }
+    }
+
+    /* ── Calendar filter tabs ── */
+    .cal-filter-tab { background:none;border:none;padding:10px 16px;font-size:13px;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s; }
+    .cal-filter-tab.active { color:var(--accent);border-bottom-color:var(--accent); }
+
+    /* ── Reminder cards ── */
+    .reminder-card { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s; }
+    .reminder-card:hover { border-color:var(--accent); }
+    .reminder-card-title { font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px; }
+    .reminder-card-meta { font-size:12px;color:var(--text3);font-weight:700; }
+    .reminder-card-milestone { font-size:12px;color:var(--gold);font-weight:700;margin-top:3px; }
+    .reminder-recur-badge { display:inline-block;background:var(--accent);color:var(--bg);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-left:6px;vertical-align:middle; }
+
+    /* ── Upcoming section upcoming items for personal ── */
+    .cal-upcoming-item.personal { border-left:3px solid var(--reminder); }
+
+
+    /* ── Day of week buttons ── */
+    .day-btn { padding:6px 0;border:1.5px solid var(--border2);border-radius:8px;background:var(--bg2);color:var(--text3);font-size:12px;font-weight:700;cursor:pointer;min-width:38px;transition:background .15s,color .15s,border-color .15s; }
+    .day-btn.active { background:var(--accent);color:var(--bg);border-color:var(--accent); }
+        /* ── Life tab items ── */
+    .life-item { display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border); }
+    .life-item:last-child { border-bottom:none; }
+    .life-check { width:24px;height:24px;border-radius:6px;border:2px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s;margin-top:1px; }
+    .life-check:hover { border-color:var(--accent); }
+    .life-check.done { background:var(--accent);border-color:var(--accent); }
+    .life-bell { width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;margin-top:1px; }
+    .life-item-title { font-size:15px;font-weight:700;color:var(--text);line-height:1.3; }
+    .life-item-title.done { text-decoration:line-through;color:var(--text3); }
+    .life-item-meta { font-size:12px;color:var(--text3);margin-top:2px; }
+    .life-item-overdue { font-size:12px;color:var(--danger);font-weight:700;margin-top:2px; }
+
+    /* ── Home stat chips ── */
+    .home-stat-chip { flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center;cursor:pointer;transition:border-color .15s; }
+    .home-stat-chip:hover { border-color:var(--accent); }
+    .home-stat-num { font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--accent);line-height:1; }
+    .home-stat-label { font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-top:3px; }
+    /* ── Nav add button ── */
+    .nav-add-btn { flex:0 0 48px !important; }
+    .nav-add-icon { width:34px;height:34px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:300;line-height:1;transition:transform .15s; }
+    .nav-add-btn:hover .nav-add-icon { transform:scale(1.1); }
+    /* ── Quick-add sheet ── */
+    #quick-add-bg { align-items:flex-end; }
+    .quick-add-btn { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:2px;cursor:pointer;transition:border-color .15s,background .15s;text-align:left;width:100%; }
+    .quick-add-btn:hover { border-color:var(--accent);background:var(--bg2); }
+    .quick-add-label { font-size:15px;font-weight:700;color:var(--text);margin-top:4px; }
+    .quick-add-sub { font-size:11px;color:var(--text3); }
+    /* ── Home upcoming & journal cards ── */
+    .home-upcoming-item { display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:7px; }
+    .home-journal-item { background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:border-color .15s; }
+    .home-journal-item:hover { border-color:var(--accent); }
+    .loc-chip { display:inline-flex; align-items:center; gap:5px; background:var(--bg2); border:1px solid var(--border); border-radius:20px; padding:4px 10px; font-size:12px; color:var(--text2); font-weight:700; }
+
+    /* ── Circle filter panel ── */
+    #circle-filter-panel { display:none; flex-wrap:wrap; gap:6px; margin-top:8px; margin-bottom:14px; padding:10px 14px; background:var(--bg2); border-radius:12px; border:1px solid var(--border); }
+
+    /* ── Form contact row ── */
+    .form-contact-row { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:8px; }
+  </style>
+  <script>window.addEventListener('error',function(e){if(e.message==='Script error.')e.stopImmediatePropagation();});</script>
+  <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="supabaseLoaded()" onerror="sbBar('disconnected')"></script>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── HOME (dashboard) ── -->
+  <div id="view-home" class="view active">
+    <div class="home-hero">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+        <div>
+          <div class="home-greeting" id="home-greeting">Good morning</div>
+          <div class="home-sub" id="home-date-sub"></div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button id="dark-toggle" onclick="toggleDark()" class="btn-icon" title="Toggle dark mode">☀️</button>
+          <button onclick="sbOpen()" class="btn-icon" title="Sync settings">☁️</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <div class="home-stat-chip" onclick="navTo('contacts')">
+          <div class="home-stat-num" id="hs-people">0</div>
+          <div class="home-stat-label">People</div>
+        </div>
+        <div class="home-stat-chip" onclick="navTo('journal')">
+          <div class="home-stat-num" id="hs-entries">0</div>
+          <div class="home-stat-label">Entries</div>
+        </div>
+        <div class="home-stat-chip" onclick="navTo('life')">
+          <div class="home-stat-num" id="hs-tasks">—</div>
+          <div class="home-stat-label">Tasks left</div>
+        </div>
+      </div>
+      <div id="home-progress-wrap" style="margin-top:14px;display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);">Today's Progress</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text2);" id="home-progress-label">0 / 0</div>
+        </div>
+        <div style="height:10px;background:var(--border);border-radius:99px;overflow:hidden;cursor:pointer;" onclick="navTo('life')">
+          <div id="home-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1);"></div>
+        </div>
+        <div id="home-progress-sub" style="font-size:12px;color:var(--text3);margin-top:5px;"></div>
+      </div>
+    </div>
+    <div id="bday-strip-wrap" style="display:none;">
+      <div class="bday-strip-section">
+        <div class="bday-strip-label">🎂 Upcoming Birthdays</div>
+        <div class="bday-strip" id="bday-strip"></div>
+      </div>
+    </div>
+    <div id="home-upcoming-wrap" style="display:none;">
+      <div style="padding:14px 20px 4px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">📆 Up Next</div>
+        <div id="home-upcoming-list"></div>
+        <button class="btn-ghost" style="font-size:12px;margin-top:4px;padding:4px 0;" onclick="navTo('life')">See all in Life →</button>
+      </div>
+    </div>
+    <div id="home-journal-wrap" style="display:none;">
+      <div style="padding:14px 20px 4px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);">📖 Recent Entries</div>
+          <button class="btn-ghost" style="font-size:12px;" onclick="navTo('journal')">All →</button>
+        </div>
+        <div id="home-journal-list"></div>
+      </div>
+    </div>
+    <div style="height:24px;"></div>
+  </div>
+
+  <!-- ── CONTACTS ── -->
+  <div id="view-contacts" class="view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Contacts</div>
+        <div class="home-sub" id="people-count">Your people</div>
+      </div>
+    </div>
+    <div id="sync-bar" class="sync-bar" style="display:none"></div>
+    <div class="section" style="margin-top:0;">
+      <input type="text" id="search-input" placeholder="Search people…" style="margin-bottom:12px;" oninput="renderContacts()" />
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn" id="circles-filter-btn" onclick="toggleCircleFilterPanel()">⬤ Circles</button>
+        <button id="trash-filter-btn" onclick="openTrashModal()" style="display:none;" class="filter-btn">🗑 <span id="trash-badge"></span></button>
+      </div>
+      <div id="circle-filter-panel"></div>
+      <div class="people-grid" id="people-list"></div>
+    </div>
+  </div>
+
+  <!-- ── CALENDAR ── -->
+  <div id="view-calendar" class="view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Calendar</div>
+        <div class="page-sub">Birthdays & reminders</div>
+      </div>
+      <button class="btn-sm" onclick="openAddCalEventModal()">+ Event</button>
+    </div>
+    <div id="sync-bar-cal" class="sync-bar" style="display:none"></div>
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 20px;">
+      <button class="cal-filter-tab active" id="cal-tab-all" onclick="setCalFilter('all')">All</button>
+      <button class="cal-filter-tab" id="cal-tab-people" onclick="setCalFilter('people')">People</button>
+      <button class="cal-filter-tab" id="cal-tab-personal" onclick="setCalFilter('personal')">Personal</button>
+    </div>
+    <!-- Desktop: two-column layout -->
+    <div class="cal-body">
+      <!-- Left: grid -->
+      <div class="cal-left">
+        <div class="cal-header">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+            <div class="cal-month" id="cal-month-label"></div>
+            <button class="cal-nav-btn" onclick="calNext()">›</button>
+            <button class="btn-ghost" onclick="calToday()" style="font-size:12px;font-weight:700;">Today</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <!-- Upcoming section (below grid on mobile, still in left col on desktop) -->
+        <div class="cal-upcoming-section" id="cal-upcoming-section"></div>
+      </div>
+      <!-- Right: selected day events (desktop only) -->
+      <div class="cal-right">
+        <div class="cal-events-panel" id="cal-events-panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BIRTHDAYS ── -->
+  <div id="view-birthdays" class="view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Birthdays</div>
+        <div class="page-sub">Everyone's upcoming</div>
+      </div>
+    </div>
+    <div class="bday-page-section" id="birthdays-list"></div>
+  </div>
+
+  <!-- ── LIFE ── -->
+  <div id="view-life" class="view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Life</div>
+        <div class="page-sub" id="life-page-sub">Your daily tasks &amp; reminders</div>
+      </div>
+      <button class="btn-sm" onclick="openLifeItemModal(null)">+ Add</button>
+    </div>
+    <div id="life-overdue-section" style="display:none;">
+      <div style="padding:12px 20px 0;"><div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px;">⚠ Overdue</div></div>
+      <div id="life-overdue-list" style="padding:0 20px;"></div>
+    </div>
+    <div id="life-reminders-section" style="display:none;">
+      <div style="padding:12px 20px 0;"><div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">🔔 Today's Reminders</div></div>
+      <div id="life-reminders-list" style="padding:0 20px;"></div>
+    </div>
+    <div style="padding:12px 20px 0;"><div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;" id="life-tasks-label">✓ Tasks</div></div>
+    <div id="life-tasks-list" style="padding:0 20px 20px;"></div>
+    <div id="life-completed-section" style="display:none;">
+      <div style="padding:4px 20px 0;border-top:1px solid var(--border);"><div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin:10px 0 8px;">✓ Completed Today</div></div>
+      <div id="life-completed-list" style="padding:0 20px 20px;"></div>
+    </div>
+    <div id="life-upcoming-section" style="display:none;">
+      <div style="padding:4px 20px 0;border-top:1px solid var(--border);"><div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin:10px 0 8px;">📆 Coming Up</div></div>
+      <div id="life-upcoming-list" style="padding:0 20px 20px;"></div>
+    </div>
+  </div>
+
+
+
+  <!-- ── JOURNAL ── -->
+  <div id="view-journal" class="view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Journal List</div>
+        <div class="page-sub">Entries to copy into your physical journal</div>
+      </div>
+    </div>
+    <div class="section">
+      <div id="journal-list" class="journal-grid"></div>
+    </div>
+  </div>
+
+  <!-- ── ADD PERSON ── -->
+  <div id="view-add-person" class="view">
+    <div class="page-header">
+      <button class="btn-back" onclick="navTo('home')">← Back</button>
+      <div class="page-title" style="font-size:18px;">Add Someone</div>
+    </div>
+    <div class="section">
+      <div class="field"><label class="label">Their Name</label><input type="text" id="form-name" placeholder="Full name…" /></div>
+      <div class="field"><label class="label">Where You Met</label><input type="text" id="form-met" placeholder="e.g. Church, Gym, Coffee shop…" /></div>
+      <div class="field"><label class="label">Date Met</label><input type="date" id="form-date" /></div>
+      <div class="field"><label class="label">Birthday <span style="font-size:11px;color:var(--text3);text-transform:none;letter-spacing:0;">(optional)</span></label><input type="date" id="form-birthday" /></div>
+      <div class="divider"></div>
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--text3);margin-bottom:14px;">Contact Details <span style="text-transform:none;letter-spacing:0;font-size:11px;">(optional)</span></div>
+      <div id="form-contacts-list"></div>
+      <button class="btn-secondary" onclick="formAddContact()" style="margin-bottom:12px;padding:9px 14px;font-size:13px;">+ Add contact detail</button>
+      <button class="btn" onclick="addPerson()">Add to Journal</button>
+      <button class="btn-secondary" onclick="navTo('home')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ── PERSON DETAIL ── -->
+  <div id="view-person" class="view">
+    <div class="page-header">
+      <button class="btn-back" onclick="navTo('home')">← People</button>
+      <button class="btn-danger" onclick="confirmDelete()">Remove</button>
+    </div>
+    <div id="person-detail"></div>
+  </div>
+
+  <!-- ── ADD ENTRY ── -->
+  <div id="view-add-entry" class="view">
+    <div class="page-header">
+      <button class="btn-back" onclick="showView('person')">← Back</button>
+      <div class="page-title" style="font-size:18px;">Add Entry</div>
+    </div>
+    <div class="section">
+      <div id="entry-about" style="font-size:13px;color:var(--text3);font-style:italic;font-family:'Playfair Display',serif;margin-bottom:14px;"></div>
+      <div class="field"><label class="label">Category</label><select id="entry-category" onchange="updateEntryPlaceholder()"></select></div>
+      <div class="field"><label class="label">What do you want to remember?</label><textarea id="entry-text"></textarea></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;margin-bottom:14px;">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);">Copy to journal</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">Mark this entry to copy to your physical journal</div>
+        </div>
+        <div id="entry-journal-toggle" onclick="toggleEntryJournal()" class="toggle-track" style="background:var(--border2);">
+          <div id="entry-journal-knob" class="toggle-knob" style="left:3px;"></div>
+        </div>
+      </div>
+      <button class="btn" onclick="addEntry()">Save Entry</button>
+      <button class="btn-secondary" onclick="showView('person')">Cancel</button>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+<!-- ── Bottom Nav ── -->
+<nav id="bottom-nav">
+  <button class="nav-btn active" id="nav-home" onclick="navTo('home')">
+    <span class="nav-icon">🏠</span>
+    <span>Home</span>
+  </button>
+  <button class="nav-btn" id="nav-contacts" onclick="navTo('contacts')">
+    <span class="nav-icon">👥</span>
+    <span>Contacts</span>
+  </button>
+  <button class="nav-btn" id="nav-calendar" onclick="navTo('calendar')">
+    <span class="nav-icon">📅</span>
+    <span>Calendar</span>
+  </button>
+  <button class="nav-btn" id="nav-life" onclick="navTo('life')">
+    <span class="nav-icon">⚡</span>
+    <span>Life</span>
+    <span class="nav-badge" id="life-nav-badge" style="background:var(--danger);"></span>
+  </button>
+  <button class="nav-btn" id="nav-journal" onclick="navTo('journal')">
+    <span class="nav-icon">📖</span>
+    <span>Journal</span>
+    <span class="nav-badge" id="journal-nav-badge"></span>
+  </button>
+  <button class="nav-btn nav-add-btn" id="nav-add" onclick="openQuickAdd()">
+    <span class="nav-add-icon">+</span>
+  </button>
+</nav>
+
+<!-- ── Modals ── -->
+
+<!-- Quick Add bottom sheet -->
+<div id="quick-add-bg" class="modal-bg" onclick="closeQuickAdd()">
+  <div id="quick-add-sheet" onclick="event.stopPropagation()" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--surface3);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + var(--nav-h));z-index:1001;transition:transform .25s ease;">
+    <div style="width:36px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 20px;"></div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;">Add new</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button class="quick-add-btn" onclick="closeQuickAdd();showView('add-person')">
+        <span style="font-size:24px;">👤</span>
+        <span class="quick-add-label">Person</span>
+        <span class="quick-add-sub">Add someone new</span>
+      </button>
+      <button class="quick-add-btn" onclick="closeQuickAdd();openLifeItemModal(null,'task')">
+        <span style="font-size:24px;">✓</span>
+        <span class="quick-add-label">Task</span>
+        <span class="quick-add-sub">To-do item</span>
+      </button>
+      <button class="quick-add-btn" onclick="closeQuickAdd();openLifeItemModal(null,'reminder')">
+        <span style="font-size:24px;">🔔</span>
+        <span class="quick-add-label">Reminder</span>
+        <span class="quick-add-sub">Daily heads-up</span>
+      </button>
+      <button class="quick-add-btn" onclick="closeQuickAdd();openLifeItemModal(null,'event')">
+        <span style="font-size:24px;">📅</span>
+        <span class="quick-add-label">Event</span>
+        <span class="quick-add-sub">Dated occasion</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Sync -->
+<div id="sb-overlay" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">Sync across devices</div>
+    <div class="modal-sub">Connect a free Supabase database so your journal syncs between your iPhone and computer.</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">1. Go to <a href="https://supabase.com" target="_blank" style="color:var(--accent);">supabase.com</a> → New project<br>2. SQL Editor → New query → Run this:</div>
+    <code style="display:block;background:var(--bg2);border-radius:8px;padding:10px 12px;font-size:11px;font-family:monospace;line-height:1.7;white-space:pre;margin-bottom:14px;overflow-x:auto;border:1px solid var(--border);">CREATE TABLE people (
+  id bigint primary key,
+  data jsonb not null,
+  updated_at timestamptz default now()
+);
+ALTER TABLE people ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all" ON people FOR ALL USING (true);
+
+CREATE TABLE settings (
+  key text primary key,
+  value jsonb not null,
+  updated_at timestamptz default now()
+);
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all" ON settings FOR ALL USING (true);</code>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">3. Project Settings → API → copy URL and anon key</div>
+    <div class="field"><label class="label">Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co" /></div>
+    <div class="field"><label class="label">Anon Key</label><input type="text" id="sb-key" placeholder="eyJhbGci…" /></div>
+    <div id="sb-err" style="color:var(--danger);font-size:12px;margin-bottom:10px;display:none;"></div>
+    <button class="btn" onclick="sbConnect()">Connect & Sync</button>
+    <button class="btn-secondary" onclick="sbClose()">Cancel</button>
+    <button class="btn-secondary" style="margin-top:6px;color:var(--danger);border-color:rgba(176,48,32,0.3);" onclick="sbDisconnect()">Disconnect sync</button>
+  </div>
+</div>
+
+<!-- Family modal -->
+<div id="family-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">Family & Relationships</div>
+    <div class="modal-sub" id="family-modal-sub"></div>
+    <div id="family-links-list" style="margin-bottom:12px;"></div>
+    <hr class="divider" style="margin-top:4px;" />
+    <div class="section-heading" style="margin-bottom:8px;">Link a person</div>
+    <input type="text" id="family-search-input" placeholder="Search by name…" oninput="renderFamilySearchResults()" style="margin-bottom:8px;" />
+    <div id="family-search-results" style="margin-bottom:8px;max-height:150px;overflow-y:auto;"></div>
+    <div id="family-selected-person" style="display:none;margin-bottom:8px;padding:8px 10px;background:var(--bg2);border-radius:8px;font-size:14px;color:var(--accent);font-weight:700;"></div>
+    <div id="family-relation-wrap">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px;" id="family-relation-label">Their relation to you</div>
+      <input type="text" id="family-relation-input" placeholder="e.g. Sister, Dad, Wife…" style="margin-bottom:8px;" />
+    </div>
+    <div id="family-reverse-wrap" style="display:none;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px;" id="family-reverse-label">Your relation to them</div>
+      <input type="text" id="family-reverse-input" placeholder="e.g. Brother, Son, Husband…" style="margin-bottom:8px;" />
+    </div>
+    <button class="btn-sm" onclick="addFamilyLink()">+ Add Link</button>
+    <div id="family-add-err" style="color:var(--danger);font-size:12px;margin-top:6px;display:none;"></div>
+    <button class="btn-secondary" onclick="closeFamilyModal()" style="margin-top:14px;">Done</button>
+  </div>
+</div>
+
+<!-- Custom category modal -->
+<div id="custom-cat-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">Custom Categories</div>
+    <div class="modal-sub">Add categories just for this person — like "Favourite Food", "Music", anything you like.</div>
+    <div id="custom-cat-list" style="margin-bottom:4px;"></div>
+    <hr class="divider" />
+    <div class="section-heading" style="margin-bottom:8px;">Add a new category</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+      <input type="text" id="new-cat-icon" placeholder="🍕" style="width:52px;padding:8px;font-size:18px;text-align:center;flex-shrink:0;" maxlength="2" />
+      <input type="text" id="new-cat-name" placeholder="e.g. Favourite Food" style="flex:1;" />
+    </div>
+    <button class="btn-sm" onclick="createCustomCategory()">+ Add Category</button>
+    <div id="custom-cat-err" style="color:var(--danger);font-size:12px;margin-top:8px;display:none;"></div>
+    <button class="btn-secondary" onclick="closeCustomCatModal()" style="margin-top:14px;">Done</button>
+  </div>
+</div>
+
+<!-- Circles modal -->
+<div id="circles-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">Circles</div>
+    <div class="modal-sub" id="circles-modal-sub">Tap a circle to assign or remove this person.</div>
+    <div id="assign-circle-list" style="margin-bottom:12px;"></div>
+    <hr class="divider" style="margin-top:4px;" />
+    <div class="section-heading" style="margin-bottom:8px;">Create a new circle</div>
+    <div style="margin-bottom:10px;"><input type="text" id="new-circle-name" placeholder="e.g. Close Friends, Church..." style="width:100%;" /></div>
+    <div id="circle-color-picker" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;"></div>
+    <button class="btn-sm" onclick="createCircle()">+ Create Circle</button>
+    <div id="circles-modal-err" style="color:var(--danger);font-size:12px;margin-top:6px;display:none;"></div>
+    <button class="btn-secondary" onclick="closeCirclesModal()" style="margin-top:14px;">Done</button>
+  </div>
+</div>
+
+<!-- Recycle Bin modal -->
+<div id="trash-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title">🗑 Recycle Bin</div>
+    <div class="modal-sub">Restore deleted items, or remove them forever.</div>
+    <div id="trash-list" style="margin-bottom:12px;max-height:50vh;overflow-y:auto;"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
+      <button class="btn-danger" style="border:1px solid rgba(176,48,32,0.3);padding:7px 14px;border-radius:8px;" onclick="emptyTrash()">Empty bin</button>
+      <button class="btn-secondary" onclick="closeTrashModal()" style="flex:1;margin-top:0;">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Life item modal -->
+<div id="life-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title" id="life-modal-title">Add Item</div>
+    <div class="field">
+      <label class="label">Type</label>
+      <div style="display:flex;gap:6px;">
+        <button id="life-type-task" class="filter-btn active" onclick="setLifeType('task')" style="flex:1;padding:7px;font-size:12px;">✓ Task</button>
+        <button id="life-type-reminder" class="filter-btn" onclick="setLifeType('reminder')" style="flex:1;padding:7px;font-size:12px;">🔔 Reminder</button>
+        <button id="life-type-event" class="filter-btn" onclick="setLifeType('event')" style="flex:1;padding:7px;font-size:12px;">📅 Event</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Title</label>
+      <input type="text" id="life-title" placeholder="e.g. Go to gym, Anniversary..." />
+    </div>
+    <div class="field" id="life-duedate-wrap">
+      <label class="label" id="life-duedate-label">Date</label>
+      <input type="date" id="life-duedate" />
+    </div>
+    <div class="field">
+      <label class="label">Repeat</label>
+      <select id="life-recur" onchange="onLifeRecurChange()" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-size:14px;font-family:Lato,sans-serif;">
+        <option value="none">No repeat</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="custom-days">Specific days of week</option>
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+    </div>
+    <!-- Day of week picker (shown for weekly / custom-days) -->
+    <div id="life-days-wrap" class="field" style="display:none;">
+      <label class="label">Which days?</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="day-btn" data-day="0" onclick="toggleLifeDay(0)">Sun</button>
+        <button class="day-btn" data-day="1" onclick="toggleLifeDay(1)">Mon</button>
+        <button class="day-btn" data-day="2" onclick="toggleLifeDay(2)">Tue</button>
+        <button class="day-btn" data-day="3" onclick="toggleLifeDay(3)">Wed</button>
+        <button class="day-btn" data-day="4" onclick="toggleLifeDay(4)">Thu</button>
+        <button class="day-btn" data-day="5" onclick="toggleLifeDay(5)">Fri</button>
+        <button class="day-btn" data-day="6" onclick="toggleLifeDay(6)">Sat</button>
+      </div>
+    </div>
+    <!-- Milestone toggle (events, monthly/yearly) -->
+    <div id="life-milestone-wrap" class="field" style="display:none;">
+      <label class="label" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="life-milestone" style="width:16px;height:16px;accent-color:var(--accent);" />
+        Relationship milestone (auto-label "X months/years together")
+      </label>
+    </div>
+    <div class="field">
+      <label class="label">Note <span style="font-size:11px;font-weight:400;color:var(--text3);">(optional)</span></label>
+      <input type="text" id="life-note" placeholder="Any extra detail..." />
+    </div>
+    <div class="field">
+      <label class="label">Link a person <span style="font-size:11px;font-weight:400;color:var(--text3);">(optional)</span></label>
+      <input type="text" id="life-person-search" placeholder="Search by name..." oninput="renderLifePersonResults()" />
+      <div id="life-person-results" style="margin-top:6px;max-height:120px;overflow-y:auto;"></div>
+      <div id="life-person-chosen" style="display:none;margin-top:6px;padding:7px 10px;background:var(--bg2);border-radius:8px;font-size:14px;color:var(--accent);font-weight:700;"></div>
+    </div>
+    <div id="life-err" style="color:var(--danger);font-size:12px;margin-bottom:10px;display:none;"></div>
+    <button class="btn" onclick="saveLifeItem()">Save</button>
+    <button class="btn-secondary" onclick="closeLifeModal()">Cancel</button>
+    <button id="life-delete-btn" class="btn-danger" style="display:none;margin-top:8px;" onclick="deleteLifeItem()">Delete</button>
+  </div>
+</div>
+
+
+<!-- Add Calendar Event modal -->
+<div id="cal-event-modal-bg" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-title" id="cal-event-modal-title">Add Event</div>
+    <div class="field">
+      <label class="label">People</label>
+      <div id="cal-event-chosen-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;min-height:0;"></div>
+      <input type="text" id="cal-event-person-search" placeholder="Search and add people…" oninput="renderCalPersonResults()" />
+      <div id="cal-event-person-results" style="margin-top:6px;max-height:140px;overflow-y:auto;"></div>
+    </div>
+    <div class="field"><label class="label">Date</label><input type="date" id="cal-event-date" /></div>
+    <div class="field"><label class="label">Note <span style="font-size:11px;font-weight:400;color:var(--text3);">(optional)</span></label><input type="text" id="cal-event-note" placeholder="e.g. Her recital, his graduation…" /></div>
+    <div id="cal-event-err" style="color:var(--danger);font-size:12px;margin-bottom:10px;display:none;"></div>
+    <button class="btn" onclick="saveCalEvent()">Save Event</button>
+    <button class="btn-secondary" onclick="closeCalEventModal()">Cancel</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>
+// ── Dark mode ─────────────────────────────────────────────────────────────────
+function initDark() {
+  const saved = localStorage.getItem('pj_dark');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = saved !== null ? saved === '1' : prefersDark;
+  document.documentElement.classList.toggle('dark', isDark);
+  const btn = document.getElementById('dark-toggle');
+  if(btn) btn.textContent = isDark ? '🌙' : '☀️';
+}
+function toggleDark() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('pj_dark', isDark ? '1' : '0');
+  const btn = document.getElementById('dark-toggle');
+  if(btn) btn.textContent = isDark ? '🌙' : '☀️';
+}
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const CATEGORIES = [
+  { key:'notes',    label:'Notes',     icon:'📝', color:'#8B6914' },
+  { key:'likes',    label:'Likes',     icon:'❤️',  color:'#8B3A3A' },
+  { key:'dislikes', label:'Dislikes',  icon:'👎',  color:'#5a5a8a' },
+  { key:'family',   label:'Family',    icon:'🏡',  color:'#5a7a3a' },
+  { key:'memories', label:'Memories',  icon:'✨',  color:'#6a4a8a' },
+];
+const CUSTOM_COLORS = ['#b87ba0','#6b8cb8','#7ab899','#b8a06b','#8b7ab8','#b8706b','#6b9eb8','#a0b86b'];
+const PLACEHOLDERS = {
+  notes:'Something they told you, an important detail…',
+  likes:'Things they enjoy, hobbies, favourites…',
+  dislikes:'Things they avoid or dislike…',
+  family:'Family members, relationships, background…',
+  memories:'A shared moment, story, or experience…',
+};
+
+function allCatsForPerson(person) {
+  const custom = (person.customCategories || []).map(c => ({
+    key: 'custom_'+c.id, label: c.label, icon: c.icon || '📌', color: c.color || '#b87ba0', isCustom: true, customId: c.id
+  }));
+  return [...CATEGORIES, ...custom];
+}
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let people = [];
+let currentPersonId = null;
+let activeCategory = 'notes';
+let currentFilter = 'all';
+let currentCircleFilter = new Set();
+let calYear, calMonth, calSelectedDate;
+let calEvents = []; // [{id, personIds, date:'YYYY-MM-DD', note}]
+let reminders = []; // kept for calendar backward compat — will be empty going forward
+let _calFilter = 'all'; // 'all' | 'people' | 'personal'
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function emptyPerson() { const p={}; CATEGORIES.forEach(c=>p[c.key]=[]); return p; }
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) { if(!d)return''; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function fmtDateShort(d) { if(!d)return''; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function fmtBday(d) { if(!d)return''; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric'}); }
+function upcomingBday(b) {
+  if(!b)return null;
+  const now=new Date(); now.setHours(0,0,0,0);
+  const bd=new Date(b+'T00:00:00');
+  const next=new Date(now.getFullYear(),bd.getMonth(),bd.getDate());
+  if(next<now)next.setFullYear(now.getFullYear()+1);
+  const diff=Math.round((next-now)/86400000);
+  if(diff===0)return'🎂 Birthday today!';
+  if(diff===1)return'🎂 Birthday tomorrow!';
+  if(diff<=30)return`🎂 Birthday in ${diff} days`;
+  return null;
+}
+function bdayDaysUntil(b) {
+  if(!b) return 999;
+  const now=new Date(); now.setHours(0,0,0,0);
+  const bd=new Date(b+'T00:00:00');
+  const next=new Date(now.getFullYear(),bd.getMonth(),bd.getDate());
+  if(next<now) next.setFullYear(now.getFullYear()+1);
+  return Math.round((next-now)/86400000);
+}
+function totalPending(p) {
+  return allCatsForPerson(p).reduce((a,c)=>a+(p[c.key]||[]).filter(e=>e.transferred).length,0);
+}
+function totalEntries(p) {
+  return allCatsForPerson(p).reduce((a,c)=>a+(p[c.key]||[]).length,0);
+}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function greeting() {
+  const h=new Date().getHours();
+  if(h<12) return'Good morning';
+  if(h<17) return'Good afternoon';
+  return'Good evening';
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const el=document.getElementById('toast');
+  el.innerHTML=esc(msg); el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}
+function showToastUndo(msg) {
+  const el=document.getElementById('toast');
+  el.innerHTML=msg+` <button onclick="undoDeleteCategory()" style="background:none;border:none;color:var(--accent3);font-size:13px;cursor:pointer;padding:0;margin-left:4px;font-family:inherit;font-weight:700;">Undo</button>`;
+  el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),10000);
+}
+function showToastWithUndo(msg, undoFn) {
+  const el=document.getElementById('toast');
+  el.innerHTML=esc(msg)+` <button onclick="journalUndo()" style="background:none;border:none;color:var(--accent3);font-size:13px;cursor:pointer;padding:0;margin-left:4px;font-family:inherit;font-weight:700;">Undo</button>`;
+  el.classList.add('show');
+  window._journalUndoFn=undoFn;
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>{el.classList.remove('show');window._journalUndoFn=null;},8000);
+}
+function journalUndo() {
+  if(window._journalUndoFn){window._journalUndoFn();window._journalUndoFn=null;}
+  document.getElementById('toast').classList.remove('show');
+}
+
+// ── Contact helpers ────────────────────────────────────────────────────────────
+const CONTACT_TYPES = [
+  { type:'phone',   icon:'📞', label:'Phone',       href: v=>'tel:'+v },
+  { type:'email',   icon:'✉️',  label:'Email',       href: v=>'mailto:'+v },
+  { type:'address', icon:'📍', label:'Address',     href: null },
+  { type:'social',  icon:'📱', label:'Social Media',href: null },
+];
+const CONTACT_LABELS = {
+  phone:['Mobile','Home','Work','Other'], email:['Personal','Work','Other'],
+  address:['Home','Work','Other'], social:['Instagram','Facebook','Twitter/X','LinkedIn','Other'],
+};
+function getContacts(person) {
+  if(!person.contacts) return [];
+  if(Array.isArray(person.contacts)) return person.contacts;
+  const o=person.contacts, arr=[];
+  if(o.phone)   arr.push({id:1,type:'phone',  label:'Mobile',   value:o.phone});
+  if(o.email)   arr.push({id:2,type:'email',  label:'Personal', value:o.email});
+  if(o.address) arr.push({id:3,type:'address',label:'Home',     value:o.address});
+  if(o.social)  arr.push({id:4,type:'social', label:'Instagram',value:o.social});
+  return arr;
+}
+window._formContacts = [];
+function renderFormContacts() {
+  const list=document.getElementById('form-contacts-list'); if(!list)return;
+  list.innerHTML=(window._formContacts||[]).map((c,i)=>{
+    const ct=CONTACT_TYPES.find(x=>x.type===c.type)||CONTACT_TYPES[0];
+    const labels=CONTACT_LABELS[c.type]||['Other'];
+    return `<div class="form-contact-row">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <span style="font-size:15px;">${ct.icon}</span>
+        <select onchange="updateFormContact(${i},'type',this.value)" style="flex:1;padding:6px 10px;font-size:13px;">
+          ${CONTACT_TYPES.map(x=>`<option value="${x.type}"${c.type===x.type?' selected':''}>${x.label}</option>`).join('')}
+        </select>
+        <button class="btn-link" style="color:var(--danger);font-size:18px;" onclick="removeFormContact(${i})">×</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <select onchange="updateFormContact(${i},'label',this.value)" style="width:110px;padding:6px 8px;font-size:13px;">
+          ${labels.map(l=>`<option value="${l}"${c.label===l?' selected':''}>${l}</option>`).join('')}
+        </select>
+        <input type="text" value="${esc(c.value)}" placeholder="Enter ${ct.label.toLowerCase()}…" oninput="updateFormContact(${i},'value',this.value)" style="flex:1;padding:6px 10px;font-size:14px;" />
+      </div>
+    </div>`;
+  }).join('');
+}
+function formAddContact() { window._formContacts.push({id:Date.now(),type:'phone',label:'Mobile',value:''}); renderFormContacts(); }
+function updateFormContact(i,field,val) {
+  if(!window._formContacts[i])return;
+  window._formContacts[i][field]=val;
+  if(field==='type'){window._formContacts[i].label=(CONTACT_LABELS[val]||['Other'])[0];renderFormContacts();}
+}
+function removeFormContact(i) { window._formContacts.splice(i,1); renderFormContacts(); }
+function readFormContacts() { return (window._formContacts||[]).filter(c=>c.value.trim()).map(c=>({...c,value:c.value.trim()})); }
+
+let _editContacts=[];
+function toggleContactEdit() {
+  const panel=document.getElementById('contact-edit-panel'); if(!panel)return;
+  if(panel.style.display==='block'){panel.style.display='none';return;}
+  const person=people.find(p=>p.id===currentPersonId);
+  _editContacts=JSON.parse(JSON.stringify(getContacts(person)));
+  panel.style.display='block'; renderContactEditPanel();
+}
+function renderContactEditPanel() {
+  const panel=document.getElementById('contact-edit-panel'); if(!panel)return;
+  panel.innerHTML=`<div id="contact-edit-rows">
+    ${_editContacts.map((c,i)=>{
+      const ct=CONTACT_TYPES.find(x=>x.type===c.type)||CONTACT_TYPES[0];
+      const labels=CONTACT_LABELS[c.type]||['Other'];
+      return `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+        <div style="flex:1;">
+          <div style="display:flex;gap:6px;margin-bottom:5px;">
+            <span style="font-size:15px;padding-top:6px;">${ct.icon}</span>
+            <select onchange="updateEditContact(${i},'type',this.value)" style="flex:1;padding:5px 8px;font-size:12px;">
+              ${CONTACT_TYPES.map(x=>`<option value="${x.type}"${c.type===x.type?' selected':''}>${x.label}</option>`).join('')}
+            </select>
+            <select onchange="updateEditContact(${i},'label',this.value)" style="width:100px;padding:5px 6px;font-size:12px;">
+              ${labels.map(l=>`<option value="${l}"${c.label===l?' selected':''}>${l}</option>`).join('')}
+            </select>
+          </div>
+          <input type="text" value="${esc(c.value)}" oninput="updateEditContact(${i},'value',this.value)" style="width:100%;padding:7px 10px;font-size:14px;" />
+        </div>
+        <button class="btn-link" style="color:var(--danger);font-size:20px;padding-top:4px;" onclick="removeEditContact(${i})">×</button>
+      </div>`;
+    }).join('')}
+  </div>
+  <button class="btn-link" onclick="addEditContact()" style="margin-bottom:10px;">+ Add another</button><br/>
+  <button class="btn-sm" onclick="saveContactDetails()" style="margin-top:4px;">Save</button>
+  <button class="btn-ghost" onclick="toggleContactEdit()" style="margin-left:10px;">Cancel</button>`;
+}
+function addEditContact() { _editContacts.push({id:Date.now(),type:'phone',label:'Mobile',value:''}); renderContactEditPanel(); }
+function updateEditContact(i,field,val) {
+  if(!_editContacts[i])return;
+  _editContacts[i][field]=val;
+  if(field==='type'){_editContacts[i].label=(CONTACT_LABELS[val]||['Other'])[0];renderContactEditPanel();}
+}
+function removeEditContact(i) { _editContacts.splice(i,1); renderContactEditPanel(); }
+function saveContactDetails() {
+  const idx=people.findIndex(p=>p.id===currentPersonId); if(idx<0)return;
+  people[idx].contacts=_editContacts.filter(c=>c.value.trim()).map(c=>({...c,value:c.value.trim()}));
+  save(); renderPerson(); showToast('Contact details saved');
+}
+
+// ── Family ─────────────────────────────────────────────────────────────────────
+let _familySelectedId = null;
+function openFamilyModal() {
+  const person=people.find(p=>p.id===currentPersonId);
+  document.getElementById('family-modal-sub').textContent=`Linked people for ${person?person.name:''}`;
+  document.getElementById('family-search-input').value='';
+  document.getElementById('family-search-results').innerHTML='';
+  document.getElementById('family-relation-input').value='';
+  document.getElementById('family-reverse-input').value='';
+  document.getElementById('family-add-err').style.display='none';
+  document.getElementById('family-reverse-wrap').style.display='none';
+  const relLabel=document.getElementById('family-relation-label');
+  if(relLabel) relLabel.textContent='Their relation to you';
+  _familySelectedId=null;
+  document.getElementById('family-selected-person').style.display='none';
+  renderFamilyLinksList();
+  document.getElementById('family-modal-bg').classList.add('open');
+}
+function closeFamilyModal() { document.getElementById('family-modal-bg').classList.remove('open'); renderPerson(); }
+function renderFamilySearchResults() {
+  const q=document.getElementById('family-search-input').value.trim().toLowerCase();
+  const container=document.getElementById('family-search-results');
+  if(!q){container.innerHTML='';return;}
+  const existing=(people.find(p=>p.id===currentPersonId)?.familyLinks||[]).map(l=>l.linkedId);
+  const results=people.filter(p=>p.id!==currentPersonId&&!existing.includes(p.id)&&p.name.toLowerCase().includes(q));
+  if(!results.length){container.innerHTML='<div style="font-size:13px;color:var(--text3);padding:6px 0;font-style:italic;">No one found…</div>';return;}
+  container.innerHTML=results.map(p=>`<div class="search-result-row" onclick="selectFamilyPerson(${p.id})">${esc(p.name)}</div>`).join('');
+}
+function selectFamilyPerson(id) {
+  _familySelectedId=id;
+  const p=people.find(x=>x.id===id);
+  const personA=people.find(x=>x.id===currentPersonId);
+  const el=document.getElementById('family-selected-person');
+  el.textContent='✓ Selected: '+(p?p.name:'');
+  el.style.display='block';
+  document.getElementById('family-search-input').value='';
+  document.getElementById('family-search-results').innerHTML='';
+  // Update labels with actual names
+  const relLabel=document.getElementById('family-relation-label');
+  const revLabel=document.getElementById('family-reverse-label');
+  if(relLabel&&p) relLabel.textContent=`${p.name}'s relation to ${personA?personA.name:'you'}`;
+  if(revLabel&&personA&&p) revLabel.textContent=`${personA.name}'s relation to ${p.name}`;
+  // Show reverse input
+  const revWrap=document.getElementById('family-reverse-wrap');
+  if(revWrap) revWrap.style.display='block';
+  document.getElementById('family-relation-input').focus();
+}
+function addFamilyLink() {
+  const err=document.getElementById('family-add-err'); err.style.display='none';
+  const relation=document.getElementById('family-relation-input').value.trim();
+  const reverseRelation=document.getElementById('family-reverse-input').value.trim();
+  if(!_familySelectedId){err.textContent='Please select a person first.';err.style.display='block';return;}
+  if(!relation){err.textContent='Please enter their relation.';err.style.display='block';document.getElementById('family-relation-input').focus();return;}
+  const personA=people.find(p=>p.id===currentPersonId);
+  const personB=people.find(p=>p.id===_familySelectedId);
+  if(!personA||!personB)return;
+  if(!personA.familyLinks)personA.familyLinks=[];
+  if(!personB.familyLinks)personB.familyLinks=[];
+  personA.familyLinks.push({linkedId:personB.id, relation});
+  personB.familyLinks.push({linkedId:personA.id, relation:reverseRelation||`${relation} of ${personA.name}`});
+  save();
+  _familySelectedId=null;
+  document.getElementById('family-selected-person').style.display='none';
+  document.getElementById('family-relation-input').value='';
+  document.getElementById('family-reverse-input').value='';
+  document.getElementById('family-reverse-wrap').style.display='none';
+  const relLabel=document.getElementById('family-relation-label');
+  if(relLabel) relLabel.textContent='Their relation to you';
+  renderFamilyLinksList();
+  showToast(`Linked ${personB.name} as ${relation}`);
+}
+function removeFamilyLink(linkedId) {
+  const a=people.find(p=>p.id===currentPersonId);
+  const b=people.find(p=>p.id===linkedId);
+  if(a)a.familyLinks=(a.familyLinks||[]).filter(l=>l.linkedId!==linkedId);
+  if(b)b.familyLinks=(b.familyLinks||[]).filter(l=>l.linkedId!==currentPersonId);
+  save(); renderFamilyLinksList(); showToast('Link removed');
+}
+function renderFamilyLinksList() {
+  const container=document.getElementById('family-links-list'); if(!container)return;
+  const person=people.find(p=>p.id===currentPersonId);
+  const links=person?.familyLinks||[];
+  if(!links.length){container.innerHTML='<div style="color:var(--text3);font-style:italic;font-size:13px;margin-bottom:10px;">No family or relationships linked yet.</div>';return;}
+  container.innerHTML=links.map((l,idx)=>{
+    const linked=people.find(p=>p.id===l.linkedId);
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">
+      <div style="cursor:pointer;flex:1;" onclick="closeFamilyModal();openPerson(${l.linkedId})">
+        <div style="font-size:15px;font-weight:700;">${linked?esc(linked.name):'Unknown'}</div>
+        <div style="font-size:12px;color:var(--text3);">${esc(l.relation)}</div>
+      </div>
+      <button style="background:none;border:none;color:var(--danger);font-size:13px;cursor:pointer;padding:4px 8px;font-weight:700;" onclick="removeFamilyLink(${l.linkedId})">Remove</button>
+    </div>`;
+  }).join('');
+}
+
+// ── Custom Categories ──────────────────────────────────────────────────────────
+let _undoTimer=null, _pendingDeletes=[];
+function openCustomCatModal() { renderCustomCatList(); document.getElementById('custom-cat-modal-bg').classList.add('open'); }
+function closeCustomCatModal() { document.getElementById('custom-cat-modal-bg').classList.remove('open'); renderPerson(); }
+function renderCustomCatList() {
+  const container=document.getElementById('custom-cat-list'); if(!container)return;
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  const cats=person.customCategories||[];
+  if(!cats.length){container.innerHTML='<div style="color:var(--text3);font-size:13px;margin-bottom:10px;font-style:italic;">No custom categories yet.</div>';return;}
+  container.innerHTML=cats.map((c,idx)=>{
+    const count=(person['custom_'+c.id]||[]).length;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">${esc(c.icon||'📌')}</span>
+        <div>
+          <div style="font-size:15px;font-weight:700;">${esc(c.label)}</div>
+          <div style="font-size:12px;color:var(--text3);">${count} entr${count===1?'y':'ies'}</div>
+        </div>
+      </div>
+      <button style="background:var(--danger);color:white;border:none;border-radius:7px;padding:7px 13px;font-size:13px;cursor:pointer;font-weight:700;" onclick="deleteCustomCategory(${idx})">Delete</button>
+    </div>`;
+  }).join('');
+}
+function createCustomCategory() {
+  const nameInput=document.getElementById('new-cat-name');
+  const iconInput=document.getElementById('new-cat-icon');
+  const err=document.getElementById('custom-cat-err'); err.style.display='none';
+  const name=nameInput.value.trim();
+  if(!name){nameInput.focus();return;}
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  if(!person.customCategories)person.customCategories=[];
+  if(person.customCategories.find(c=>c.label.toLowerCase()===name.toLowerCase())){err.textContent='Already exists.';err.style.display='block';return;}
+  const id=Date.now();
+  person.customCategories.push({id,label:name,icon:iconInput.value.trim()||'📌',color:CUSTOM_COLORS[person.customCategories.length%CUSTOM_COLORS.length]});
+  person['custom_'+id]=[];
+  save(); nameInput.value=''; iconInput.value='';
+  renderCustomCatList(); showToast('Category added');
+}
+function deleteCustomCategory(idx) {
+  const person=people.find(p=>p.id===currentPersonId); if(!person||!person.customCategories)return;
+  const cat=person.customCategories[idx]; if(!cat)return;
+  _pendingDeletes.push({personId:currentPersonId,catId:cat.id,catData:{...cat},entries:JSON.parse(JSON.stringify(person['custom_'+cat.id]||[]))});
+  person.customCategories.splice(idx,1);
+  delete person['custom_'+cat.id];
+  save(); renderCustomCatList();
+  clearTimeout(_undoTimer);
+  const count=_pendingDeletes.length;
+  const label=_pendingDeletes[_pendingDeletes.length-1].catData.label;
+  showToastUndo(count===1?`"${label}" deleted — `:`${count} categories deleted — `);
+  _undoTimer=setTimeout(()=>{_pendingDeletes=[];document.getElementById('toast').classList.remove('show');},10000);
+}
+function undoDeleteCategory() {
+  if(!_pendingDeletes.length)return;
+  clearTimeout(_undoTimer);
+  const {personId,catId,catData,entries}=_pendingDeletes.pop();
+  const person=people.find(p=>p.id===personId);
+  if(person){
+    if(!person.customCategories)person.customCategories=[];
+    person.customCategories.push(catData);
+    person['custom_'+catId]=entries;
+    save(); renderCustomCatList();
+  }
+  if(_pendingDeletes.length>0){
+    const count=_pendingDeletes.length;
+    const label=_pendingDeletes[_pendingDeletes.length-1].catData.label;
+    showToastUndo(count===1?`"${label}" deleted — `:`${count} categories deleted — `);
+    _undoTimer=setTimeout(()=>{_pendingDeletes=[];document.getElementById('toast').classList.remove('show');},10000);
+  } else {
+    showToast(`"${catData.label}" restored ✓`);
+  }
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────────
+let _currentNav = 'home';
+function navTo(name) {
+  _currentNav = name;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const nb = document.getElementById('nav-'+name);
+  if(nb) nb.classList.add('active');
+  showView(name);
+}
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='home') renderHome();
+  if(name==='contacts') renderContacts();
+  if(name==='journal') renderJournal();
+  if(name==='calendar') renderCalendar();
+  if(name==='birthdays') renderBirthdays();
+  if(name==='life') renderLife();
+  if(name==='person') renderPerson();
+  if(name==='add-person') {
+    document.getElementById('form-name').value='';
+    document.getElementById('form-met').value='';
+    document.getElementById('form-date').value=today();
+    document.getElementById('form-birthday').value='';
+    window._formContacts=[]; renderFormContacts();
+    setTimeout(()=>document.getElementById('form-name').focus(),150);
+  }
+  if(name==='add-entry') {
+    const p=people.find(x=>x.id===currentPersonId);
+    document.getElementById('entry-about').textContent=p?'About '+p.name:'';
+    const cats=p?allCatsForPerson(p):CATEGORIES;
+    const sel=document.getElementById('entry-category');
+    sel.innerHTML=cats.map(c=>`<option value="${c.key}">${c.icon} ${c.label}</option>`).join('');
+    sel.value=activeCategory;
+    document.getElementById('entry-text').value='';
+    _entryJournalOn = p?.journalDefault || false;
+    const tog=document.getElementById('entry-journal-toggle');
+    const knob=document.getElementById('entry-journal-knob');
+    if(tog) tog.style.background=_entryJournalOn?'var(--accent)':'var(--border2)';
+    if(knob) knob.style.left=_entryJournalOn?'23px':'3px';
+    updateEntryPlaceholder();
+    setTimeout(()=>document.getElementById('entry-text').focus(),150);
+  }
+}
+
+function setFilter(btn,f) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter=f;
+  currentCircleFilter=new Set();
+  const panel=document.getElementById('circle-filter-panel');
+  if(panel) panel.style.display='none';
+  renderHome();
+}
+function toggleCircleFilterPanel() {
+  const panel=document.getElementById('circle-filter-panel');
+  const btn=document.getElementById('circles-filter-btn');
+  const isOpen=panel.style.display==='flex';
+  if(isOpen&&currentCircleFilter.size===0){panel.style.display='none';btn.classList.remove('active');}
+  else{panel.style.display='flex';btn.classList.add('active');renderCircleFilterPanel();}
+}
+function setCircleFilter(id) {
+  if(currentCircleFilter.has(id)) currentCircleFilter.delete(id);
+  else currentCircleFilter.add(id);
+  renderCircleFilterPanel(); renderHome();
+}
+function renderCircleFilterPanel() {
+  const panel=document.getElementById('circle-filter-panel'); if(!panel)return;
+  if(!circles.length){panel.innerHTML='<span style="font-size:13px;color:var(--text3);font-style:italic;">No circles yet — create some from a person\'s profile.</span>';return;}
+  panel.innerHTML=circles.map(c=>{
+    const active=currentCircleFilter.has(c.id);
+    const count=people.filter(p=>(p.circleIds||[]).includes(c.id)).length;
+    return `<button onclick="setCircleFilter(${c.id})" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:2px solid ${c.color};background:${active?c.color:'transparent'};color:${active?'#fff':c.color};font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;">
+      <span style="width:7px;height:7px;border-radius:50%;background:${active?'rgba(255,255,255,0.8)':c.color};display:inline-block;flex-shrink:0;"></span>
+      ${esc(c.name)}<span style="opacity:.7;font-size:11px;margin-left:2px;">(${count})</span>
+    </button>`;
+  }).join('');
+}
+
+// ── Home ───────────────────────────────────────────────────────────────────────
+function renderHome() {
+  updateJournalBadge();
+  updateLifeBadge();
+  renderHomeProgress();
+  // Greeting
+  const g=document.getElementById('home-greeting');
+  if(g) g.textContent=greeting();
+  const ds=document.getElementById('home-date-sub');
+  if(ds){
+    const now=new Date();
+    ds.textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  }
+  // Stats chips
+  const totalE=people.reduce((a,p)=>a+totalEntries(p),0);
+  const {total:lt,done:ld}=_getLifeProgress();
+  const el=document.getElementById('hs-people'); if(el) el.textContent=people.length;
+  const ee=document.getElementById('hs-entries'); if(ee) ee.textContent=totalE;
+  const etl=document.getElementById('hs-tasks'); if(etl) etl.textContent=lt>0?(lt-ld):'—';
+  // Birthday strip
+  const bdayWrap=document.getElementById('bday-strip-wrap');
+  const bdayStrip=document.getElementById('bday-strip');
+  const bdayUpcoming=people.filter(p=>p.birthday&&bdayDaysUntil(p.birthday)<=30).sort((a,b)=>bdayDaysUntil(a.birthday)-bdayDaysUntil(b.birthday)).slice(0,8);
+  if(bdayUpcoming.length&&bdayWrap&&bdayStrip){
+    bdayWrap.style.display='';
+    bdayStrip.innerHTML=bdayUpcoming.map(p=>{
+      const days=bdayDaysUntil(p.birthday);
+      const isToday=days===0;
+      return `<div class="bday-pill${isToday?' today':''}" onclick="openPerson(${p.id})">
+        <div class="bday-pill-name">${esc(p.name.split(' ')[0])}</div>
+        <div class="bday-pill-date">${fmtDateShort(p.birthday.replace(/\d{4}/,new Date().getFullYear()))}</div>
+        <div class="bday-pill-days">${isToday?'Today!':days===1?'Tmrw':days+'d'}</div>
+      </div>`;
+    }).join('');
+  } else if(bdayWrap) { bdayWrap.style.display='none'; }
+  // Upcoming tasks (overdue + today + next 5 days)
+  const todayStr=today();
+  const in5=new Date(todayStr+'T00:00:00'); in5.setDate(in5.getDate()+5);
+  const in5Str=in5.toISOString().slice(0,10);
+  const upcomingTasks=[];
+  lifeItems.forEach(item=>{
+    if(item.type==='reminder') return;
+    if(_isTodayCompleted(item)) return;
+    // Overdue
+    if(_isOverdue(item)){ upcomingTasks.push({item,date:item.dueDate,label:'Overdue',danger:true}); return; }
+    // Due today
+    if(_itemAppliesToday(item)){ upcomingTasks.push({item,date:todayStr,label:'Today',danger:false}); return; }
+    // Future within 5 days
+    if(!item.recur||item.recur==='none'){
+      if(item.dueDate&&item.dueDate>todayStr&&item.dueDate<=in5Str)
+        upcomingTasks.push({item,date:item.dueDate,label:fmtDate(item.dueDate),danger:false});
+    } else {
+      const inst=_getUpcomingInstances(item,1);
+      if(inst.length&&inst[0]<=in5Str)
+        upcomingTasks.push({item,date:inst[0],label:fmtDate(inst[0]),danger:false});
+    }
+  });
+  upcomingTasks.sort((a,b)=>a.date>b.date?1:a.date<b.date?-1:0);
+  const upWrap=document.getElementById('home-upcoming-wrap');
+  const upList=document.getElementById('home-upcoming-list');
+  if(upWrap&&upList){
+    if(upcomingTasks.length){
+      upWrap.style.display='';
+      const checkSvg='<svg width="13" height="13" viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      upList.innerHTML=upcomingTasks.slice(0,6).map(({item,label,danger})=>{
+        const done=_isTodayCompleted(item);
+        const person=item.personId?people.find(p=>p.id===item.personId):null;
+        return `<div class="home-upcoming-item">
+          <div class="life-check${done?' done':''}" onclick="toggleLifeTask('${item.id}');renderHome();">${done?checkSvg:''}</div>
+          <div style="flex:1;min-width:0;" onclick="openLifeItemModal('${item.id}')">
+            <div style="font-size:14px;font-weight:700;color:${done?'var(--text3)':'var(--text)'};${done?'text-decoration:line-through;':''}">${esc(item.title)}</div>
+            ${person?`<div style="font-size:11px;color:var(--text3);">${esc(person.name)}</div>`:''}
+          </div>
+          <div style="font-size:11px;font-weight:700;color:${danger?'var(--danger)':'var(--text3)'};flex-shrink:0;">${label}</div>
+        </div>`;
+      }).join('');
+    } else { upWrap.style.display='none'; }
+  }
+  // Recent journal entries (last 3 across all people)
+  const allEntries=[];
+  people.forEach(person=>{
+    allCatsForPerson(person).forEach(cat=>{
+      (person[cat.key]||[]).forEach(e=>allEntries.push({...e,personName:person.name,personId:person.id,catLabel:cat.label}));
+    });
+  });
+  allEntries.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const recent=allEntries.slice(0,3);
+  const jwrap=document.getElementById('home-journal-wrap');
+  const jlist=document.getElementById('home-journal-list');
+  if(jwrap&&jlist){
+    if(recent.length){
+      jwrap.style.display='';
+      jlist.innerHTML=recent.map(e=>`<div class="home-journal-item" onclick="openPerson(${e.personId})">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);">${esc(e.personName)}</div>
+          <div style="font-size:11px;color:var(--text3);">${e.ts?fmtDate(new Date(e.ts).toISOString().slice(0,10)):''}</div>
+        </div>
+        <div style="font-size:13px;color:var(--text2);font-style:italic;font-family:'Playfair Display',serif;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">"${esc(e.text.slice(0,120))}${e.text.length>120?'…':''}"</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;">${esc(e.catLabel)}</div>
+      </div>`).join('');
+    } else { jwrap.style.display='none'; }
+  }
+}
+
+function renderContacts() {
+  // Badge
+  const trashBadge=document.getElementById('trash-badge');
+  const trashBtn=document.getElementById('trash-filter-btn');
+  if(trashBtn) trashBtn.style.display=trash.length>0?'':'none';
+  if(trashBadge) trashBadge.textContent=trash.length>0?trash.length:'';
+  const pc=document.getElementById('people-count');
+  if(pc) pc.textContent=people.length+' '+(people.length===1?'person':'people');
+  const q=(document.getElementById('search-input')?document.getElementById('search-input').value||'':'').toLowerCase();
+  const filtered=people.filter(p=>{
+    const m=p.name.toLowerCase().includes(q)||(p.metAt||'').toLowerCase().includes(q)||(p.bio||'').toLowerCase().includes(q);
+    if(currentCircleFilter.size>0) return m&&[...currentCircleFilter].every(id=>(p.circleIds||[]).includes(id));
+    return m;
+  }).sort((a,b)=>(b.lastEntryAt||b.id)-(a.lastEntryAt||a.id));
+  const list=document.getElementById('people-list');
+  if(!list) return;
+  if(!filtered.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">👥</div><p>${q?'No one found\u2026':'Tap + to add the first person you\'ve met.'}</p></div>`;
+    return;
+  }
+  list.innerHTML=filtered.map(person=>{
+    const pend=totalPending(person), alert=upcomingBday(person.birthday);
+    const cats=allCatsForPerson(person);
+    const first=cats.map(c=>(person[c.key]||[])[0]).find(Boolean);
+    const personCircleList=circles.filter(c=>(person.circleIds||[]).includes(c.id));
+    const circleDots=personCircleList.length
+      ?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;">${personCircleList.map(c=>`<span title="${esc(c.name)}" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${c.color};"></span>`).join('')}</div>`:'';
+    return`<div class="card" onclick="openPerson(${person.id})">
+      <div class="card-row">
+        <div style="flex:1;min-width:0;">
+          <div class="card-name">${esc(person.name)}</div>
+          ${person.metAt?`<div class="card-meta">📍 ${esc(person.metAt)}</div>`:''}
+          ${person.bio?`<div class="card-meta" style="margin-top:3px;font-style:italic;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;">${esc(person.bio)}</div>`:''}
+          ${alert?`<div style="font-size:12px;color:var(--gold);margin-top:3px;font-weight:700;">${esc(alert)}</div>`:''}
+          ${circleDots}
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px;">
+          <div class="card-date">${fmtDate(person.date)}</div>
+          ${pend>0?`<div style="font-size:11px;color:var(--gold);font-weight:700;margin-top:3px;">📖 ${pend}</div>`:''}
+        </div>
+      </div>
+      ${first?`<div class="card-preview">"${esc(first.text.slice(0,90))}${first.text.length>90?'…':''}"</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openPerson(id) { currentPersonId=id; sessionStorage.setItem('pj_pid',id); activeCategory='notes'; showView('person'); }
+
+// ── Person Detail ──────────────────────────────────────────────────────────────
+function renderPerson() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  const pend=totalPending(person), bdayAlert=upcomingBday(person.birthday);
+  const cats=allCatsForPerson(person);
+  const cat=cats.find(c=>c.key===activeCategory)||cats[0];
+  const entries=person[activeCategory]||[];
+  document.getElementById('person-detail').innerHTML=`
+    <div class="person-hero">
+      <div id="name-display-row" style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+        <div class="person-hero-name">${esc(person.name)}</div>
+        <button class="btn-link" style="font-size:11px;color:var(--text3);border:1px solid var(--border2);border-radius:6px;padding:2px 7px;flex-shrink:0;" onclick="toggleEditName()">✏️</button>
+      </div>
+      <div id="name-edit-row" style="display:none;margin-bottom:8px;">
+        <input type="text" id="name-input" value="${esc(person.name)}" style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:6px;" />
+        <div style="display:flex;gap:8px;">
+          <button class="btn-sm" onclick="commitName()">Save</button>
+          <button onclick="toggleEditName()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;">×</button>
+        </div>
+      </div>
+      ${person.date?`<div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Met ${fmtDate(person.date)}</div>`:''}
+      <!-- Bio -->
+      <div id="bio-display-row" style="margin-bottom:10px;">
+        ${person.bio
+          ?`<div class="person-bio">${esc(person.bio)}</div>`
+          :`<div class="person-bio-placeholder">Add a short bio about this person…</div>`}
+        <button class="btn-link" style="font-size:12px;color:var(--text3);border:1px solid var(--border2);border-radius:6px;padding:3px 9px;margin-top:6px;" onclick="toggleEditBio()">✏️ edit bio</button>
+      </div>
+      <div id="bio-edit-row" style="display:none;margin-bottom:10px;">
+        <textarea class="bio-edit-area" id="bio-input" placeholder="e.g. Photographer from Austin, met at a coffee shop. Has two kids, loves jazz…">${esc(person.bio||'')}</textarea>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <button class="btn-sm" onclick="commitBio()">Save</button>
+          <button onclick="toggleEditBio()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;">×</button>
+        </div>
+      </div>
+    </div>
+    <hr class="divider" style="margin:4px 0 0;" />
+
+    <!-- Quick info -->
+    <div style="padding:14px 20px 0;">
+      <div class="info-row" id="metat-display-row">
+        <span class="info-icon">📍</span>
+        <span class="info-text">${person.metAt?esc(person.metAt):'<span style="color:var(--text4);font-style:italic;">Where did you meet?</span>'}</span>
+        <button class="btn-link" style="font-size:11px;color:var(--text3);border:1px solid var(--border2);border-radius:6px;padding:3px 9px;" onclick="toggleEditMetAt()">✏️</button>
+      </div>
+      <div id="metat-edit-row" class="edit-expand">
+        <div class="edit-expand-inner">
+          <input type="text" id="metat-input" value="${esc(person.metAt||'')}" placeholder="e.g. Church, Gym, Coffee shop…" style="flex:1;font-size:14px;" />
+          <button class="btn-sm" onclick="commitMetAt()">Save</button>
+          <button onclick="toggleEditMetAt()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;">×</button>
+        </div>
+      </div>
+
+      <div class="info-row" id="bday-display-row">
+        <span class="info-icon">🎂</span>
+        <span class="info-text">${person.birthday?`${fmtBday(person.birthday)}${bdayAlert?` <span class="bday-badge">${esc(bdayAlert)}</span>`:''}` : '<span style="color:var(--text4);font-style:italic;">Add a birthday</span>'}</span>
+        <button class="btn-link" style="font-size:11px;color:var(--text3);border:1px solid var(--border2);border-radius:6px;padding:3px 9px;" onclick="toggleEditBday()">✏️</button>
+      </div>
+      <div id="bday-edit-row" class="edit-expand">
+        <div class="edit-expand-inner">
+          <input type="date" id="bday-input" value="${esc(person.birthday||'')}" style="flex:1;font-size:14px;" />
+          <button class="btn-sm" onclick="commitBday()">Save</button>
+          ${person.birthday?`<button onclick="clearBirthday()" style="background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer;font-weight:700;padding:0 4px;">clear</button>`:''}
+          <button onclick="toggleEditBday()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;">×</button>
+        </div>
+      </div>
+
+      <div class="info-row" style="margin-top:4px;">
+        <span class="info-icon">📖</span>
+        <span class="info-text" style="flex:1;">Auto-copy entries to journal</span>
+        <div onclick="toggleJournalDefault()" class="toggle-track" style="background:${person.journalDefault?'var(--accent)':'var(--border2)'};">
+          <div class="toggle-knob" style="left:${person.journalDefault?'23px':'3px'};"></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Contact -->
+    <div style="padding:0 20px;">
+      <div class="section-heading">
+        <span>Contact Details</span>
+        <button class="btn-sm" onclick="toggleContactEdit()">Edit</button>
+      </div>
+      <div id="contact-edit-panel"></div>
+      ${(()=>{
+        const contacts=getContacts(person);
+        if(!contacts.length)return'<div class="empty-msg" style="padding:6px 0 12px;">No contact details yet.</div>';
+        return contacts.map(c=>{
+          const ct=CONTACT_TYPES.find(x=>x.type===c.type)||CONTACT_TYPES[0];
+          const href=ct.href?ct.href(c.value):null;
+          return`<div class="contact-row">
+            <span class="contact-icon">${ct.icon}</span>
+            <div style="flex:1;">
+              <div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:1px;">${esc(c.label)}</div>
+              <span class="contact-value">${href?`<a href="${href}">${esc(c.value)}</a>`:esc(c.value)}</span>
+            </div>
+          </div>`;
+        }).join('');
+      })()}
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Family -->
+    <div style="padding:0 20px;">
+      <div class="section-heading">
+        <span>Family & Relationships</span>
+        <button class="btn-sm" onclick="openFamilyModal()">+ Add</button>
+      </div>
+      ${(()=>{
+        const links=person.familyLinks||[];
+        if(!links.length)return'<div class="empty-msg" style="padding:6px 0 12px;">No one linked yet.</div>';
+        return links.map(l=>{
+          const linked=people.find(p=>p.id===l.linkedId);
+          return`<div class="family-card" onclick="openPerson(${l.linkedId})">
+            <div>
+              <div class="family-name">${linked?esc(linked.name):'Unknown'}</div>
+              <div class="family-rel">${esc(l.relation)}</div>
+            </div>
+            <span style="margin-left:auto;color:var(--text4);font-size:13px;">→</span>
+          </div>`;
+        }).join('');
+      })()}
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Circles -->
+    <div style="padding:0 20px;">
+      <div class="section-heading">
+        <span>Circles</span>
+        <button class="btn-sm" onclick="openCirclesModal()">Assign</button>
+      </div>
+      ${(()=>{
+        const pc=personCircles(person.id);
+        if(!pc.length)return'<div class="empty-msg" style="padding:6px 0 12px;">Not in any circles yet.</div>';
+        return`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">${pc.map(c=>`<span style="display:inline-flex;align-items:center;gap:5px;background:${c.color}22;color:${c.color};border:1.5px solid ${c.color}66;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;" onclick="openCirclesModal()">${esc(c.name)}</span>`).join('')}</div>`;
+      })()}
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Calendar Events for this person -->
+    <div style="padding:0 20px;">
+      <div class="section-heading">
+        <span>Calendar Events</span>
+        <button class="btn-sm" onclick="openAddCalEventModal(${person.id})">+ Add</button>
+      </div>
+      ${(()=>{
+        const evts=calEvents.filter(e=>_getEventPersonIds(e).includes(person.id)).sort((a,b)=>a.date>b.date?1:-1);
+        if(!evts.length)return'<div class="empty-msg" style="padding:6px 0 12px;">No events yet.</div>';
+        return evts.map((e,i)=>{
+          const isPast=e.date<today();
+          return`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;opacity:${isPast?0.6:1};">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--text);">${fmtDate(e.date)}</div>
+              ${e.note?`<div style="font-size:13px;color:var(--text2);font-style:italic;margin-top:2px;">${esc(e.note)}</div>`:''}
+            </div>
+            <button style="background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer;font-weight:700;padding:4px 8px;" onclick="deleteCalEvent('${e.id}')">✕</button>
+          </div>`;
+        }).join('');
+      })()}
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Entries -->
+    <div style="padding:0 20px 20px;">
+      ${pend>0?`<div class="transfer-box"><div class="transfer-msg">📖 ${pend} entr${pend>1?'ies':'y'} marked to copy to your physical journal</div><button class="btn-sm" onclick="markAllTransferred()">Clear all once copied</button></div>`:''}
+      <div class="cat-tabs" style="margin-top:4px;">
+        ${cats.map(c=>{const n=(person[c.key]||[]).length,a=c.key===activeCategory;return`<button class="cat-tab${a?' active':''}" style="${a?`background:${c.color};border-color:${c.color};`+''  :''}" onclick="setCategory('${c.key}')">${c.icon} ${c.label}${n>0?` (${n})`:''}</button>`;}).join('')}
+        <button class="cat-tab" style="border-style:dashed;" onclick="openCustomCatModal()">＋ Custom</button>
+      </div>
+      <div class="cat-header">
+        <span class="label" style="margin-bottom:0;">${cat?.icon} ${cat?.label}</span>
+        <button class="btn-sm" onclick="showView('add-entry')">+ Add</button>
+      </div>
+      ${!entries.length?'<div class="empty-msg">Nothing here yet. Tap + to add something.</div>':''}
+      ${entries.map(e=>`<div class="entry-card" style="border-left:3px solid ${cat?.color||'#8B6914'};">
+        <div class="entry-text">${esc(e.text)}</div>
+        <div class="entry-footer">
+          <span class="entry-date">${fmtDate(e.date)}</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            ${e.transferred?`<button class="btn-link" onclick="markEntryTransferred(${e.id})">✓ done</button>`:''}
+            <button class="btn-link" style="color:var(--danger);font-size:11px;" onclick="deleteEntry(${e.id})">delete</button>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+  `;
+}
+function setCategory(key) { activeCategory=key; renderPerson(); }
+
+// ── Bio ────────────────────────────────────────────────────────────────────────
+function toggleEditName() {
+  const row = document.getElementById('name-edit-row');
+  const disp = document.getElementById('name-display-row');
+  const isHidden = row.style.display === 'none';
+  row.style.display = isHidden ? 'block' : 'none';
+  disp.style.display = isHidden ? 'none' : 'flex';
+  if(isHidden) {
+    const inp = document.getElementById('name-input');
+    if(inp) { inp.focus(); inp.select();
+      inp.onkeydown = e => { if(e.key==='Enter') commitName(); if(e.key==='Escape') toggleEditName(); };
+    }
+  }
+}
+function commitName() {
+  const person = people.find(p=>p.id===currentPersonId); if(!person) return;
+  const val = (document.getElementById('name-input').value||'').trim();
+  if(!val) { showToast('Name cannot be empty'); return; }
+  // Update family links on other people that reference this person
+  const oldName = person.name;
+  person.name = val;
+  save(); renderPerson(); renderHome(); showToast('Name updated');
+}
+function toggleEditBio() {
+  const row = document.getElementById('bio-edit-row');
+  const disp = document.getElementById('bio-display-row');
+  const isHidden = row.style.display === 'none';
+  row.style.display = isHidden ? 'block' : 'none';
+  disp.style.display = isHidden ? 'none' : 'block';
+  if(isHidden) {
+    const inp = document.getElementById('bio-input');
+    if(inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  }
+}
+function commitBio() {
+  const person = people.find(p=>p.id===currentPersonId); if(!person) return;
+  const val = (document.getElementById('bio-input').value||'').trim();
+  person.bio = val;
+  save(); renderPerson(); showToast(val ? 'Bio saved' : 'Bio cleared');
+}
+
+// ── MetAt & Birthday ───────────────────────────────────────────────────────────
+function toggleEditMetAt() {
+  const row = document.getElementById('metat-edit-row');
+  const isHidden = row.style.display === 'none';
+  row.style.display = isHidden ? 'block' : 'none';
+  if(isHidden) {
+    const inp = document.getElementById('metat-input');
+    inp.focus(); inp.select();
+    inp.onkeydown = e => { if(e.key==='Enter'){commitMetAt();} if(e.key==='Escape'){toggleEditMetAt();} };
+  }
+}
+function commitMetAt() {
+  const person = people.find(p=>p.id===currentPersonId); if(!person) return;
+  person.metAt = (document.getElementById('metat-input').value||'').trim();
+  save(); renderPerson(); showToast(person.metAt ? 'Location saved' : 'Location cleared');
+}
+function toggleEditBday() {
+  const row = document.getElementById('bday-edit-row');
+  const isHidden = row.style.display === 'none';
+  row.style.display = isHidden ? 'block' : 'none';
+  if(isHidden) { const inp = document.getElementById('bday-input'); if(inp) inp.focus(); }
+}
+function commitBday() {
+  const inp = document.getElementById('bday-input');
+  if(!inp||!inp.value){showToast('Please pick a date first');return;}
+  setBirthday(inp.value);
+}
+function setBirthday(val) {
+  if(!val)return;
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person.birthday=val; save(); renderPerson(); showToast('Birthday saved');
+}
+function clearBirthday() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person.birthday=''; save(); renderPerson(); showToast('Birthday cleared');
+}
+
+// ── Add Person / Entry ─────────────────────────────────────────────────────────
+function addPerson() {
+  const name=document.getElementById('form-name').value.trim();
+  if(!name){document.getElementById('form-name').focus();return;}
+  people.unshift({id:Date.now(),name,metAt:document.getElementById('form-met').value,
+    date:document.getElementById('form-date').value,birthday:document.getElementById('form-birthday').value,
+    bio:'',transferred:false,contacts:readFormContacts(),customCategories:[],familyLinks:[],...emptyPerson()});
+  save(); navTo('home'); showToast('Person added to your journal');
+}
+function addEntry() {
+  const text=document.getElementById('entry-text').value.trim();
+  if(!text){document.getElementById('entry-text').focus();return;}
+  const cat=document.getElementById('entry-category').value;
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  if(!person[cat])person[cat]=[];
+  person[cat]=[{id:Date.now(),text,date:today(),transferred:_entryJournalOn},...person[cat]];
+  person.lastEntryAt=Date.now();
+  save(); activeCategory=cat; showView('person'); showToast('Entry saved');
+}
+let _entryJournalOn = false;
+function toggleEntryJournal() {
+  _entryJournalOn = !_entryJournalOn;
+  const tog=document.getElementById('entry-journal-toggle');
+  const knob=document.getElementById('entry-journal-knob');
+  if(tog) tog.style.background=_entryJournalOn?'var(--accent)':'var(--border2)';
+  if(knob) knob.style.left=_entryJournalOn?'23px':'3px';
+}
+function toggleJournalDefault() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  person.journalDefault=!person.journalDefault;
+  save(); renderPerson();
+}
+function updateEntryPlaceholder() {
+  const cat=document.getElementById('entry-category').value;
+  document.getElementById('entry-text').placeholder=PLACEHOLDERS[cat]||'Write something to remember…';
+}
+function markEntryTransferred(entryId) {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>e.id===entryId?{...e,transferred:false}:e);});
+  save(); renderPerson();
+  showToastWithUndo('Marked as done', ()=>{
+    allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>e.id===entryId?{...e,transferred:true}:e);});
+    save(); renderPerson(); renderHome();
+  });
+}
+function markAllTransferred() {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  const snapshot={};
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])snapshot[c.key]=person[c.key].map(e=>({...e}));});
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>({...e,transferred:false}));});
+  save(); renderPerson();
+  showToastWithUndo('All cleared from journal list', ()=>{
+    allCatsForPerson(person).forEach(c=>{if(snapshot[c.key])person[c.key]=snapshot[c.key];});
+    save(); renderPerson();
+  });
+}
+async function confirmDelete() {
+  if(!currentPersonId) currentPersonId=Number(sessionStorage.getItem('pj_pid'))||null;
+  if(!currentPersonId){showToast('No person selected');return;}
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  const id=currentPersonId;
+  await sbDelete(id);
+  // Save their cal events so they can be restored
+  const personCalEvents=calEvents.filter(e=>_getEventPersonIds(e).includes(id));
+  trash.push({type:'person',...person,deletedAt:Date.now(),_calEvents:personCalEvents});
+  saveTrash();
+  // Remove family links from other people's profiles
+  people.forEach(p=>{if(p.familyLinks)p.familyLinks=p.familyLinks.filter(l=>l.linkedId!==id);});
+  people=people.filter(p=>p.id!==id);
+  calEvents=calEvents.filter(e=>!_getEventPersonIds(e).includes(id));
+  saveCalEvents();
+  save(); navTo('home'); showToast(`${person.name} moved to Recycle Bin`);
+}
+function deleteEntry(entryId) {
+  const person=people.find(p=>p.id===currentPersonId); if(!person)return;
+  const cats=allCatsForPerson(person);
+  for(const c of cats){
+    const arr=person[c.key]||[];
+    const entry=arr.find(e=>e.id===entryId);
+    if(entry){
+      trash.push({type:'entry',personId:person.id,personName:person.name,categoryKey:c.key,categoryLabel:c.label,entry,deletedAt:Date.now()});
+      person[c.key]=arr.filter(e=>e.id!==entryId);
+      saveTrash(); save(); renderPerson();
+      showToast('Entry moved to Recycle Bin');
+      return;
+    }
+  }
+}
+
+// ── Calendar ───────────────────────────────────────────────────────────────────
+function loadCalEvents() {
+  try { calEvents=JSON.parse(localStorage.getItem('pj_cal')||'[]'); } catch(e) { calEvents=[]; }
+}
+function saveCalEvents() {
+  try { localStorage.setItem('pj_cal',JSON.stringify(calEvents)); } catch(e) {}
+  if(_sb)(async()=>{try{await _sb.from('settings').upsert({key:'calEvents',value:calEvents},{onConflict:'key'});}catch(e){}})();
+}
+
+// ── Life & Reminders (unified) ────────────────────────────────────────────────
+// lifeItems: [{id, type:'task'|'reminder'|'event', title, note,
+//   dueDate:'YYYY-MM-DD', recur:'none'|'daily'|'weekly'|'custom-days'|'monthly'|'yearly',
+//   recurDays:[0-6,...],  // for custom-days or to narrow weekly
+//   personId, milestone,
+//   completedDates:[], dismissedDates:[], createdAt}]
+let lifeItems = [];
+
+function loadLifeItems() {
+  try { lifeItems=JSON.parse(localStorage.getItem('pj_life')||'[]'); } catch(e) { lifeItems=[]; }
+  // Migrate old reminders into lifeItems if any
+  try {
+    const old=JSON.parse(localStorage.getItem('pj_reminders')||'[]');
+    old.forEach(r=>{
+      if(!lifeItems.find(x=>x.id===r.id)){
+        lifeItems.push({id:r.id,type:'event',title:r.title,note:r.note||'',
+          dueDate:r.date||'',recur:r.recur||'none',recurDays:[],personId:r.personId||null,
+          milestone:r.milestone||false,completedDates:[],dismissedDates:[],createdAt:Date.now()});
+      }
+    });
+  } catch(e){}
+}
+function saveLifeItems() {
+  try { localStorage.setItem('pj_life',JSON.stringify(lifeItems)); } catch(e) {}
+  if(_sb)(async()=>{try{await _sb.from('settings').upsert({key:'lifeItems',value:lifeItems},{onConflict:'key'});}catch(e){}})();
+}
+function loadReminders(){ reminders=[]; } // kept for compat — no-op
+function saveReminders(){}
+
+// ── Day-of-week helpers ───────────────────────────────────────────────────────
+function _itemAppliesToday(item) {
+  const todayStr = today();
+  const dow = new Date(todayStr+'T00:00:00').getDay();
+  if(!item.recur || item.recur==='none') {
+    if(item.type==='task') return !item.dueDate || item.dueDate<=todayStr;
+    if(item.type==='reminder') return !item.dueDate || item.dueDate===todayStr;
+    if(item.type==='event') return !item.dueDate || item.dueDate===todayStr; // no date = always show
+    return false;
+  }
+  if(!item.dueDate) {
+    // recurring with no start date: use today as start, always applies
+    if(item.recur==='daily') return true;
+    if(item.recur==='weekly'||item.recur==='custom-days') {
+      const days=item.recurDays&&item.recurDays.length?item.recurDays:[];
+      return days.includes(dow);
+    }
+    return false;
+  }
+  const start = new Date(item.dueDate+'T00:00:00');
+  const nowD = new Date(todayStr+'T00:00:00');
+  if(nowD < start) return false;
+  if(item.recur==='daily') return true;
+  if(item.recur==='weekly') {
+    const days = item.recurDays&&item.recurDays.length ? item.recurDays : [start.getDay()];
+    return days.includes(dow);
+  }
+  if(item.recur==='custom-days') {
+    const days = item.recurDays&&item.recurDays.length ? item.recurDays : [];
+    return days.includes(dow);
+  }
+  if(item.recur==='monthly') return nowD.getDate()===start.getDate();
+  if(item.recur==='yearly') return nowD.getDate()===start.getDate()&&nowD.getMonth()===start.getMonth();
+  return false;
+}
+
+// Returns upcoming instances of an item after today, up to 90 days ahead
+function _getUpcomingInstances(item, limit=5) {
+  const todayStr=today();
+  const limitDate=new Date(todayStr+'T00:00:00');
+  limitDate.setDate(limitDate.getDate()+90);
+  const limitStr=limitDate.toISOString().slice(0,10);
+  const results=[];
+  if(_isTodayCompleted(item)) return []; // already done
+  if(!item.recur||item.recur==='none') {
+    if(item.dueDate&&item.dueDate>todayStr&&item.dueDate<=limitStr) results.push(item.dueDate);
+    return results;
+  }
+  // recurring — find next occurrences after today
+  const startStr=item.dueDate||todayStr;
+  let cur=new Date(startStr+'T00:00:00');
+  const todayD=new Date(todayStr+'T00:00:00');
+  // Advance past today
+  const advance=()=>{
+    if(item.recur==='daily') cur.setDate(cur.getDate()+1);
+    else if(item.recur==='weekly'||item.recur==='custom-days') cur.setDate(cur.getDate()+1);
+    else if(item.recur==='monthly') cur.setMonth(cur.getMonth()+1);
+    else if(item.recur==='yearly') cur.setFullYear(cur.getFullYear()+1);
+  };
+  const applies=()=>{
+    const dow=cur.getDay();
+    if(item.recur==='daily') return true;
+    if(item.recur==='weekly') {
+      const days=item.recurDays&&item.recurDays.length?item.recurDays:[new Date(startStr+'T00:00:00').getDay()];
+      return days.includes(dow);
+    }
+    if(item.recur==='custom-days') {
+      return (item.recurDays||[]).includes(dow);
+    }
+    if(item.recur==='monthly') return cur.getDate()===new Date(startStr+'T00:00:00').getDate();
+    if(item.recur==='yearly') { const s=new Date(startStr+'T00:00:00'); return cur.getDate()===s.getDate()&&cur.getMonth()===s.getMonth(); }
+    return false;
+  };
+  // Start from tomorrow or startStr whichever is later
+  if(cur<=todayD) cur=new Date(todayD.getTime()+86400000);
+  let safety=0;
+  while(results.length<limit&&safety++<200) {
+    const ds=cur.toISOString().slice(0,10);
+    if(ds>limitStr) break;
+    if(applies()) results.push(ds);
+    advance();
+  }
+  return results;
+}
+
+function _isTodayCompleted(item) { return (item.completedDates||[]).includes(today()); }
+function _isTodayDismissed(item) { return (item.dismissedDates||[]).includes(today()); }
+function _isOverdue(item) {
+  if(item.type!=='task') return false;
+  if(_isTodayCompleted(item)) return false;
+  if(!item.dueDate) return false;
+  return item.dueDate < today();
+}
+
+// ── Progress (tasks only) ─────────────────────────────────────────────────────
+function _getLifeProgress() {
+  const todayStr=today();
+  const relevant=lifeItems.filter(item=>{
+    if(item.type!=='task') return false;
+    if(_isOverdue(item)) return true;
+    return _itemAppliesToday(item);
+  });
+  const done=relevant.filter(item=>_isTodayCompleted(item)).length;
+  return{total:relevant.length,done};
+}
+function renderHomeProgress() {
+  const wrap=document.getElementById('home-progress-wrap');
+  const bar=document.getElementById('home-progress-bar');
+  const label=document.getElementById('home-progress-label');
+  const sub=document.getElementById('home-progress-sub');
+  if(!wrap) return;
+  const{total,done}=_getLifeProgress();
+  if(total===0){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  const pct=Math.round((done/total)*100);
+  bar.style.width=pct+'%';
+  label.textContent=done+' / '+total;
+  if(pct===100) sub.textContent='All done for today! 🎉';
+  else if(done===0) sub.textContent=total+' task'+(total===1?'':'s')+' to do today';
+  else sub.textContent=(total-done)+' remaining';
+}
+function updateLifeBadge() {
+  const overdue=lifeItems.filter(i=>_isOverdue(i)).length;
+  const badge=document.getElementById('life-nav-badge');
+  if(badge){badge.textContent=overdue||'';badge.style.display=overdue>0?'flex':'none';}
+}
+
+// ── Render Life tab ───────────────────────────────────────────────────────────
+function renderLife() {
+  const todayStr=today();
+  const overdue=lifeItems.filter(i=>_isOverdue(i));
+  const remindersToday=lifeItems.filter(i=>i.type==='reminder'&&!_isTodayDismissed(i)&&_itemAppliesToday(i));
+  const events=lifeItems.filter(i=>i.type==='event'&&!_isTodayDismissed(i)&&_itemAppliesToday(i));
+  const allReminders=[...remindersToday,...events];
+  const tasks=lifeItems.filter(i=>i.type==='task'&&!_isOverdue(i)&&!_isTodayCompleted(i)&&_itemAppliesToday(i));
+  const completedToday=lifeItems.filter(i=>i.type==='task'&&_isTodayCompleted(i));
+
+  const{total,done}=_getLifeProgress();
+  const sub=document.getElementById('life-page-sub');
+  if(sub){
+    if(total===0) sub.textContent='Your daily tasks & reminders';
+    else if(done===total) sub.textContent='All '+total+' tasks done today 🎉';
+    else sub.textContent=done+' of '+total+' tasks done today';
+  }
+
+  // Overdue
+  const overdueSection=document.getElementById('life-overdue-section');
+  const overdueList=document.getElementById('life-overdue-list');
+  if(overdue.length){
+    overdueSection.style.display='block';
+    overdueList.innerHTML=overdue.map(item=>_renderLifeItem(item,'overdue')).join('');
+  } else { overdueSection.style.display='none'; }
+
+  // Reminders + Events
+  const remSec=document.getElementById('life-reminders-section');
+  const remList=document.getElementById('life-reminders-list');
+  if(allReminders.length){
+    remSec.style.display='block';
+    remList.innerHTML=allReminders.map(item=>_renderLifeItem(item,'reminder')).join('');
+  } else { remSec.style.display='none'; }
+
+  // Tasks
+  const tasksList=document.getElementById('life-tasks-list');
+  if(tasks.length){
+    tasksList.innerHTML=tasks.map(item=>_renderLifeItem(item,'task')).join('');
+  } else {
+    tasksList.innerHTML='<div style="color:var(--text3);font-size:13px;font-style:italic;padding:8px 0;">No tasks due today. Tap + Add to create one.</div>';
+  }
+
+  // Completed
+  const compSec=document.getElementById('life-completed-section');
+  const compList=document.getElementById('life-completed-list');
+  if(completedToday.length){
+    compSec.style.display='block';
+    compList.innerHTML=completedToday.map(item=>_renderLifeItem(item,'completed')).join('');
+  } else { compSec.style.display='none'; }
+
+  // Upcoming — future tasks and reminders, sorted by next date
+  const upcomingSec=document.getElementById('life-upcoming-section');
+  const upcomingList=document.getElementById('life-upcoming-list');
+  if(upcomingSec&&upcomingList){
+    // Collect future one-time items not yet shown today
+    const futureItems=[];
+    lifeItems.forEach(item=>{
+      if(_isTodayCompleted(item)) return;
+      if(_itemAppliesToday(item)) return; // already shown above
+      if(_isOverdue(item)) return; // already shown above
+      // One-time future items
+      if(!item.recur||item.recur==='none'){
+        if(item.dueDate&&item.dueDate>todayStr){
+          futureItems.push({item, nextDate:item.dueDate, label:null});
+        }
+      } else {
+        // Recurring — show next 1 upcoming instance
+        const instances=_getUpcomingInstances(item, 1);
+        if(instances.length) futureItems.push({item, nextDate:instances[0], label:null});
+      }
+    });
+    futureItems.sort((a,b)=>a.nextDate>b.nextDate?1:a.nextDate<b.nextDate?-1:0);
+    if(futureItems.length){
+      upcomingSec.style.display='block';
+      upcomingList.innerHTML=futureItems.map(({item,nextDate})=>_renderLifeItem(item,'upcoming',nextDate)).join('');
+    } else { upcomingSec.style.display='none'; }
+  }
+
+  updateLifeBadge();
+}
+
+function _dayLabel(days) {
+  if(!days||!days.length) return '';
+  const names=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  if(days.length===7) return 'Daily';
+  if(days.length===5&&![0,6].some(d=>days.includes(d))) return 'Weekdays';
+  if(days.length===2&&days.includes(0)&&days.includes(6)) return 'Weekends';
+  return days.slice().sort((a,b)=>a-b).map(d=>names[d]).join(', ');
+}
+
+function _recurLabel(item) {
+  if(!item.recur||item.recur==='none') return '';
+  if(item.recur==='daily') return 'Daily';
+  if(item.recur==='weekly') {
+    const d=item.recurDays&&item.recurDays.length?item.recurDays:[new Date((item.dueDate||today())+'T00:00:00').getDay()];
+    return _dayLabel(d);
+  }
+  if(item.recur==='custom-days') return _dayLabel(item.recurDays)||'Custom days';
+  if(item.recur==='monthly') return 'Monthly';
+  if(item.recur==='yearly') return 'Yearly';
+  return '';
+}
+
+function _renderLifeItem(item, context, upcomingDate) {
+  const person=item.personId?people.find(p=>p.id===item.personId):null;
+  const isDone=context==='completed';
+  const isUpcoming=context==='upcoming';
+  const rl=_recurLabel(item);
+  let meta=[];
+  if(isUpcoming&&upcomingDate) meta.push(fmtDate(upcomingDate));
+  else if(item.dueDate&&item.type==='task'&&!isDone) meta.push(fmtDate(item.dueDate));
+  if(rl) meta.push(rl);
+  if(person) meta.push(person.name);
+  if(item.note) meta.push(item.note);
+
+  const checkSvg='<svg width="14" height="14" viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  if(context==='reminder') {
+    const isEvent=item.type==='event';
+    const icon=isEvent?'📅':'🔔';
+    return `<div class="life-item">
+      <div class="life-bell">${icon}</div>
+      <div style="flex:1;min-width:0;" onclick="openLifeItemModal('${item.id}')">
+        <div class="life-item-title">${esc(item.title)}</div>
+        ${meta.length?`<div class="life-item-meta">${meta.map(esc).join(' · ')}</div>`:''}
+      </div>
+      <button onclick="dismissLifeReminder('${item.id}')" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--text3);cursor:pointer;font-weight:700;flex-shrink:0;">Done</button>
+    </div>`;
+  }
+
+  if(context==='overdue') {
+    const days=Math.round((new Date(today()+'T00:00:00')-new Date(item.dueDate+'T00:00:00'))/86400000);
+    return `<div class="life-item">
+      <div class="life-check" onclick="toggleLifeTask('${item.id}')"></div>
+      <div style="flex:1;min-width:0;" onclick="openLifeItemModal('${item.id}')">
+        <div class="life-item-title">${esc(item.title)}</div>
+        <div class="life-item-overdue">${days} day${days===1?'':'s'} overdue${person?' · '+esc(person.name):''}</div>
+        ${item.note?`<div class="life-item-meta">${esc(item.note)}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  if(context==='upcoming') {
+    const typeIcon=item.type==='reminder'?'🔔':item.type==='event'?'📅':'○';
+    const diff=upcomingDate?Math.round((new Date(upcomingDate+'T00:00:00')-new Date(today()+'T00:00:00'))/86400000):null;
+    const diffLabel=diff===1?'Tomorrow':diff?'In '+diff+'d':'';
+    return `<div class="life-item" style="opacity:0.7;" onclick="openLifeItemModal('${item.id}')">
+      <div class="life-bell" style="font-size:14px;color:var(--text3);">${typeIcon}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="life-item-title" style="font-weight:600;color:var(--text2);">${esc(item.title)}</div>
+        ${meta.length?`<div class="life-item-meta">${meta.map(esc).join(' · ')}</div>`:''}
+      </div>
+      ${diffLabel?`<div style="font-size:11px;font-weight:700;color:var(--text3);flex-shrink:0;">${diffLabel}</div>`:''}
+    </div>`;
+  }
+
+  return `<div class="life-item">
+    <div class="life-check${isDone?' done':''}" onclick="toggleLifeTask('${item.id}')">${isDone?checkSvg:''}</div>
+    <div style="flex:1;min-width:0;" onclick="openLifeItemModal('${item.id}')">
+      <div class="life-item-title${isDone?' done':''}">${esc(item.title)}</div>
+      ${meta.length?`<div class="life-item-meta">${meta.map(esc).join(' · ')}</div>`:''}
+    </div>
+  </div>`;
+}
+
+function toggleLifeTask(id) {
+  const item=lifeItems.find(i=>i.id===id); if(!item) return;
+  const todayStr=today();
+  if(!item.completedDates) item.completedDates=[];
+  if(item.completedDates.includes(todayStr)){
+    item.completedDates=item.completedDates.filter(d=>d!==todayStr);
+  } else {
+    item.completedDates.push(todayStr);
+    // Spawn next instance for recurring tasks
+    if(item.recur&&item.recur!=='none'&&item.dueDate){
+      const next=_nextRecurDate(item.dueDate,item.recur,item.recurDays);
+      if(next){
+        lifeItems.push({id:'li_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+          type:item.type,title:item.title,note:item.note,dueDate:next,
+          recur:item.recur,recurDays:(item.recurDays||[]).slice(),
+          personId:item.personId,milestone:item.milestone,
+          completedDates:[],dismissedDates:[],createdAt:Date.now()});
+      }
+      item.recur='none'; item.recurDays=[];
+    }
+  }
+  saveLifeItems();
+  renderLife();
+  renderHomeProgress();
+}
+
+function _nextRecurDate(dateStr, recur, recurDays) {
+  const d=new Date(dateStr+'T00:00:00');
+  if(recur==='daily') { d.setDate(d.getDate()+1); return d.toISOString().slice(0,10); }
+  if(recur==='weekly') {
+    const days=recurDays&&recurDays.length?recurDays:[d.getDay()];
+    d.setDate(d.getDate()+1);
+    let safety=0;
+    while(!days.includes(d.getDay())&&safety++<7) d.setDate(d.getDate()+1);
+    return d.toISOString().slice(0,10);
+  }
+  if(recur==='custom-days') {
+    const days=recurDays&&recurDays.length?recurDays:[];
+    if(!days.length) return null;
+    d.setDate(d.getDate()+1);
+    let safety=0;
+    while(!days.includes(d.getDay())&&safety++<7) d.setDate(d.getDate()+1);
+    return d.toISOString().slice(0,10);
+  }
+  if(recur==='monthly') { d.setMonth(d.getMonth()+1); return d.toISOString().slice(0,10); }
+  if(recur==='yearly') { d.setFullYear(d.getFullYear()+1); return d.toISOString().slice(0,10); }
+  return null;
+}
+
+function dismissLifeReminder(id) {
+  const item=lifeItems.find(i=>i.id===id); if(!item) return;
+  if(!item.dismissedDates) item.dismissedDates=[];
+  item.dismissedDates.push(today());
+  saveLifeItems();
+  renderLife();
+}
+
+// ── Life modal ────────────────────────────────────────────────────────────────
+let _editingLifeId=null, _lifePersonId=null, _lifeType='task', _lifeSelectedDays=[];
+
+function setLifeType(t) {
+  _lifeType=t;
+  ['task','reminder','event'].forEach(k=>{
+    const el=document.getElementById('life-type-'+k);
+    if(el) el.classList.toggle('active',k===t);
+  });
+  const dl=document.getElementById('life-duedate-label');
+  if(dl) dl.textContent=t==='task'?'Due date (optional)':'Date (optional)';
+  const mw=document.getElementById('life-milestone-wrap');
+  if(mw) mw.style.display=t==='event'?'block':'none';
+  onLifeRecurChange();
+}
+
+function onLifeRecurChange() {
+  const val=document.getElementById('life-recur').value;
+  const dw=document.getElementById('life-days-wrap');
+  if(dw) dw.style.display=(val==='weekly'||val==='custom-days')?'block':'none';
+  const mw=document.getElementById('life-milestone-wrap');
+  if(mw&&_lifeType!=='event') mw.style.display='none';
+}
+
+let _lifeSelectedDays2=[];
+function toggleLifeDay(day) {
+  if(_lifeSelectedDays2.includes(day)) _lifeSelectedDays2=_lifeSelectedDays2.filter(d=>d!==day);
+  else _lifeSelectedDays2.push(day);
+  document.querySelectorAll('.day-btn').forEach(btn=>{
+    const d=parseInt(btn.dataset.day);
+    btn.classList.toggle('active',_lifeSelectedDays2.includes(d));
+  });
+}
+
+function openQuickAdd() { document.getElementById('quick-add-bg').classList.add('open'); }
+function closeQuickAdd() { document.getElementById('quick-add-bg').classList.remove('open'); }
+
+function openLifeItemModal(id, presetType) {
+  _editingLifeId=id;
+  _lifePersonId=null;
+  _lifeSelectedDays2=[];
+  const item=id?lifeItems.find(x=>x.id===id):null;
+  _lifeType=item?(item.type||'task'):(presetType||'task');
+  document.getElementById('life-modal-title').textContent=item?'Edit Item':'Add Item';
+  document.getElementById('life-title').value=item?item.title:'';
+  document.getElementById('life-duedate').value=item?(item.dueDate||''):'';
+  document.getElementById('life-recur').value=item?(item.recur||'none'):'none';
+  document.getElementById('life-note').value=item?(item.note||''):'';
+  document.getElementById('life-err').style.display='none';
+  document.getElementById('life-person-search').value='';
+  document.getElementById('life-person-results').innerHTML='';
+  document.getElementById('life-delete-btn').style.display=item?'block':'none';
+  const ms=document.getElementById('life-milestone');
+  if(ms) ms.checked=item?!!(item.milestone):false;
+  _lifeSelectedDays2=item&&item.recurDays?item.recurDays.slice():[];
+  document.querySelectorAll('.day-btn').forEach(btn=>{
+    const d=parseInt(btn.dataset.day);
+    btn.classList.toggle('active',_lifeSelectedDays2.includes(d));
+  });
+  setLifeType(_lifeType);
+  const chosen=document.getElementById('life-person-chosen');
+  if(item&&item.personId){
+    _lifePersonId=item.personId;
+    const p=people.find(x=>x.id===item.personId);
+    chosen.innerHTML=`✓ ${esc(p?p.name:'Unknown')} <span onclick="clearLifePerson()" style="cursor:pointer;color:var(--danger);margin-left:6px;font-size:16px;">×</span>`;
+    chosen.style.display='block';
+  } else { chosen.style.display='none'; }
+  document.getElementById('life-modal-bg').classList.add('open');
+  setTimeout(()=>document.getElementById('life-title').focus(),100);
+}
+function clearLifePerson(){
+  _lifePersonId=null;
+  document.getElementById('life-person-chosen').style.display='none';
+}
+function closeLifeModal(){ document.getElementById('life-modal-bg').classList.remove('open'); }
+function renderLifePersonResults(){
+  const q=document.getElementById('life-person-search').value.trim().toLowerCase();
+  const container=document.getElementById('life-person-results');
+  if(!q){container.innerHTML='';return;}
+  const results=people.filter(p=>p.name.toLowerCase().includes(q)).slice(0,6);
+  container.innerHTML=results.length
+    ?results.map(p=>`<div class="search-result-row" onclick="selectLifePerson(${p.id})">${esc(p.name)}</div>`).join('')
+    :'<div style="font-size:13px;color:var(--text3);padding:6px 0;font-style:italic;">No one found...</div>';
+}
+function selectLifePerson(id){
+  _lifePersonId=id;
+  const p=people.find(x=>x.id===id);
+  const chosen=document.getElementById('life-person-chosen');
+  chosen.innerHTML=`✓ ${esc(p?p.name:'Unknown')} <span onclick="clearLifePerson()" style="cursor:pointer;color:var(--danger);margin-left:6px;font-size:16px;">×</span>`;
+  chosen.style.display='block';
+  document.getElementById('life-person-search').value='';
+  document.getElementById('life-person-results').innerHTML='';
+}
+function saveLifeItem(){
+  const err=document.getElementById('life-err'); err.style.display='none';
+  const title=document.getElementById('life-title').value.trim();
+  if(!title){err.textContent='Please enter a title.';err.style.display='block';return;}
+  const recur=document.getElementById('life-recur').value;
+  if((recur==='weekly'||recur==='custom-days')&&!_lifeSelectedDays2.length){
+    err.textContent='Please select at least one day.';err.style.display='block';return;
+  }
+  const dueDate=document.getElementById('life-duedate').value||null;
+  if(_lifeType==='event'&&!dueDate){
+    err.textContent='Events must have a date.';err.style.display='block';return;
+  }
+  const note=document.getElementById('life-note').value.trim();
+  const ms=document.getElementById('life-milestone');
+  const milestone=ms&&ms.checked&&_lifeType==='event';
+  if(_editingLifeId){
+    const item=lifeItems.find(x=>x.id===_editingLifeId);
+    if(item){
+      item.title=title;item.type=_lifeType;item.dueDate=dueDate;
+      item.recur=recur;item.recurDays=_lifeSelectedDays2.slice();
+      item.note=note;item.personId=_lifePersonId||null;item.milestone=milestone;
+    }
+  } else {
+    lifeItems.push({id:'li_'+Date.now(),type:_lifeType,title,note,dueDate,
+      recur,recurDays:_lifeSelectedDays2.slice(),personId:_lifePersonId||null,
+      milestone,completedDates:[],dismissedDates:[],createdAt:Date.now()});
+  }
+  saveLifeItems();
+  closeLifeModal();
+  renderLife();
+  renderHomeProgress();
+  showToast(_editingLifeId?'Updated':'Added');
+}
+function deleteLifeItem(){
+  if(!_editingLifeId) return;
+  lifeItems=lifeItems.filter(i=>i.id!==_editingLifeId);
+  saveLifeItems();
+  closeLifeModal();
+  renderLife();
+  renderHomeProgress();
+  showToast('Deleted');
+}
+
+// Stubs for calendar refs to old reminder system
+function getReminderInstances(r){ return []; }
+function openReminderModal(id){ openLifeItemModal(id); }
+function renderReminders(){}
+
+// ── Calendar filter ───────────────────────────────────────────────────────────
+function setCalFilter(f){
+  _calFilter=f;
+  ['all','people','personal'].forEach(k=>{
+    const el=document.getElementById('cal-tab-'+k);
+    if(el) el.classList.toggle('active',k===f);
+  });
+  _renderCalGrid(); _renderCalEvents(); _renderUpcoming();
+}
+function _eventPassesFilter(type){
+  if(_calFilter==='all') return true;
+  if(_calFilter==='people') return type==='birthday'||type==='cal';
+  if(_calFilter==='personal') return type==='reminder';
+  return true;
+}
+
+function renderCalendar() {
+  const now = new Date();
+  if(calYear===undefined){ calYear=now.getFullYear(); calMonth=now.getMonth(); }
+  if(calSelectedDate===undefined) calSelectedDate=today();
+  _renderCalGrid();
+  _renderCalEvents();
+}
+function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} _renderCalGrid(); _renderCalEvents(); }
+function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} _renderCalGrid(); _renderCalEvents(); }
+function calToday() {
+  const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth();
+  calSelectedDate=today(); _renderCalGrid(); _renderCalEvents();
+}
+function _renderCalGrid() {
+  const label=document.getElementById('cal-month-label');
+  if(label) label.textContent=new Date(calYear,calMonth,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const grid=document.getElementById('cal-grid'); if(!grid)return;
+  const todayStr=today();
+  const dayNames=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let html=dayNames.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+  // Collect event dates for this month (respects filter)
+  const peopleDates=new Set(); // birthdays + cal events
+  const personalDates=new Set(); // reminders
+  if(_eventPassesFilter('cal')) {
+    calEvents.forEach(e=>{
+      const d=new Date(e.date+'T00:00:00');
+      if(d.getFullYear()===calYear&&d.getMonth()===calMonth) peopleDates.add(d.getDate());
+    });
+  }
+  if(_eventPassesFilter('birthday')) {
+    people.forEach(p=>{
+      if(p.birthday){
+        const bd=new Date(p.birthday+'T00:00:00');
+        if(bd.getMonth()===calMonth) peopleDates.add(bd.getDate());
+      }
+    });
+  }
+  if(_eventPassesFilter('reminder')) {
+    lifeItems.filter(i=>i.type==='event'&&i.dueDate).forEach(item=>{
+      const d=new Date(item.dueDate+'T00:00:00');
+      if(d.getFullYear()===calYear&&d.getMonth()===calMonth) personalDates.add(d.getDate());
+    });
+  }
+  for(let i=firstDay-1;i>=0;i--){
+    const d=daysInPrev-i;
+    html+=`<div class="cal-day other-month">${d}</div>`;
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=dateStr===todayStr;
+    const isSelected=dateStr===calSelectedDate;
+    const hasPpl=peopleDates.has(d);
+    const hasPersonal=personalDates.has(d);
+    let dots='';
+    if(hasPpl)dots+='has-events ';
+    if(hasPersonal)dots+='has-personal ';
+    html+=`<div class="cal-day${isToday?' today':''}${isSelected&&!isToday?' selected':''} ${dots.trim()}" onclick="selectCalDay('${dateStr}')">${d}</div>`;
+  }
+  const total=firstDay+daysInMonth;
+  const remaining=(7-total%7)%7;
+  for(let d=1;d<=remaining;d++){
+    html+=`<div class="cal-day other-month">${d}</div>`;
+  }
+  grid.innerHTML=html;
+}
+function selectCalDay(dateStr) {
+  calSelectedDate=dateStr; _renderCalGrid(); _renderCalEvents();
+}
+function _renderCalEvents() {
+  const panel=document.getElementById('cal-events-panel'); if(!panel)return;
+  if(!calSelectedDate){panel.innerHTML='';_renderUpcoming();return;}
+  const dt=new Date(calSelectedDate+'T00:00:00');
+  const displayDate=dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  let html=`<div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;padding-top:2px;">${displayDate}</div>`;
+  let count=0;
+  // Birthdays
+  if(_eventPassesFilter('birthday')){
+    const bdayPeople=people.filter(p=>{
+      if(!p.birthday)return false;
+      const bd=new Date(p.birthday+'T00:00:00');
+      return bd.getMonth()===dt.getMonth()&&bd.getDate()===dt.getDate();
+    });
+    bdayPeople.forEach(p=>{
+      count++;
+      html+=`<div class="cal-event-card" style="border-left:3px solid var(--gold);cursor:pointer;" onclick="openPerson(${p.id})">
+        <div class="cal-event-name">🎂 ${esc(p.name)}'s Birthday</div>
+        <div class="cal-event-meta">Tap to open their profile</div>
+      </div>`;
+    });
+  }
+  // Cal events (people)
+  if(_eventPassesFilter('cal')){
+    const dayEvents=calEvents.filter(e=>e.date===calSelectedDate);
+    dayEvents.forEach(e=>{
+      count++;
+      const ids=_getEventPersonIds(e);
+      const eventPeople=ids.map(id=>people.find(p=>p.id===id)).filter(Boolean);
+      const names=eventPeople.length?eventPeople.map(p=>esc(p.name)).join(', '):'Unknown';
+      html+=`<div class="cal-event-card" style="border-left:3px solid var(--accent);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+          <div style="flex:1;min-width:0;">
+            <div class="cal-event-name">${names}</div>
+            ${e.note?`<div class="cal-event-note">${esc(e.note)}</div>`:''}
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+              ${eventPeople.map(p=>`<div class="cal-event-meta" style="cursor:pointer;" onclick="openPerson(${p.id})">${esc(p.name)} &#x2192;</div>`).join('')}
+            </div>
+          </div>
+          <button style="background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer;font-weight:700;padding:4px 6px;" onclick="deleteCalEvent('${e.id}')">&#x2715;</button>
+        </div>
+      </div>`;
+    });
+  }
+  // Personal life events on this date
+  if(_eventPassesFilter('reminder')){
+    lifeItems.filter(i=>i.type==='event'&&i.dueDate===calSelectedDate).forEach(item=>{
+      count++;
+      const person=item.personId?people.find(p=>p.id===item.personId):null;
+      html+=`<div class="cal-event-card" style="border-left:3px solid var(--reminder);cursor:pointer;" onclick="openLifeItemModal('${item.id}')">
+        <div style="flex:1;min-width:0;">
+          <div class="cal-event-name">📅 ${esc(item.title)}</div>
+          ${item.note?`<div class="cal-event-note">${esc(item.note)}</div>`:''}
+          ${person?`<div class="cal-event-meta" style="margin-top:4px;cursor:pointer;" onclick="event.stopPropagation();openPerson(${person.id})">${esc(person.name)} &#x2192;</div>`:''}
+        </div>
+      </div>`;
+    });
+  }
+  if(!count){
+    html+=`<div class="empty-state" style="padding:30px 0;"><div class="empty-icon" style="font-size:32px;">📅</div><p style="font-size:14px;">Nothing on this day</p></div>`;
+  }
+  panel.innerHTML=html;
+  _renderUpcoming();
+}
+function _renderUpcoming() {
+  const section=document.getElementById('cal-upcoming-section'); if(!section)return;
+  const todayStr=today();
+  const now=new Date(todayStr+'T00:00:00');
+  const items=[];
+  // Birthdays
+  if(_eventPassesFilter('birthday')){
+    people.forEach(p=>{
+      if(!p.birthday)return;
+      const bd=new Date(p.birthday+'T00:00:00');
+      const next=new Date(now.getFullYear(),bd.getMonth(),bd.getDate());
+      if(next<now)next.setFullYear(now.getFullYear()+1);
+      const diff=Math.round((next-now)/86400000);
+      if(diff<=60){
+        const ds=`${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}-${String(next.getDate()).padStart(2,'0')}`;
+        items.push({date:ds,diff,type:'birthday',label:p.name+"'s Birthday",sub:'Birthday',color:'var(--gold)',personId:p.id});
+      }
+    });
+  }
+  // Cal events
+  if(_eventPassesFilter('cal')){
+    calEvents.forEach(e=>{
+      if(e.date<todayStr)return;
+      const evtDate=new Date(e.date+'T00:00:00');
+      const diff=Math.round((evtDate-now)/86400000);
+      if(diff>60)return;
+      const ids=_getEventPersonIds(e);
+      const evtPeople=ids.map(id=>people.find(p=>p.id===id)).filter(Boolean);
+      const label=evtPeople.length?evtPeople.map(p=>p.name).join(', '):'Unknown';
+      items.push({date:e.date,diff,type:'event',label,sub:e.note||'Event',color:'var(--accent)',eventId:e.id});
+    });
+  }
+  // Personal life events upcoming
+  if(_eventPassesFilter('reminder')){
+    lifeItems.filter(i=>i.type==='event'&&i.dueDate&&i.dueDate>=todayStr).forEach(item=>{
+      const diff=Math.round((new Date(item.dueDate+'T00:00:00')-now)/86400000);
+      if(diff<0||diff>60)return;
+      items.push({date:item.dueDate,diff,type:'reminder',label:item.title,sub:item.note||item.title,color:'var(--reminder)',lifeId:item.id});
+    });
+  }
+  items.sort((a,b)=>a.date>b.date?1:a.date<b.date?-1:0);
+  if(!items.length){
+    const msg=_calFilter==='personal'?'No personal reminders coming up. Add one with + Add.':
+              _calFilter==='people'?'No people events in the next 60 days.':
+              'Nothing coming up. Tap + Event for people events, or ⚡ Life for personal tasks.';
+    section.innerHTML=`<div class="cal-upcoming-label">Upcoming — next 60 days</div><div style="color:var(--text3);font-size:13px;font-style:italic;padding:8px 0;">${msg}</div>`;
+    return;
+  }
+  let html=`<div class="cal-upcoming-label">Upcoming — next 60 days <span style="color:var(--text4);font-weight:400;">${items.length} event${items.length===1?'':'s'}</span></div>`;
+  items.forEach(item=>{
+    const d=new Date(item.date+'T00:00:00');
+    const dayNum=d.getDate();
+    const mon=d.toLocaleDateString('en-US',{month:'short'});
+    const diffLabel=item.diff===0?'Today':item.diff===1?'Tomorrow':'In '+item.diff+'d';
+    let actionBtn='';
+    if(item.type==='event')actionBtn=`<button style="background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer;font-weight:700;padding:4px 6px;" onclick="event.stopPropagation();deleteCalEvent('`+item.eventId+`')">&#x2715;</button>`;
+    const clickFn=item.type==='birthday'?`openPerson(${item.personId})`:
+                  item.type==='reminder'?`openLifeItemModal('${item.lifeId}')`:
+                  `selectCalDay('${item.date}')`;
+    html+=`<div class="cal-upcoming-item" onclick="${clickFn}">
+      <div class="cal-upcoming-date">
+        <div class="cal-upcoming-day">${dayNum}</div>
+        <div class="cal-upcoming-mon">${mon}</div>
+      </div>
+      <div class="cal-upcoming-dot" style="background:${item.color};"></div>
+      <div style="flex:1;min-width:0;">
+        <div class="cal-upcoming-title">${esc(item.label)}${item.milestone?` <span style="color:var(--gold);font-size:11px;">🎉</span>`:''}</div>
+        <div class="cal-upcoming-sub">${esc(item.sub)} &middot; ${diffLabel}</div>
+      </div>
+      ${actionBtn}
+    </div>`;
+  });
+  section.innerHTML=html;
+}
+
+// Cal event modal — supports multiple people per event
+let _calEventPeople = []; // array of person ids
+function _getEventPersonIds(e) { return e.personIds || (e.personId?[e.personId]:[]); }
+function _renderCalEventChips() {
+  const el=document.getElementById('cal-event-chosen-list'); if(!el)return;
+  el.innerHTML=_calEventPeople.map(id=>{
+    const p=people.find(x=>x.id===id);
+    return`<span style="display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:var(--bg);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;">${esc(p?p.name:'?')}<span onclick="removeCalEventPerson(${id})" style="cursor:pointer;opacity:.7;font-size:14px;line-height:1;">×</span></span>`;
+  }).join('');
+}
+function removeCalEventPerson(id) {
+  _calEventPeople=_calEventPeople.filter(x=>x!==id);
+  _renderCalEventChips();
+}
+function openAddCalEventModal(prePersonId) {
+  _calEventPeople = prePersonId ? [prePersonId] : [];
+  document.getElementById('cal-event-person-search').value='';
+  document.getElementById('cal-event-person-results').innerHTML='';
+  document.getElementById('cal-event-note').value='';
+  document.getElementById('cal-event-err').style.display='none';
+  _renderCalEventChips();
+  document.getElementById('cal-event-date').value=calSelectedDate||today();
+  document.getElementById('cal-event-modal-bg').classList.add('open');
+}
+function closeCalEventModal() { document.getElementById('cal-event-modal-bg').classList.remove('open'); }
+function renderCalPersonResults() {
+  const q=document.getElementById('cal-event-person-search').value.trim().toLowerCase();
+  const container=document.getElementById('cal-event-person-results');
+  if(!q){container.innerHTML='';return;}
+  const results=people.filter(p=>p.name.toLowerCase().includes(q)&&!_calEventPeople.includes(p.id)).slice(0,6);
+  if(!results.length){container.innerHTML='<div style="font-size:13px;color:var(--text3);padding:6px 0;font-style:italic;">No one found…</div>';return;}
+  container.innerHTML=results.map(p=>`<div class="search-result-row" onclick="selectCalPerson(${p.id})">${esc(p.name)}</div>`).join('');
+}
+function selectCalPerson(id) {
+  if(!_calEventPeople.includes(id)) _calEventPeople.push(id);
+  _renderCalEventChips();
+  document.getElementById('cal-event-person-search').value='';
+  document.getElementById('cal-event-person-results').innerHTML='';
+}
+function saveCalEvent() {
+  const err=document.getElementById('cal-event-err'); err.style.display='none';
+  if(!_calEventPeople.length){err.textContent='Please select at least one person.';err.style.display='block';return;}
+  const dateVal=document.getElementById('cal-event-date').value;
+  if(!dateVal){err.textContent='Please pick a date.';err.style.display='block';return;}
+  calEvents.push({id:'ce_'+Date.now(),personIds:_calEventPeople.slice(),date:dateVal,note:document.getElementById('cal-event-note').value.trim()});
+  saveCalEvents();
+  closeCalEventModal();
+  if(_currentNav==='calendar') renderCalendar();
+  const personView=document.getElementById('view-person');
+  if(personView&&personView.classList.contains('active'))renderPerson();
+  showToast('Event saved');
+}
+function deleteCalEvent(id) {
+  const evt=calEvents.find(e=>e.id===id); if(!evt)return;
+  const evtPids=_getEventPersonIds(evt);
+  const evtPeople=evtPids.map(id=>people.find(p=>p.id===id)).filter(Boolean);
+  const evtNames=evtPeople.length?evtPeople.map(p=>p.name).join(', '):'Unknown';
+  trash.push({type:'calEvent',event:evt,personName:evtNames,deletedAt:Date.now()});
+  saveTrash();
+  calEvents=calEvents.filter(e=>e.id!==id);
+  saveCalEvents();
+  if(_currentNav==='calendar'){_renderCalGrid();_renderCalEvents();}
+  const personView=document.getElementById('view-person');
+  if(personView&&personView.classList.contains('active'))renderPerson();
+  showToast('Event moved to Recycle Bin');
+}
+
+// ── Birthdays page ─────────────────────────────────────────────────────────────
+function renderBirthdays() {
+  const container=document.getElementById('birthdays-list'); if(!container)return;
+  const withBday=people.filter(p=>p.birthday).sort((a,b)=>bdayDaysUntil(a.birthday)-bdayDaysUntil(b.birthday));
+  if(!withBday.length){
+    container.innerHTML='<div class="empty-state" style="padding:60px 0;"><div class="empty-icon">🎂</div><p>No birthdays recorded yet.<br>Add them from each person\'s profile.</p></div>';
+    return;
+  }
+  // Group by month
+  const groups={};
+  withBday.forEach(p=>{
+    const bd=new Date(p.birthday+'T00:00:00');
+    const key=bd.toLocaleDateString('en-US',{month:'long'});
+    if(!groups[key])groups[key]=[];
+    groups[key].push(p);
+  });
+  container.innerHTML=Object.entries(groups).map(([month,people_])=>`
+    <div style="margin-bottom:24px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">${month}</div>
+      <div class="bday-month-group">
+      ${people_.map(p=>{
+        const days=bdayDaysUntil(p.birthday);
+        const alert=upcomingBday(p.birthday);
+        return`<div class="card" onclick="openPerson(${p.id})">
+          <div class="card-row">
+            <div>
+              <div class="card-name">${esc(p.name)}</div>
+              <div class="card-meta" style="margin-top:2px;">🎂 ${fmtBday(p.birthday)}</div>
+              ${alert?`<div style="font-size:12px;color:var(--gold);font-weight:700;margin-top:3px;">${esc(alert)}</div>`:''}
+            </div>
+            <div style="text-align:right;flex-shrink:0;margin-left:12px;">
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:${days<=7?'var(--gold)':'var(--accent)'};">${days===0?'🎂':days+'d'}</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.5px;">UNTIL</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Journal ────────────────────────────────────────────────────────────────────
+function renderJournal() {
+  const container=document.getElementById('journal-list'); if(!container)return;
+  const groups=[];
+  people.forEach(person=>{
+    const cats=allCatsForPerson(person);
+    const pending=[];
+    cats.forEach(c=>{
+      (person[c.key]||[]).filter(e=>e.transferred).forEach(e=>{
+        pending.push({entry:e,cat:c,personId:person.id});
+      });
+    });
+    if(pending.length)groups.push({person,pending});
+  });
+  if(!groups.length){
+    container.innerHTML='<div class="empty-state" style="padding:60px 0;"><div class="empty-icon">✓</div><p>Nothing to copy —<br>you\'re all caught up!</p></div>';
+    return;
+  }
+  container.innerHTML=groups.map(({person,pending})=>`
+    <div class="journal-person-group" style="margin-bottom:22px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;">
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text);cursor:pointer;" onclick="openPerson(${person.id})">${esc(person.name)} →</div>
+        <button class="btn-sm" onclick="markPersonAllDone(${person.id})">All done</button>
+      </div>
+      ${pending.map(({entry,cat})=>`
+        <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid ${cat.color};border-radius:12px;padding:12px 14px;margin-bottom:7px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+          <div style="flex:1;">
+            <div style="font-size:11px;color:${cat.color};font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">${cat.icon} ${cat.label}</div>
+            <div style="font-size:14px;color:var(--text);">${esc(entry.text)}</div>
+            <div style="font-size:11px;color:var(--text4);margin-top:4px;font-weight:700;">${fmtDate(entry.date)}</div>
+          </div>
+          <button class="btn-sm" style="flex-shrink:0;" onclick="markDoneFromJournal(${person.id},${entry.id})">✓ Done</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+function markDoneFromJournal(personId, entryId) {
+  const person=people.find(p=>p.id===personId); if(!person)return;
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>e.id===entryId?{...e,transferred:false}:e);});
+  save(); renderJournal(); updateJournalBadge();
+  showToastWithUndo('Marked as done', ()=>{
+    allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>e.id===entryId?{...e,transferred:true}:e);});
+    save(); renderJournal(); updateJournalBadge();
+  });
+}
+function updateJournalBadge() {
+  const total=people.reduce((a,p)=>a+totalPending(p),0);
+  const badge=document.getElementById('journal-nav-badge');
+  if(badge){badge.textContent=total||'';badge.style.display=total>0?'block':'none';}
+}
+function markPersonAllDone(personId) {
+  const person=people.find(p=>p.id===personId); if(!person)return;
+  const snapshot={};
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])snapshot[c.key]=person[c.key].map(e=>({...e}));});
+  allCatsForPerson(person).forEach(c=>{if(person[c.key])person[c.key]=person[c.key].map(e=>({...e,transferred:false}));});
+  save(); renderJournal(); updateJournalBadge();
+  showToastWithUndo(`${person.name}'s entries cleared`, ()=>{
+    allCatsForPerson(person).forEach(c=>{if(snapshot[c.key])person[c.key]=snapshot[c.key];});
+    save(); renderJournal(); updateJournalBadge();
+  });
+}
+
+// ── Supabase ───────────────────────────────────────────────────────────────────
+let _sb=null;
+function supabaseLoaded(){const cfg=sbConfig();if(cfg)sbInit(cfg.url,cfg.key,false);else sbBar('disconnected');}
+function sbConfig(){try{return JSON.parse(localStorage.getItem('pj_sb')||'null');}catch{return null;}}
+async function sbInit(url,key,pushLocal){
+  try{
+    _sb=window.supabase.createClient(url,key);
+    const{error}=await _sb.from('people').select('id').limit(1);
+    if(error)throw error;
+    if(pushLocal){await sbPush();sbBar('connected');}
+    else{await sbPull();sbBar('connected');}
+  }catch(e){console.warn('Sync error',e);sbBar('error');}
+}
+function sbBar(state){
+  const bar=document.getElementById('sync-bar');if(!bar)return;
+  if(state==='connected'){bar.style.display='';bar.innerHTML='✓ Synced &nbsp;·&nbsp; <button onclick="sbOpen()">settings</button>';}
+  else if(state==='disconnected'){bar.style.display='';bar.innerHTML='☁ Not synced &nbsp;·&nbsp; <button onclick="sbOpen()">connect</button>';}
+  else{bar.style.display='';bar.innerHTML='⚠ Sync error &nbsp;·&nbsp; <button onclick="sbOpen()">check settings</button>';}
+}
+function sbOpen(){document.getElementById('sb-overlay').classList.add('open');}
+function sbClose(){document.getElementById('sb-overlay').classList.remove('open');}
+async function sbConnect(){
+  const url=document.getElementById('sb-url').value.trim();
+  const key=document.getElementById('sb-key').value.trim();
+  const err=document.getElementById('sb-err');err.style.display='none';
+  if(!url||!key){err.textContent='Please fill in both fields.';err.style.display='block';return;}
+  if(!window.supabase){err.textContent='Still loading, please wait.';err.style.display='block';return;}
+  err.textContent='Connecting…';err.style.color='var(--text3)';err.style.display='block';
+  try{
+    _sb=window.supabase.createClient(url,key);
+    const{error}=await _sb.from('people').select('id').limit(1);if(error)throw error;
+    localStorage.setItem('pj_sb',JSON.stringify({url,key}));
+    await sbPush();sbClose();sbBar('connected');showToast('Connected! Journal will now sync.');
+  }catch(e){err.textContent='Could not connect — check your URL and key.';err.style.color='var(--danger)';err.style.display='block';}
+}
+function sbDisconnect(){
+  localStorage.removeItem('pj_sb');_sb=null;sbClose();sbBar('disconnected');showToast('Sync disconnected.');
+}
+async function sbPush(){
+  if(!_sb)return;
+  try{
+    if(people.length>0)await _sb.from('people').upsert(people.map(p=>{const{id,...data}=p;return{id,data};}),{onConflict:'id'});
+    await _sb.from('settings').upsert([
+      {key:'circles',value:circles},
+      {key:'trash',value:trash},
+      {key:'calEvents',value:calEvents},
+      {key:'lifeItems',value:lifeItems},
+    ],{onConflict:'key'});
+  }catch(e){}
+}
+async function sbPull(){
+  if(!_sb)return;
+  try{
+    const{data:pd}=await _sb.from('people').select('id,data').order('id',{ascending:false});
+    if(pd){people=pd.map(r=>({id:r.id,...r.data}));try{localStorage.setItem('pj_people',JSON.stringify(people));}catch(e){}}
+    const{data:sd}=await _sb.from('settings').select('key,value');
+    if(sd){
+      sd.forEach(row=>{
+        if(row.key==='circles'){circles=row.value||[];try{localStorage.setItem('pj_circles',JSON.stringify(circles));}catch(e){}}
+        if(row.key==='trash'){trash=row.value||[];try{localStorage.setItem('pj_trash',JSON.stringify(trash));}catch(e){}}
+        if(row.key==='calEvents'){calEvents=row.value||[];try{localStorage.setItem('pj_cal',JSON.stringify(calEvents));}catch(e){}}
+        if(row.key==='lifeItems'){lifeItems=row.value||[];try{localStorage.setItem('pj_life',JSON.stringify(lifeItems));}catch(e){}}
+      });
+    }
+    renderHome();
+  }catch(e){}
+}
+async function sbDelete(id){if(!_sb)return;try{await _sb.from('people').delete().eq('id',id);}catch(e){}}
+function save(){try{localStorage.setItem('pj_people',JSON.stringify(people));}catch(e){}sbPush();}
+
+// ── Circles ────────────────────────────────────────────────────────────────────
+const CIRCLE_COLORS=['#8a7ab8','#6b8cb8','#7ab899','#b87ba0','#c8956c','#7a8c5a','#b8706b','#6b8c7a','#b8a06b','#6b7ab8'];
+let circles=[], _selectedCircleColor=CIRCLE_COLORS[0];
+function loadCircles(){
+  try{const stored=localStorage.getItem('pj_circles');if(!stored){circles=[];return;}const parsed=JSON.parse(stored);circles=Array.isArray(parsed)?parsed.filter(c=>typeof c.id==='number'):[];}catch(e){circles=[];}
+}
+function saveCircles(){
+  try{localStorage.setItem('pj_circles',JSON.stringify(circles));}catch(e){}
+  if(_sb)(async()=>{try{await _sb.from('settings').upsert({key:'circles',value:circles},{onConflict:'key'});}catch(e){}})();
+}
+function saveTrash(){
+  try{localStorage.setItem('pj_trash',JSON.stringify(trash));}catch(e){}
+  if(_sb)(async()=>{try{await _sb.from('settings').upsert({key:'trash',value:trash},{onConflict:'key'});}catch(e){}})();
+}
+function renderCircleColorPicker(){
+  const container=document.getElementById('circle-color-picker');if(!container)return;
+  const usedColors=new Set(circles.map(c=>c.color));
+  container.innerHTML=CIRCLE_COLORS.map(color=>{
+    const used=usedColors.has(color)&&color!==_selectedCircleColor;
+    const onclick=used?'':('selectCircleColor(\''+color+'\')');
+    return`<div onclick="${onclick}" title="${used?'Already used':'Pick this colour'}" style="width:28px;height:28px;border-radius:50%;background:${color};cursor:${used?'not-allowed':'pointer'};opacity:${used?0.2:1};box-shadow:${color===_selectedCircleColor?'0 0 0 3px var(--text)':'none'};transition:box-shadow .15s;"></div>`;
+  }).join('');
+}
+function selectCircleColor(color){_selectedCircleColor=color;renderCircleColorPicker();}
+function personCircles(personId){const p=people.find(x=>x.id===personId);return circles.filter(c=>(p?.circleIds||[]).includes(c.id));}
+function openCirclesModal(){
+  const person=people.find(p=>p.id===currentPersonId);
+  const sub=document.getElementById('circles-modal-sub');
+  if(sub)sub.textContent=person?`Tap a circle to assign or remove ${person.name}.`:'Manage your circles.';
+  const usedColors=new Set(circles.map(c=>c.color));
+  _selectedCircleColor=CIRCLE_COLORS.find(c=>!usedColors.has(c))||CIRCLE_COLORS[0];
+  document.getElementById('new-circle-name').value='';
+  document.getElementById('circles-modal-err').style.display='none';
+  renderAssignCircleList();renderCircleColorPicker();
+  document.getElementById('circles-modal-bg').classList.add('open');
+}
+function closeCirclesModal(){document.getElementById('circles-modal-bg').classList.remove('open');if(currentPersonId)renderPerson();}
+function openAssignCircleModal(){openCirclesModal();}
+function closeAssignCircleModal(){closeCirclesModal();}
+function createCircle(){
+  const nameInput=document.getElementById('new-circle-name');
+  const err=document.getElementById('circles-modal-err');err.style.display='none';
+  const name=nameInput.value.trim();
+  if(!name){nameInput.focus();return;}
+  if(circles.find(c=>c.name.toLowerCase()===name.toLowerCase())){err.textContent='A circle with that name already exists.';err.style.display='block';return;}
+  if(circles.find(c=>c.color===_selectedCircleColor)){err.textContent='That colour is already used. Pick a different one.';err.style.display='block';return;}
+  circles.push({id:Date.now(),name,color:_selectedCircleColor});
+  saveCircles();nameInput.value='';
+  const usedAfter=new Set(circles.map(c=>c.color));
+  _selectedCircleColor=CIRCLE_COLORS.find(c=>!usedAfter.has(c))||CIRCLE_COLORS[0];
+  renderCircleColorPicker();renderAssignCircleList();showToast('Circle created');
+}
+function deleteCircle(id){
+  const circle=circles.find(c=>c.id===id);if(!circle)return;
+  const members=people.filter(p=>(p.circleIds||[]).includes(id));
+  if(members.length>0){showToast(`Can't delete — ${members.length} ${members.length===1?'person belongs':'people belong'} to this circle`);return;}
+  trash.push({type:'circle',circle,deletedAt:Date.now()});saveTrash();
+  circles=circles.filter(c=>c.id!==id);saveCircles();
+  renderAssignCircleList();showToast('Circle moved to Recycle Bin');
+}
+function togglePersonCircle(circleId){
+  const person=people.find(p=>p.id===currentPersonId);if(!person)return;
+  if(!person.circleIds)person.circleIds=[];
+  if(person.circleIds.includes(circleId))person.circleIds=person.circleIds.filter(id=>id!==circleId);
+  else person.circleIds.push(circleId);
+  save();renderAssignCircleList();
+}
+function renderAssignCircleList(){
+  const container=document.getElementById('assign-circle-list');if(!container)return;
+  const person=people.find(p=>p.id===currentPersonId);
+  if(!circles.length){container.innerHTML='<div style="color:var(--text3);font-size:13px;margin-bottom:10px;font-style:italic;">No circles yet — create one below.</div>';return;}
+  container.innerHTML=circles.map(c=>{
+    const assigned=(person?.circleIds||[]).includes(c.id);
+    const memberCount=people.filter(p=>(p.circleIds||[]).includes(c.id)).length;
+    return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:${assigned?c.color+'22':'var(--bg2)'};border:2px solid ${assigned?c.color:'var(--border)'};border-radius:10px;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;" onclick="togglePersonCircle(${c.id})">
+        <div style="width:18px;height:18px;border-radius:50%;background:${c.color};flex-shrink:0;"></div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:${assigned?c.color:'var(--text)'};">${esc(c.name)}</div>
+          <div style="font-size:12px;color:var(--text3);">${memberCount} ${memberCount===1?'person':'people'}${assigned?' · assigned':''}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        ${assigned?`<span style="color:${c.color};font-size:18px;">✓</span>`:''}
+        <button style="background:none;border:none;color:${memberCount>0?'var(--border2)':'var(--danger)'};font-size:12px;cursor:pointer;padding:4px 6px;font-weight:700;" onclick="deleteCircle(${c.id})" title="${memberCount>0?'Remove all members first':''}">${memberCount>0?'🔒':'Delete'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Recycle Bin ────────────────────────────────────────────────────────────────
+let trash=[];
+function loadTrash(){try{trash=JSON.parse(localStorage.getItem('pj_trash')||'[]');}catch(e){trash=[];}}
+function openTrashModal(){renderTrashList();document.getElementById('trash-modal-bg').classList.add('open');}
+function closeTrashModal(){document.getElementById('trash-modal-bg').classList.remove('open');}
+function restoreFromTrash(idx){
+  const item=trash[idx];if(!item)return;
+  if(item.type==='person'){
+    const{type,deletedAt,_calEvents,...person}=item;
+    people.unshift(person);
+    // Restore their family links on the other people's profiles
+    (person.familyLinks||[]).forEach(link=>{
+      const other=people.find(p=>p.id===link.linkedId);
+      if(other){
+        if(!other.familyLinks)other.familyLinks=[];
+        if(!other.familyLinks.find(l=>l.linkedId===person.id)){
+          other.familyLinks.push({linkedId:person.id,relation:link.relation});
+        }
+      }
+    });
+    // Restore their calendar events
+    if(_calEvents&&_calEvents.length){
+      _calEvents.forEach(e=>{if(!calEvents.find(c=>c.id===e.id))calEvents.push(e);});
+      saveCalEvents();
+    }
+    trash.splice(idx,1);saveTrash();save();renderTrashList();renderHome();showToast(`${person.name} restored`);
+  }
+  else if(item.type==='entry'){const person=people.find(p=>p.id===item.personId);if(!person){showToast('Person no longer exists');trash.splice(idx,1);saveTrash();renderTrashList();return;}if(!person[item.categoryKey])person[item.categoryKey]=[];person[item.categoryKey].unshift(item.entry);trash.splice(idx,1);saveTrash();save();renderTrashList();showToast('Entry restored');}
+  else if(item.type==='circle'){circles.push(item.circle);trash.splice(idx,1);saveCircles();saveTrash();renderTrashList();showToast(`Circle "${item.circle.name}" restored`);}
+  else if(item.type==='calEvent'){calEvents.push(item.event);trash.splice(idx,1);saveCalEvents();saveTrash();renderTrashList();showToast('Event restored');}
+}
+function permanentDelete(idx){trash.splice(idx,1);saveTrash();renderTrashList();showToast('Permanently deleted');}
+function emptyTrash(){trash=[];saveTrash();renderTrashList();showToast('Recycle bin emptied');}
+function renderTrashList(){
+  const container=document.getElementById('trash-list');if(!container)return;
+  const trashBadge=document.getElementById('trash-badge');const trashBtn=document.getElementById('trash-filter-btn');
+  if(trashBadge)trashBadge.textContent=trash.length>0?trash.length:'';
+  if(trashBtn)trashBtn.style.display=trash.length>0?'':'none';
+  if(!trash.length){container.innerHTML='<div style="color:var(--text3);font-size:14px;padding:10px 0;font-style:italic;">Recycle bin is empty.</div>';return;}
+  container.innerHTML=trash.map((item,idx)=>{
+    const ago=Math.round((Date.now()-item.deletedAt)/60000);
+    const timeStr=ago<60?`${ago}m ago`:ago<1440?`${Math.round(ago/60)}h ago`:`${Math.round(ago/1440)}d ago`;
+    let title,sub;
+    if(item.type==='person'){title=item.name;sub=`${item.metAt?`met at ${item.metAt} · `:''}person · deleted ${timeStr}`;}
+    else if(item.type==='entry'){title=`"${item.entry.text.length>50?item.entry.text.slice(0,50)+'…':item.entry.text}"`;sub=`${item.personName} · ${item.categoryLabel} · deleted ${timeStr}`;}
+    else if(item.type==='circle'){title=item.circle.name;sub=`circle · deleted ${timeStr}`;}
+    else if(item.type==='calEvent'){title=`${item.personName} — ${fmtDate(item.event.date)}`;sub=`${item.event.note?item.event.note+' · ':''}calendar event · deleted ${timeStr}`;}
+    const dot=item.type==='circle'?`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${item.circle.color};margin-right:6px;vertical-align:middle;"></span>`:'';
+    return`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:3px;">${dot}${esc(title)}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">${esc(sub)}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm" onclick="restoreFromTrash(${idx})">↩ Restore</button>
+        <button style="background:none;border:1px solid rgba(176,48,32,0.4);color:var(--danger);border-radius:7px;padding:6px 13px;font-size:12px;cursor:pointer;font-weight:700;" onclick="permanentDelete(${idx})">Delete forever</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+const SAMPLE_PEOPLE=[
+  {id:1,name:'Marcus Webb',metAt:'Church small group',date:'2024-01-15',birthday:'1985-03-22',bio:'Grew up in Tennessee. Woodworker, father of one, leads the men\'s Bible study.',transferred:false,familyLinks:[],customCategories:[],
+    notes:[{id:10,text:'Grew up in Tennessee, loves woodworking',date:'2024-01-15',transferred:false}],
+    likes:[{id:11,text:'Woodworking, country music, strong coffee',date:'2024-01-15',transferred:false}],
+    dislikes:[],family:[{id:12,text:'Daughter just started college',date:'2024-02-03',transferred:true}],memories:[]},
+  {id:2,name:'Elena Rourke',metAt:'Coffee shop — 3rd & Main',date:'2024-03-20',birthday:'',bio:'Photographer, travels for work. Has a thing for black & white film.',transferred:false,familyLinks:[],customCategories:[],
+    notes:[{id:20,text:'Photographer, travels a lot for work',date:'2024-03-20',transferred:false}],
+    likes:[{id:21,text:'Photography, travel, black & white film',date:'2024-03-20',transferred:false}],
+    dislikes:[],family:[],memories:[]}
+];
+loadCircles();
+loadTrash();
+loadCalEvents();
+loadReminders();
+loadLifeItems();
+document.getElementById('form-date').value=today();
+try{const s=localStorage.getItem('pj_people');people=s?JSON.parse(s):SAMPLE_PEOPLE.slice();}catch(e){people=SAMPLE_PEOPLE.slice();}
+initDark();
+navTo('home');
+if(sbConfig())sbBar('connected');else sbBar('disconnected');
+</script>
+</body>
+</html>
